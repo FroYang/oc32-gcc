@@ -1,0 +1,44 @@
+; Options for the OC32 port of the compiler.
+
+; Copyright (C) 2015-2023 Free Software Foundation, Inc.
+;
+; This file is part of GCC.
+;
+; GCC is free software; you can redistribute it and/or modify it under
+; the terms of the GNU General Public License as published by the Free
+; Software Foundation; either version 3, or (at your option) any later
+; version.
+;
+; GCC is distributed in the hope that it will be useful, but WITHOUT ANY
+; WARRANTY; without even the implied warranty of MERCHANTABILITY or
+; FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+; for more details.
+;
+; You should have received a copy of the GNU General Public License
+; along with GCC; see the file COPYING3.  If not see
+; <http://www.gnu.org/licenses/>.
+
+; See the GCC internals manual (options.texi) for a description of
+; this file's format.
+
+HeaderInclude
+config/oc32/oc32-opts.h
+
+
+mzfsf
+Target Mask(ZFSF)
+Enable ZF operations support(OC32 ISA Ver 1.0 only).
+
+mcmodel=
+Target RejectNegative Joined Enum(oc32_cmodel_type) Var(oc32_code_model) Init(CMODEL_SMALL)
+Specify the code model used for accessing memory addresses.
+
+Enum
+Name(oc32_cmodel_type) Type(enum oc32_cmodel_type)
+Known code model types (for use with the -mcmodel= option):
+
+EnumValue
+Enum(oc32_cmodel_type) String(small) Value(CMODEL_SMALL)
+
+EnumValue
+Enum(oc32_cmodel_type) String(large) Value(CMODEL_LARGE)

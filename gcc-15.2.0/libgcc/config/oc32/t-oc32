@@ -1,0 +1,34 @@
+# Libgcc Makefile fragment for OC32
+# Copyright (C) 2015-2025 Free Software Foundation, Inc.
+#
+# This file is part of GCC.
+#
+# GCC is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published
+# by the Free Software Foundation; either version 3, or (at your
+# option) any later version.
+#
+# GCC is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+# License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with GCC; see the file COPYING3.  If not, see
+# <http://www.gnu.org/licenses/>.
+
+# Assembly functions for integer arithmetic
+LIB1ASMSRC = oc32/lib1funcs.S
+LIB1ASMFUNCS = _negdi2 _addvsi3 _addvdi3 _subvsi3 _subvdi3 _negvsi2 _negvdi2 \
+               _absvsi2 _absvdi2 _mulvsi3 _muldi3 _mulvdi3 _lshrdi3 _ashldi3 _ashrdi3 \
+               _bswapdi2 _ffssi2 _ffsdi2 _clzsi2 _clzdi2 _ctzsi2 _ctzdi2 _clrsbsi2 _clrsbdi2 \
+               _popcountsi2 _paritysi2 _cmpdi2 _ucmpdi2
+
+# Hardware startup file (for bare metal without newlib)
+# comment this when newlib is ported and used
+crti-hw.o: $(srcdir)/config/oc32/crti-hw.S
+	$(crt_compile) -c -x assembler-with-cpp $<
+
+# Compile crtbeginS.o and crtendS.o with -mcmodel=large
+CRTSTUFF_T_CFLAGS_S += -mcmodel=large
+

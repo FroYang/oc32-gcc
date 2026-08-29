@@ -1,0 +1,236 @@
+cat <<EOF
+OUTPUT_FORMAT("${OUTPUT_FORMAT}")
+OUTPUT_ARCH(${ARCH})
+${LIB_SEARCH_DIRS}
+EOF
+
+test -n "${RELOCATING}" && cat << EOF
+/* Allow the command line to override the memory region sizes.  */
+__BOOTSIZE  = DEFINED(__BOOTSIZE)  ? __BOOTSIZE  : 4K;
+__INTSIZE   = DEFINED(__INTSIZE)   ? __INTSIZE   : 1536;
+__USRSIZE   = DEFINED(__USRSIZE)   ? __USRSIZE   : 98K;
+__SRAMSIZE  = DEFINED(__SRAMSIZE)  ? __SRAMSIZE  : 22K;
+
+MEMORY
+{
+  fboot     (rx)   : ORIGIN = 0x00000000, LENGTH = __BOOTSIZE
+  ferr0     (rx)   : ORIGIN = 0x10000000, LENGTH = 256
+  ferr1     (rx)   : ORIGIN = 0x10000100, LENGTH = 256
+  ferr2     (rx)   : ORIGIN = 0x10000200, LENGTH = 256
+  ferr3     (rx)   : ORIGIN = 0x10000300, LENGTH = 256
+  ferr4     (rx)   : ORIGIN = 0x10000400, LENGTH = 256
+  ferr5     (rx)   : ORIGIN = 0x10000500, LENGTH = 256
+  ferr6     (rx)   : ORIGIN = 0x10000600, LENGTH = 256
+  ferr7     (rx)   : ORIGIN = 0x10000700, LENGTH = 256
+  ssysc     (rx)   : ORIGIN = 0x10000800, LENGTH = 256
+  strap     (rx)   : ORIGIN = 0x10000900, LENGTH = 256
+  shint     (rx)   : ORIGIN = 0x10000A00, LENGTH = __INTSIZE
+  screg     (rw!x) : ORIGIN = 0x3FF00000, LENGTH = 32K
+  spreg     (rw!x) : ORIGIN = 0x3FF08000, LENGTH = 32K
+  fusr      (rx)   : ORIGIN = 0x40000000, LENGTH = __USRSIZE
+  sram      (rwx)  : ORIGIN = (0x40000000+__USRSIZE), LENGTH = __SRAMSIZE
+}
+EOF
+
+
+cat <<EOF
+SECTIONS
+{
+  .boot :
+  {
+    . = ALIGN(4);
+    *(.boot)
+    
+    ${RELOCATING+FILL(0xFFFFFFFF);}
+    ${RELOCATING+. = ORIGIN(fboot) + LENGTH(fboot);}
+  } ${RELOCATING+ > fboot}
+
+  .syserr0 :
+  {
+    . = ALIGN(4);
+    *(.syserr0)
+    
+    ${RELOCATING+FILL(0xFFFFFFFF);}
+    ${RELOCATING+. = ORIGIN(ferr0) + LENGTH(ferr0);}
+  } ${RELOCATING+ > ferr0}
+
+  .syserr1 :
+  {
+    . = ALIGN(4);
+    *(.syserr1)
+    
+    ${RELOCATING+FILL(0xFFFFFFFF);}
+    ${RELOCATING+. = ORIGIN(ferr1) + LENGTH(ferr1);}
+  } ${RELOCATING+ > ferr1}
+
+  .syserr2 :
+  {
+    . = ALIGN(4);
+    *(.syserr2)
+    
+    ${RELOCATING+FILL(0xFFFFFFFF);}
+    ${RELOCATING+. = ORIGIN(ferr2) + LENGTH(ferr2);}
+  } ${RELOCATING+ > ferr2}
+
+  .syserr3 :
+  {
+    . = ALIGN(4);
+    *(.syserr3)
+    
+    ${RELOCATING+FILL(0xFFFFFFFF);}
+    ${RELOCATING+. = ORIGIN(ferr3) + LENGTH(ferr3);}
+  } ${RELOCATING+ > ferr3}
+
+  .syserr4 :
+  {
+    . = ALIGN(4);
+    *(.syserr4)
+    
+    ${RELOCATING+FILL(0xFFFFFFFF);}
+    ${RELOCATING+. = ORIGIN(ferr4) + LENGTH(ferr4);}
+  } ${RELOCATING+ > ferr4}
+
+  .syserr5 :
+  {
+    . = ALIGN(4);
+    *(.syserr5)
+    
+    ${RELOCATING+FILL(0xFFFFFFFF);}
+    ${RELOCATING+. = ORIGIN(ferr5) + LENGTH(ferr5);}
+  } ${RELOCATING+ > ferr5}
+
+  .syserr6 :
+  {
+    . = ALIGN(4);
+    *(.syserr6)
+    
+    ${RELOCATING+FILL(0xFFFFFFFF);}
+    ${RELOCATING+. = ORIGIN(ferr6) + LENGTH(ferr6);}
+  } ${RELOCATING+ > ferr6}
+
+  .syserr7 :
+  {
+    . = ALIGN(4);
+    *(.syserr7)
+    
+    ${RELOCATING+FILL(0xFFFFFFFF);}
+    ${RELOCATING+. = ORIGIN(ferr7) + LENGTH(ferr7);}
+  } ${RELOCATING+ > ferr7}
+
+  .syscall :
+  {
+    . = ALIGN(4);
+    *(.syscall)
+    
+    ${RELOCATING+FILL(0xFFFFFFFF);}
+    ${RELOCATING+. = ORIGIN(ssysc) + LENGTH(ssysc);}
+  } ${RELOCATING+ > ssysc}
+
+  .systrap :
+  {
+    . = ALIGN(4);
+    *(.systrap)
+    
+    ${RELOCATING+FILL(0xFFFFFFFF);}
+    ${RELOCATING+. = ORIGIN(strap) + LENGTH(strap);}
+  } ${RELOCATING+ > strap}
+
+  .interrupt :
+  {
+    . = ALIGN(4);
+    *(.interrupt)
+    
+    FILL(0xFFFFFFFF);
+    . = ORIGIN(shint) + LENGTH(shint);
+  } ${RELOCATING+ > shint}
+
+  .srcore :
+  {
+    . = ALIGN(4);
+    *(.srcore)
+    FILL(0x00000000);
+    . = ORIGIN(screg) + LENGTH(screg);
+  } > screg
+
+  .srpher :
+  {
+    . = ALIGN(4);
+    *(.srpher)
+    FILL(0x00000000);
+    . = ORIGIN(spreg) + LENGTH(spreg);
+  } > spreg
+
+  .text :
+  {
+    . = ALIGN(4);
+    *(.text${RELOCATING+*})
+    
+    ${RELOCATING+*(.strings)
+    KEEP (*(SORT_NONE(.init)))
+    KEEP (*(SORT_NONE(.fini)))
+    FILL(0xFFFFFFFF);
+    . = ORIGIN(fusr) + LENGTH(fusr);}
+  } ${RELOCATING+ > fusr}
+
+  .stext :
+  {
+    . = ALIGN(4);
+    *(.stext)
+    *(.stext.*)
+    
+    ${RELOCATING+*(.stext*)
+    FILL(0xFFFFFFFF);
+    /* Mark end of secure text; data sections start after this */
+    __sram_text_end = . ;}
+  } > sram
+
+  /* SRAM: stext takes code first, alldata takes remaining space dynamically */
+  .alldata : ${RELOCATING+ AT (__sram_text_end)}
+  {
+    . = ALIGN(4);
+    ${RELOCATING+ __sram_data_start = . ; }
+    
+    /* .tors: constructors and destructors */
+    ___ctors = . ;
+    *(.ctors)
+    *(.ctors.*)
+    ___ctors_end = . ;
+    ___dtors = . ;
+    *(.dtors)
+    *(.dtors.*)
+    ___dtors_end = . ;
+
+
+    /* .bss: uninitialized data */
+    . = ALIGN(4);
+    ${RELOCATING+ __bss_start = . ; }
+    
+    *(.bss)
+    *(.bss.*)
+    ${RELOCATING+*(COMMON)}
+    ${RELOCATING+ __bss_end = . ;}
+
+    /* .data: initialized data */
+    . = ALIGN(4);
+    ${RELOCATING+ __data_start = . ; }
+    
+    *(.data)
+    *(.data.*)
+    ${RELOCATING+*(.rodata)
+    *(.rodata*)}
+    ${RELOCATING+ __data_end = . ;}
+
+    FILL(0x00000000);
+    /* Stack top: stack grows down from end of SRAM */
+    __stack_top = ORIGIN(sram) + LENGTH(sram);
+    __sram_end = . ;
+  } > sram
+
+EOF
+
+source_sh $srcdir/scripttempl/misc-sections.sc
+source_sh $srcdir/scripttempl/DWARF.sc
+
+cat <<EOF
+}
+EOF
