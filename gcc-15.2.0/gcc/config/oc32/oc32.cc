@@ -1533,11 +1533,25 @@ void oc32_expand_cbranch(rtx *operands)
                 }
 
         case EQ:
-                emit_jump_insn(gen_jumpeq(operands[1], operands[2], operands[3]));
+                if (CONST_INT_P(operands[2]) && (val == 0))
+                {
+                        emit_jump_insn(gen_jumpz(operands[1], operands[3]));
+                }
+                else 
+                {
+                        emit_jump_insn(gen_jumpeq(operands[1], operands[2], operands[3]));
+                }
                 return;
 
         case NE:
-                emit_jump_insn(gen_jumpne(operands[1], operands[2], operands[3]));
+                if (CONST_INT_P(operands[2]) && (val == 0))
+                {
+                        emit_jump_insn(gen_jumpnz(operands[1], operands[3]));
+                }
+                else
+                {
+                        emit_jump_insn(gen_jumpne(operands[1], operands[2], operands[3]));
+                }
                 return;
 
         default:
