@@ -1443,7 +1443,7 @@ void oc32_expand_cbranch(rtx *operands)
         rtx ccflag_lt = gen_rtx_REG(SImode, OC32_R4);
         rtx ccflag_gt = gen_rtx_REG(SImode, OC32_R5);
 
-        /* Ensure operand 0 are in registers */
+        /* Ensure operand 1 are in registers */
         if (!register_operand(operands[1], SImode))
                 operands[1] = force_reg(SImode, operands[1]);
 
@@ -1451,9 +1451,9 @@ void oc32_expand_cbranch(rtx *operands)
            For unsigned comparisons (LTU, LEU, GTU, GEU), use 0-65535 range.
            For signed comparisons, use -32768 to 32767 range.  */
         bool valid_imm = false;
+        HOST_WIDE_INT val = INTVAL(operands[2]);
         if (CONST_INT_P(operands[2]))
         {
-                HOST_WIDE_INT val = INTVAL(operands[2]);
                 if (code == LTU || code == LEU || code == GTU || code == GEU)
                         valid_imm = (val >= 0 && val <= 65535);
                 else
@@ -1466,30 +1466,35 @@ void oc32_expand_cbranch(rtx *operands)
 
         switch (code)
         {
-        case GT:
+        case GT:     
                 if (TARGET_ZFSF)
                 {
                         emit_jump_insn(gen_jumpgt_zf(operands[1], operands[2], operands[3]));
-                        return;
                 }
                 else
                 {
                         emit_jump_insn(gen_jumpgt(operands[1], operands[2], operands[3]));
-                        return;
                 }
-                
+                return;
+
 
         case GTU:
-                if (TARGET_ZFSF)
+                if (CONST_INT_P(operands[2]) && (val == 0))
                 {
-                        emit_jump_insn(gen_jumpgtu_zf(operands[1], operands[2], operands[3]));
-                        return;
+                        emit_jump_insn(gen_jump_ne_z(operands[1], operands[3]));
                 }
-                else
-                {
-                        emit_jump_insn(gen_jumpgtu(operands[1], operands[2], operands[3]));
-                        return;
+                else 
+                {    
+                        if (TARGET_ZFSF)
+                        {
+                                emit_jump_insn(gen_jumpgtu_zf(operands[1], operands[2], operands[3]));
+                        }
+                        else
+                        {
+                                emit_jump_insn(gen_jumpgtu(operands[1], operands[2], operands[3]));
+                        }
                 }
+                return;
                 
 
         case GE:
@@ -1512,30 +1517,28 @@ void oc32_expand_cbranch(rtx *operands)
                 if (TARGET_ZFSF)
                 {
                         emit_jump_insn(gen_jumple_zf(operands[1], operands[2], operands[3]));
-                        return;
                 }
                 else
                 {
-                        emit_jump_insn(gen_jumple(operands[1], operands[2], operands[3]));
-                        return;                        
+                        emit_jump_insn(gen_jumple(operands[1], operands[2], operands[3]));                      
                 }
+                return;
 
         case LEU:
                 if (TARGET_ZFSF)
                 {
                         emit_jump_insn(gen_jumpleu_zf(operands[1], operands[2], operands[3]));
-                        return;
                 }
                 else
                 {
-                        emit_jump_insn(gen_jumpleu(operands[1], operands[2], operands[3]));
-                        return;                           
+                        emit_jump_insn(gen_jumpleu(operands[1], operands[2], operands[3]));                        
                 }
+                return;
 
         case EQ:
                 if (CONST_INT_P(operands[2]) && (val == 0))
                 {
-                        emit_jump_insn(gen_jumpz(operands[1], operands[3]));
+                        emit_jump_insn(gen_jump_eq_z(operands[1], operands[3]));
                 }
                 else 
                 {
@@ -1546,7 +1549,7 @@ void oc32_expand_cbranch(rtx *operands)
         case NE:
                 if (CONST_INT_P(operands[2]) && (val == 0))
                 {
-                        emit_jump_insn(gen_jumpnz(operands[1], operands[3]));
+                        emit_jump_insn(gen_jump_ne_z(operands[1], operands[3]));
                 }
                 else
                 {
@@ -1697,13 +1700,37 @@ oc32_rtx_costs(rtx x, machine_mode mode, int outer_code, int opno,
         case IF_THEN_ELSE:
         {
                 rtx cond = XEXP(x, 0);
-                if ((GET_CODE(cond) == EQ || GET_CODE(cond) == NE) &&
-                    REG_P(XEXP(cond, 0)) &&
-                    CONST_INT_P(XEXP(cond, 1)) &&
-                    INTVAL(XEXP(cond, 1)) == 0)
+                rtx then_part = XEXP(x, 1);
+                rtx else_part = XEXP(x, 2);
+
+                /* Case 1: cmov_ne — condition is a plain register (no comparison operator) */
+                if (!COMPARISON_P(cond) && REG_P(cond))
                 {
-                        // 条件移动指令的成本
-                        *total = COSTS_N_INSNS(1); // 单条指令的成本
+                        *total = COSTS_N_INSNS(1);
+                        return true;
+                }
+
+                /* Case 2: cmov_z / cmov_nz — EQ/NE against const 0, result used as integer */
+                if ((GET_CODE(cond) == EQ || GET_CODE(cond) == NE) &&
+                        REG_P(XEXP(cond, 0)) &&
+                        CONST_INT_P(XEXP(cond, 1)) &&
+                        INTVAL(XEXP(cond, 1)) == 0)
+                {
+                        *total = COSTS_N_INSNS(2);   // OR + MOVZ/MOVNZ = 2 insns
+                        return true;
+                }
+
+                /* Case 3: cbranchsi4 — comparison with label_ref / pc */
+                if ((LABEL_REF_P(then_part) && else_part == pc_rtx) ||
+                        (LABEL_REF_P(else_part) && then_part == pc_rtx))
+                {
+                        bool is_zero_eqne = (GET_CODE(cond) == EQ || GET_CODE(cond) == NE || GET_CODE(cond) == GTU) &&
+                                        CONST_INT_P(XEXP(cond, 1)) &&
+                                        INTVAL(XEXP(cond, 1)) == 0;
+                        if (is_zero_eqne)
+                        *total = COSTS_N_INSNS(1);               // jump_eq_z/jump_ne_z: 1 insn
+                        else
+                        *total = COSTS_N_INSNS(TARGET_ZFSF ? 3 : 2);  // cmp + jump
                         return true;
                 }
         }
@@ -1873,7 +1900,7 @@ void oc32_expand_atomic_compare_and_swap(rtx operands[])
         //emit_jump_insn(gen_jumpne(retval, oldval, XEXP(label2, 0)));
 
         emit_insn(gen_cmpeq(retval, oldval));
-        emit_jump_insn(gen_jumpz(gen_rtx_REG(SImode, OC32_R4), XEXP(label2, 0)));        
+        emit_jump_insn(gen_jump_eq_z(gen_rtx_REG(SImode, OC32_R4), XEXP(label2, 0)));        
 
 
         /* 5. store new value to memory */
@@ -1882,7 +1909,7 @@ void oc32_expand_atomic_compare_and_swap(rtx operands[])
         /* 6. jump back if store failed(ZF==0) - for stong only */
         if (!is_weak)
         {
-                emit_jump_insn(gen_jumpz(gen_rtx_REG(SImode, OC32_R3), XEXP(label1, 0)));
+                emit_jump_insn(gen_jump_eq_z(gen_rtx_REG(SImode, OC32_R3), XEXP(label1, 0)));
         }
 
         /* 7. set return label */
@@ -1950,7 +1977,7 @@ void oc32_expand_atomic_compare_and_swap_qihi(rtx operands[])
         //emit_jump_insn(gen_jumpne(retval, oldval, XEXP(label2, 0)));        
 
         emit_insn(gen_cmpeq(retval, oldval));
-        emit_jump_insn(gen_jumpz(gen_rtx_REG(SImode, OC32_R4), XEXP(label2, 0)));
+        emit_jump_insn(gen_jump_eq_z(gen_rtx_REG(SImode, OC32_R4), XEXP(label2, 0)));
 
         // 9. 插入新值
         if (newval != const0_rtx)
@@ -1964,7 +1991,7 @@ void oc32_expand_atomic_compare_and_swap_qihi(rtx operands[])
         // 11. Strong CAS: 存储失败则重试
         if (!is_weak)
         {
-                emit_jump_insn(gen_jumpz(gen_rtx_REG(SImode, OC32_R3), XEXP(label1, 0)));
+                emit_jump_insn(gen_jump_eq_z(gen_rtx_REG(SImode, OC32_R3), XEXP(label1, 0)));
         }
 
         // 12. 完成标签
@@ -2001,7 +2028,7 @@ void oc32_expand_atomic_exchange(rtx operands[])
         oc32_emit_load_atomic(mode, retval, mem);
         oc32_emit_store_atomic(mode, mem, val);
         /* jump back if store failed(R3==0) */
-        emit_jump_insn(gen_jumpz(gen_rtx_REG(SImode, OC32_R3), XEXP(label, 0)));
+        emit_jump_insn(gen_jump_eq_z(gen_rtx_REG(SImode, OC32_R3), XEXP(label, 0)));
 }
 
 /* Expand an atomic exchange operation for QImode and HImode.
@@ -2056,7 +2083,7 @@ void oc32_expand_atomic_exchange_qihi(rtx operands[])
         oc32_emit_store_atomic(SImode, mem, scratch);
 
         /* Jump back if store failed (R3==0) */
-        emit_jump_insn(gen_jumpz(gen_rtx_REG(SImode, OC32_R3), XEXP(label, 0)));
+        emit_jump_insn(gen_jump_eq_z(gen_rtx_REG(SImode, OC32_R3), XEXP(label, 0)));
 
         /* Extract the original value and return it */
         oc32_finish_atomic_subword(mode, orig_retval, retval, shift);
@@ -2096,7 +2123,7 @@ void oc32_expand_atomic_op(rtx_code code, rtx mem, rtx val,
 
         oc32_emit_store_atomic(mode, mem, after);
         /* Jump back if store failed (R3==0) */
-        emit_jump_insn(gen_jumpz(gen_rtx_REG(SImode, OC32_R3), XEXP(label, 0)));
+        emit_jump_insn(gen_jump_eq_z(gen_rtx_REG(SImode, OC32_R3), XEXP(label, 0)));
 
         if (orig_before)
                 emit_move_insn(orig_before, before);
@@ -2203,7 +2230,7 @@ void oc32_expand_atomic_op_qihi(rtx_code code, rtx mem, rtx val,
         oc32_emit_store_atomic(SImode, mem, scratch);
 
         /* Jump back if store failed (R3==0) */
-        emit_jump_insn(gen_jumpz(gen_rtx_REG(SImode, OC32_R3), XEXP(label, 0)));
+        emit_jump_insn(gen_jump_eq_z(gen_rtx_REG(SImode, OC32_R3), XEXP(label, 0)));
 
         /* Return original and/or new values */
         if (orig_before)
