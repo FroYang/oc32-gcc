@@ -58,6 +58,8 @@
 #include "tree.h"   // 需要 DECL_SECTION_NAME, SYMBOL_REF_DECL
 #include "varasm.h" // 需要 current_function_section, section
 
+static FILE *debug_log_fp = NULL;
+
 /* Per-function machine data.  */
 struct GTY(()) machine_function
 {
@@ -591,7 +593,7 @@ oc32_legitimate_address_p(machine_mode mode, rtx x, bool strict_p,
                 break;
 
         case CONST_INT:
-                /* SR addresses (OC32_SRADR_START~OC32_SRADR_END) are valid as-is */
+                /* SR addresses (0x3FF00000~0x3FF3FFFF) are valid as-is */
                 if ((unsigned HOST_WIDE_INT)INTVAL(x) >= OC32_SRADR_START
                     && (unsigned HOST_WIDE_INT)INTVAL(x) <= OC32_SRADR_END)
                         return true;
@@ -664,7 +666,7 @@ oc32_legitimize_address_1(rtx x, rtx scratch, machine_mode mode)
         tls_model tls_kind = TLS_MODEL_NONE;
         bool is_local = true;
 
-        /* if x is constant OC32_SRADR_START~OC32_SRADR_END, return as-is  */
+        /* if x is constant 0x3FF00000~0x3FF3FFFF, return as-is  */
         if (CONST_INT_P(x) && (unsigned int)INTVAL(x) >= OC32_SRADR_START && (unsigned int)INTVAL(x) <= OC32_SRADR_END)
         {
                 return x;
@@ -1286,7 +1288,43 @@ void oc32_expand_move(machine_mode mode, rtx *operands)
         rtx op0 = operands[0];
         rtx op1 = operands[1];
 
-        /* Handle SR (Special Register) stores: OC32_SRADR_START~OC32_SRADR_END */
+        /* Debug log */
+        if (!debug_log_fp)
+                debug_log_fp = fopen("oc32_expand_move.log", "w");
+
+        if (debug_log_fp)
+        {
+                fprintf(debug_log_fp, "\noc32_expand_move: ");
+                if (op0)
+                {
+                        if (MEM_P(op0))
+                                fprintf(debug_log_fp, "op0 is MEM[%s]; ",
+                                        GET_CODE(XEXP(op0, 0)) == CONST_INT ? "CONST_INT" :
+                                        GET_CODE(XEXP(op0, 0)) == MEM ? "MEM(nested)" :
+                                        GET_CODE(XEXP(op0, 0)) == REG ? "REG" :
+                                        GET_CODE(XEXP(op0, 0)) == SYMBOL_REF ? "SYMBOL_REF" : "??");
+                        else
+                                fprintf(debug_log_fp, "op0 is %s; ",
+                                        GET_CODE(op0) == CONST_INT ? "CONST_INT" :
+                                        GET_CODE(op0) == REG ? "REG" : "??");
+                }
+                if (op1)
+                {
+                        if (MEM_P(op1))
+                                fprintf(debug_log_fp, "op1 is MEM[%s]; ",
+                                        GET_CODE(XEXP(op1, 0)) == CONST_INT ? "CONST_INT" :
+                                        GET_CODE(XEXP(op1, 0)) == MEM ? "MEM(nested)" :
+                                        GET_CODE(XEXP(op1, 0)) == REG ? "REG" :
+                                        GET_CODE(XEXP(op1, 0)) == SYMBOL_REF ? "SYMBOL_REF" : "??");
+                        else
+                                fprintf(debug_log_fp, "op1 is %s; ",
+                                        GET_CODE(op1) == CONST_INT ? "CONST_INT" :
+                                        GET_CODE(op1) == REG ? "REG" : "??");
+                }
+                fprintf(debug_log_fp, "\n");
+        }
+
+        /* Handle SR (Special Register) stores: 0x3FF00000~0x3FF3FFFF */
         if (MEM_P(op0) && GET_MODE(op0) == SImode)
         {
                 if (!const0_operand(op1, mode))
@@ -1300,12 +1338,32 @@ void oc32_expand_move(machine_mode mode, rtx *operands)
                         sr_val = INTVAL(XEXP(sr_addr, 0));
                 if (sr_val >= 0)
                 {
+                        if (debug_log_fp)
+                                fprintf(debug_log_fp, "Store CONST-addr=%x\n", (int)sr_val);
+
                         if (sr_val >= OC32_SRADR_START && sr_val <= OC32_SRADR_END)
                         {
                                 /* Build a clean MEM address for WRSR if needed */
                                 rtx wrsr_op0 = op0;
                                 if (MEM_P(sr_addr))
                                         wrsr_op0 = gen_rtx_MEM(SImode, XEXP(sr_addr, 0));
+                                if (debug_log_fp)
+                                {
+                                        fprintf(debug_log_fp, "emit WRSR (const_int addr=%x)\n", (int)sr_val);
+                                        fprintf(debug_log_fp, "  op0 code=%s mode=%s\n",
+                                                GET_CODE(op0) == MEM ? "MEM" : "NOT-MEM",
+                                                GET_MODE_NAME(GET_MODE(op0)));
+                                        if (MEM_P(op0))
+                                        {
+                                                rtx inner = XEXP(op0, 0);
+                                                fprintf(debug_log_fp, "  op0.addr code=%s",
+                                                        GET_CODE(inner) == CONST_INT ? "CONST_INT" :
+                                                        GET_CODE(inner) == MEM ? "MEM(nested!)" : "OTHER");
+                                                if (CONST_INT_P(inner))
+                                                        fprintf(debug_log_fp, " val=%x", (int)INTVAL(inner));
+                                                fprintf(debug_log_fp, "\n");
+                                        }
+                                }
 
                                 emit_insn(gen_wrsr(wrsr_op0, op1));
                                 return;
@@ -1313,7 +1371,7 @@ void oc32_expand_move(machine_mode mode, rtx *operands)
                 }
         }
 
-        /* Handle SR (Special Register) loads: OC32_SRADR_START~OC32_SRADR_END */
+        /* Handle SR (Special Register) loads: 0x3FF00000~0x3FF3FFFF */
         if (MEM_P(op1) && GET_MODE(op1) == SImode)
         {
                 rtx sr_addr = XEXP(op1, 0);
@@ -1324,12 +1382,32 @@ void oc32_expand_move(machine_mode mode, rtx *operands)
                         sr_val = INTVAL(XEXP(sr_addr, 0));
                 if (sr_val >= 0)
                 {
+                        if (debug_log_fp)
+                                fprintf(debug_log_fp, "Load CONST-addr=%x\n", (int)sr_val);
+
                         if (sr_val >= OC32_SRADR_START && sr_val <= OC32_SRADR_END)
                         {
                                 /* Build a clean MEM address for RDSR if needed */
                                 rtx rdsr_op1 = op1;
                                 if (MEM_P(sr_addr))
                                         rdsr_op1 = gen_rtx_MEM(SImode, XEXP(sr_addr, 0));
+                                if (debug_log_fp)
+                                {
+                                        fprintf(debug_log_fp, "emit RDSR (const_int addr=%x)\n", (int)sr_val);
+                                        fprintf(debug_log_fp, "  op1 code=%s mode=%s\n",
+                                                GET_CODE(op1) == MEM ? "MEM" : "NOT-MEM",
+                                                GET_MODE_NAME(GET_MODE(op1)));
+                                        if (MEM_P(op1))
+                                        {
+                                                rtx inner = XEXP(op1, 0);
+                                                fprintf(debug_log_fp, "  op1.addr code=%s",
+                                                        GET_CODE(inner) == CONST_INT ? "CONST_INT" :
+                                                        GET_CODE(inner) == MEM ? "MEM(nested!)" : "OTHER");
+                                                if (CONST_INT_P(inner))
+                                                        fprintf(debug_log_fp, " val=%x", (int)INTVAL(inner));
+                                                fprintf(debug_log_fp, "\n");
+                                        }
+                                }
 
                                 emit_insn(gen_rdsr(op0, rdsr_op1));
                                 return;

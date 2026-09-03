@@ -31,7 +31,7 @@ extern void        oc32_expand_move (machine_mode, rtx *);
 extern rtx         oc32_dynamic_chain_addr (rtx);
 extern void        oc32_profile_hook (void);
 extern rtx         oc32_initial_frame_addr (void);
-extern bool        oc32_branch_in_range_p ();
+extern bool        oc32_sr_address_p (rtx);
 
 #ifdef RTX_CODE
 void oc32_expand_atomic_compare_and_swap (rtx operands[]);

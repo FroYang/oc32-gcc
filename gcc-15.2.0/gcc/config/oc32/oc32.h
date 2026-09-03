@@ -153,6 +153,9 @@
 
 #define OC32_TLS    OC32_R17
 
+/* SR(special register) address range */
+#define OC32_SRADR_START 0x3FF00000ULL
+#define OC32_SRADR_END   0x3FF3FFFFULL
 
 /* Virtual registers for frame and argument pointers */
 #define FIRST_PSEUDO_REGISTER 34

@@ -107,3 +107,8 @@
 (define_predicate "call_insn_operand"
   (ior (match_code "symbol_ref")
        (match_operand 0 "register_operand")))
+
+;; SR address：0x3FF00000 - 0x3FFFFFFF
+(define_predicate "oc32_sr_address_operand"
+  (and (match_code "mem")
+       (match_test "oc32_sr_address_p (op)")))
