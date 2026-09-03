@@ -1,0 +1,268 @@
+make[1]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp'
+make  all-recursive
+make[2]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp'
+Making all in tests
+make[1]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gettext'
+make[3]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp/tests'
+make  all-recursive
+Making all in .
+make[4]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp/tests'
+make[4]: Nothing to be done for 'all-am'.
+make[4]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp/tests'
+Making all in devel
+make[4]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp/tests/devel'
+make[4]: Nothing to be done for 'all'.
+make[4]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp/tests/devel'
+Making all in mpn
+make[4]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp/tests/mpn'
+make[4]: Nothing to be done for 'all'.
+make[4]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp/tests/mpn'
+Making all in mpz
+make[4]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp/tests/mpz'
+make[4]: Nothing to be done for 'all'.
+make[4]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp/tests/mpz'
+Making all in mpq
+make[4]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp/tests/mpq'
+make[4]: Nothing to be done for 'all'.
+make[4]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp/tests/mpq'
+Making all in mpf
+make[4]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp/tests/mpf'
+make[4]: Nothing to be done for 'all'.
+make[4]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp/tests/mpf'
+Making all in rand
+make[2]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gettext'
+make[4]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp/tests/rand'
+make[4]: Nothing to be done for 'all'.
+make[4]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp/tests/rand'
+Making all in misc
+Making all in doc
+make[4]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp/tests/misc'
+make[4]: Nothing to be done for 'all'.
+make[4]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp/tests/misc'
+Making all in cxx
+make[4]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp/tests/cxx'
+make[4]: Nothing to be done for 'all'.
+make[4]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp/tests/cxx'
+make[3]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp/tests'
+Making all in mpn
+make[3]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gettext/doc'
+make[3]: Nothing to be done for 'all'.
+make[3]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gettext/doc'
+Making all in intl
+make[3]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gettext/intl'
+make  all-recursive
+make[3]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp/mpn'
+make[3]: Nothing to be done for 'all'.
+make[3]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp/mpn'
+Making all in mpz
+make[4]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gettext/intl'
+Making all in gnulib-lib
+make[3]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp/mpz'
+make[3]: Nothing to be done for 'all'.
+make[3]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp/mpz'
+Making all in mpq
+make[5]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gettext/intl/gnulib-lib'
+make  all-recursive
+make[3]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp/mpq'
+make[3]: Nothing to be done for 'all'.
+make[3]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp/mpq'
+Making all in mpf
+make[6]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gettext/intl/gnulib-lib'
+make[3]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp/mpf'
+make[3]: Nothing to be done for 'all'.
+make[3]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp/mpf'
+Making all in printf
+make[3]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp/printf'
+make[3]: Nothing to be done for 'all'.
+make[3]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp/printf'
+Making all in scanf
+make[3]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp/scanf'
+make[3]: Nothing to be done for 'all'.
+make[3]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp/scanf'
+Making all in rand
+make[3]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp/rand'
+make[3]: Nothing to be done for 'all'.
+make[3]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp/rand'
+Making all in cxx
+make[3]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp/cxx'
+make[3]: Nothing to be done for 'all'.
+make[3]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp/cxx'
+Making all in demos
+make[7]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gettext/intl/gnulib-lib'
+make[7]: Nothing to be done for 'all-am'.
+make[7]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gettext/intl/gnulib-lib'
+make[3]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp/demos'
+make[6]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gettext/intl/gnulib-lib'
+make[5]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gettext/intl/gnulib-lib'
+Making all in calc
+make[4]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp/demos/calc'
+make  all-am
+make[5]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp/demos/calc'
+make[5]: Nothing to be done for 'all-am'.
+make[5]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp/demos/calc'
+make[4]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp/demos/calc'
+Making all in expr
+make[4]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp/demos/expr'
+make[4]: Nothing to be done for 'all'.
+make[4]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp/demos/expr'
+make[4]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp/demos'
+make[4]: Nothing to be done for 'all-am'.
+make[4]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp/demos'
+make[3]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp/demos'
+Making all in tune
+make[3]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp/tune'
+make[3]: Nothing to be done for 'all'.
+make[3]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp/tune'
+Making all in doc
+make[3]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp/doc'
+make[3]: Nothing to be done for 'all'.
+make[3]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp/doc'
+make[5]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gettext/intl'
+make[5]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gettext/intl'
+make[4]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gettext/intl'
+make[3]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gettext/intl'
+Making all in intl-java
+make[3]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gettext/intl-java'
+make[3]: Nothing to be done for 'all'.
+make[3]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gettext/intl-java'
+Making all in intl-csharp
+make[3]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp'
+make[3]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp'
+make[2]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp'
+make[1]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gmp'
+make[3]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gettext/intl-csharp'
+make[3]: Nothing to be done for 'all'.
+make[3]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gettext/intl-csharp'
+Making all in gnulib-lib
+make[1]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/libiberty'
+make[3]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gettext/gnulib-lib'
+make  all-recursive
+make[2]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/libiberty/testsuite'
+make[2]: Nothing to be done for 'all'.
+make[2]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/libiberty/testsuite'
+make[1]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/libiberty'
+make[4]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gettext/gnulib-lib'
+make[1]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/build-x86_64-linux-gnu/libiberty'
+make[2]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/build-x86_64-linux-gnu/libiberty/testsuite'
+make[2]: Nothing to be done for 'all'.
+make[2]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/build-x86_64-linux-gnu/libiberty/testsuite'
+make[1]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/build-x86_64-linux-gnu/libiberty'
+make[5]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gettext/gnulib-lib'
+make[5]: Nothing to be done for 'all-am'.
+make[5]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gettext/gnulib-lib'
+make[4]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gettext/gnulib-lib'
+make[3]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gettext/gnulib-lib'
+Making all in src
+make[1]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/zlib'
+true "AR_FLAGS=rc" "CC_FOR_BUILD=gcc" "CFLAGS=-Wno-error=discarded-qualifiers  " "CXXFLAGS=-Wno-error=discarded-qualifiers  " "CFLAGS_FOR_BUILD=" "CFLAGS_FOR_TARGET=-g -O2" "INSTALL=/usr/bin/install -c" "INSTALL_DATA=/usr/bin/install -c -m 644" "INSTALL_PROGRAM=/usr/bin/install -c" "INSTALL_SCRIPT=/usr/bin/install -c" "LDFLAGS=-static-libstdc++ -static-libgcc -Wl,--stack,12582912" "LIBCFLAGS=-Wno-error=discarded-qualifiers  " "LIBCFLAGS_FOR_TARGET=-g -O2" "MAKE=make" "MAKEINFO=makeinfo --split-size=5000000 " "PICFLAG=" "PICFLAG_FOR_TARGET=" "SHELL=/bin/bash" "EXPECT=expect" "RUNTEST=runtest" "RUNTESTFLAGS=" "exec_prefix=/home/fro/oc32/windows" "infodir=/home/fro/oc32/windows/share/info" "libdir=/home/fro/oc32/windows/lib" "prefix=/home/fro/oc32/windows" "tooldir=/home/fro/oc32/windows/oc32-none-elf" "AR=x86_64-w64-mingw32-ar --plugin /usr/lib/gcc/x86_64-w64-mingw32/13-win32/liblto_plugin.so" "AS=x86_64-w64-mingw32-as" "CC=x86_64-w64-mingw32-gcc" "CXX=x86_64-w64-mingw32-g++" "LD=/usr/bin/x86_64-w64-mingw32-ld" "LIBCFLAGS=-Wno-error=discarded-qualifiers  " "NM=x86_64-w64-mingw32-nm" "PICFLAG=" "RANLIB=x86_64-w64-mingw32-ranlib --plugin /usr/lib/gcc/x86_64-w64-mingw32/13-win32/liblto_plugin.so" "DESTDIR=" DO=all multi-do # make
+make[1]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/zlib'
+make[1]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/libbacktrace'
+make  all-am
+make[2]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/libbacktrace'
+make[3]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gettext/src'
+make[3]: Nothing to be done for 'all'.
+make[3]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gettext/src'
+Making all in po
+true  DO=all multi-do # make
+make[2]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/libbacktrace'
+make[1]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/libbacktrace'
+make[3]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gettext/po'
+make[3]: Nothing to be done for 'all'.
+make[3]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gettext/po'
+Making all in man
+make[1]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/libcody'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/libcody'
+make[3]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gettext/man'
+make[3]: Nothing to be done for 'all'.
+make[3]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gettext/man'
+Making all in m4
+make[1]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/libdecnumber'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/libdecnumber'
+make[3]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gettext/m4'
+make[3]: Nothing to be done for 'all'.
+make[3]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gettext/m4'
+Making all in tests
+make[1]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/lto-plugin'
+make  all-am
+make[2]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/lto-plugin'
+make[3]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gettext/tests'
+make[3]: Nothing to be done for 'all'.
+make[3]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gettext/tests'
+make[2]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/lto-plugin'
+make[1]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/lto-plugin'
+make[1]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/build-x86_64-linux-gnu/fixincludes'
+make[3]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gettext'
+make[3]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gettext'
+make[2]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gettext'
+make[1]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/gettext'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/build-x86_64-linux-gnu/fixincludes'
+make[1]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/build-x86_64-linux-gnu/libcpp'
+test -f config.h || (rm -f stamp-h1 && make stamp-h1)
+make[1]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/fixincludes'
+make[1]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/build-x86_64-linux-gnu/libcpp'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/fixincludes'
+make[1]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/mpfr'
+Making all in doc
+make[2]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/mpfr/doc'
+make[2]: Nothing to be done for 'all'.
+make[2]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/mpfr/doc'
+Making all in src
+make[2]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/mpfr/src'
+make  all-am
+make[1]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/isl'
+make  all-recursive
+make[2]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/isl'
+Making all in .
+make[3]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/mpfr/src'
+depbase=`echo exceptions.lo | sed 's|[^/]*$|.deps/&|;s|\.lo$||'`;\
+/bin/bash ../libtool  --tag=CC   --mode=compile x86_64-w64-mingw32-gcc -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DLT_OBJDIR=\".libs/\" -DHAVE_LITTLE_ENDIAN=1 -DTIME_WITH_SYS_TIME=1 -DHAVE_LOCALE_H=1 -DHAVE_WCHAR_H=1 -DHAVE_STDARG=1 -DHAVE_SYS_TIME_H=1 -DHAVE_STRUCT_LCONV_DECIMAL_POINT=1 -DHAVE_STRUCT_LCONV_THOUSANDS_SEP=1 -DHAVE_ALLOCA=1 -DHAVE_UINTPTR_T=1 -DHAVE_VA_COPY=1 -DHAVE_SETLOCALE=1 -DHAVE_GETTIMEOFDAY=1 -DHAVE_SIGNAL=1 -DHAVE_LONG_LONG=1 -DHAVE_INTMAX_T=1 -DMPFR_HAVE_INTMAX_MAX=1 -DMPFR_HAVE_NORETURN=1 -DMPFR_HAVE_BUILTIN_UNREACHABLE=1 -DMPFR_HAVE_CONSTRUCTOR_ATTR=1 -DMPFR_HAVE_FESETROUND=1 -DHAVE_ROUND=1 -DHAVE_TRUNC=1 -DHAVE_FLOOR=1 -DHAVE_CEIL=1 -DHAVE_NEARBYINT=1 -DHAVE_DOUBLE_IEEE_LITTLE_ENDIAN=1 -DHAVE_LDOUBLE_IEEE_EXT_LITTLE=1 -DMPFR_WANT_FLOAT128=1 -DMPFR_USE_STATIC_ASSERT=1 -DHAVE_ATTRIBUTE_MODE=1 -DHAVE___GMPN_SBPI1_DIVAPPR_Q=1 -DMPFR_LONG_WITHIN_LIMB=1 -I. -I/home/fro/oc32/gcc/gcc-15.2.0/mpfr/src   -I/home/fro/oc32/gcc/gcc-15.2.0-build/gmp -DNO_ASM -Wno-error=discarded-qualifiers   -MT exceptions.lo -MD -MP -MF $depbase.Tpo -c -o exceptions.lo /home/fro/oc32/gcc/gcc-15.2.0/mpfr/src/exceptions.c &&\
+mv -f $depbase.Tpo $depbase.Plo
+libtool: compile:  x86_64-w64-mingw32-gcc -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DLT_OBJDIR=\".libs/\" -DHAVE_LITTLE_ENDIAN=1 -DTIME_WITH_SYS_TIME=1 -DHAVE_LOCALE_H=1 -DHAVE_WCHAR_H=1 -DHAVE_STDARG=1 -DHAVE_SYS_TIME_H=1 -DHAVE_STRUCT_LCONV_DECIMAL_POINT=1 -DHAVE_STRUCT_LCONV_THOUSANDS_SEP=1 -DHAVE_ALLOCA=1 -DHAVE_UINTPTR_T=1 -DHAVE_VA_COPY=1 -DHAVE_SETLOCALE=1 -DHAVE_GETTIMEOFDAY=1 -DHAVE_SIGNAL=1 -DHAVE_LONG_LONG=1 -DHAVE_INTMAX_T=1 -DMPFR_HAVE_INTMAX_MAX=1 -DMPFR_HAVE_NORETURN=1 -DMPFR_HAVE_BUILTIN_UNREACHABLE=1 -DMPFR_HAVE_CONSTRUCTOR_ATTR=1 -DMPFR_HAVE_FESETROUND=1 -DHAVE_ROUND=1 -DHAVE_TRUNC=1 -DHAVE_FLOOR=1 -DHAVE_CEIL=1 -DHAVE_NEARBYINT=1 -DHAVE_DOUBLE_IEEE_LITTLE_ENDIAN=1 -DHAVE_LDOUBLE_IEEE_EXT_LITTLE=1 -DMPFR_WANT_FLOAT128=1 -DMPFR_USE_STATIC_ASSERT=1 -DHAVE_ATTRIBUTE_MODE=1 -DHAVE___GMPN_SBPI1_DIVAPPR_Q=1 -DMPFR_LONG_WITHIN_LIMB=1 -I. -I/home/fro/oc32/gcc/gcc-15.2.0/mpfr/src -I/home/fro/oc32/gcc/gcc-15.2.0-build/gmp -DNO_ASM -Wno-error=discarded-qualifiers -MT exceptions.lo -MD -MP -MF .deps/exceptions.Tpo -c /home/fro/oc32/gcc/gcc-15.2.0/mpfr/src/exceptions.c -o exceptions.o
+make[3]: Entering directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/isl'
+In file included from /home/fro/oc32/gcc/gcc-15.2.0/mpfr/src/exceptions.c:23:
+/home/fro/oc32/gcc/gcc-15.2.0/mpfr/src/mpfr-impl.h:96:10: fatal error: gmp.h: No such file or directory
+   96 | #include "gmp.h"
+      |          ^~~~~~~
+compilation terminated.
+make[3]: *** [Makefile:980: exceptions.lo] Error 1
+make[3]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/mpfr/src'
+make[2]: *** [Makefile:620: all] Error 2
+make[2]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/mpfr/src'
+make[1]: *** [Makefile:500: all-recursive] Error 1
+make[1]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/mpfr'
+make: *** [Makefile:5711: all-mpfr] Error 2
+make: *** Waiting for unfinished jobs....
+depbase=`echo isl_test.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+x86_64-w64-mingw32-gcc -DHAVE_CONFIG_H   -I. -I/home/fro/oc32/gcc/gcc-15.2.0/isl -I/home/fro/oc32/gcc/gcc-15.2.0/isl/include -Iinclude/ -I/home/fro/oc32/gcc/gcc-15.2.0/gmp -I/home/fro/oc32/gcc/gcc-15.2.0-build/./gmp   -Wno-error=discarded-qualifiers   -MT isl_test.o -MD -MP -MF $depbase.Tpo -c -o isl_test.o /home/fro/oc32/gcc/gcc-15.2.0/isl/isl_test.c &&\
+mv -f $depbase.Tpo $depbase.Po
+depbase=`echo isl_gmp.lo | sed 's|[^/]*$|.deps/&|;s|\.lo$||'`;\
+/bin/bash ./libtool  --tag=CC   --mode=compile x86_64-w64-mingw32-gcc -DHAVE_CONFIG_H   -I. -I/home/fro/oc32/gcc/gcc-15.2.0/isl -I/home/fro/oc32/gcc/gcc-15.2.0/isl/include -Iinclude/ -I/home/fro/oc32/gcc/gcc-15.2.0/gmp -I/home/fro/oc32/gcc/gcc-15.2.0-build/./gmp   -Wno-error=discarded-qualifiers   -MT isl_gmp.lo -MD -MP -MF $depbase.Tpo -c -o isl_gmp.lo /home/fro/oc32/gcc/gcc-15.2.0/isl/isl_gmp.c &&\
+mv -f $depbase.Tpo $depbase.Plo
+libtool: compile:  x86_64-w64-mingw32-gcc -DHAVE_CONFIG_H -I. -I/home/fro/oc32/gcc/gcc-15.2.0/isl -I/home/fro/oc32/gcc/gcc-15.2.0/isl/include -Iinclude/ -I/home/fro/oc32/gcc/gcc-15.2.0/gmp -I/home/fro/oc32/gcc/gcc-15.2.0-build/./gmp -Wno-error=discarded-qualifiers -MT isl_gmp.lo -MD -MP -MF .deps/isl_gmp.Tpo -c /home/fro/oc32/gcc/gcc-15.2.0/isl/isl_gmp.c -o isl_gmp.o
+In file included from /home/fro/oc32/gcc/gcc-15.2.0/isl/isl_int.h:20,
+                 from /home/fro/oc32/gcc/gcc-15.2.0/isl/isl_blk.h:13,
+                 from /home/fro/oc32/gcc/gcc-15.2.0/isl/isl_ctx_private.h:2,
+                 from /home/fro/oc32/gcc/gcc-15.2.0/isl/isl_test.c:21:
+/home/fro/oc32/gcc/gcc-15.2.0/isl/isl_int_gmp.h:4:10: fatal error: gmp.h: No such file or directory
+    4 | #include <gmp.h>
+      |          ^~~~~~~
+compilation terminated.
+make[3]: *** [Makefile:1842: isl_test.o] Error 1
+make[3]: *** Waiting for unfinished jobs....
+In file included from /home/fro/oc32/gcc/gcc-15.2.0/isl/isl_int.h:20,
+                 from /home/fro/oc32/gcc/gcc-15.2.0/isl/isl_gmp.c:10:
+/home/fro/oc32/gcc/gcc-15.2.0/isl/isl_int_gmp.h:4:10: fatal error: gmp.h: No such file or directory
+    4 | #include <gmp.h>
+      |          ^~~~~~~
+compilation terminated.
+make[3]: *** [Makefile:1858: isl_gmp.lo] Error 1
+make[3]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/isl'
+make[2]: *** [Makefile:1997: all-recursive] Error 1
+make[2]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/isl'
+make[1]: *** [Makefile:1506: all] Error 2
+make[1]: Leaving directory '/home/fro/oc32/gcc/gcc-15.2.0-build-win/isl'
+make: *** [Makefile:6673: all-isl] Error 2

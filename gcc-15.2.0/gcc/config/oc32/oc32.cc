@@ -592,8 +592,7 @@ oc32_legitimate_address_p(machine_mode mode, rtx x, bool strict_p,
 
         case CONST_INT:
                 /* SR addresses (OC32_SRADR_START~OC32_SRADR_END) are valid as-is */
-                if ((unsigned HOST_WIDE_INT)INTVAL(x) >= OC32_SRADR_START
-                    && (unsigned HOST_WIDE_INT)INTVAL(x) <= OC32_SRADR_END)
+                if ((unsigned HOST_WIDE_INT)INTVAL(x) >= OC32_SRADR_START && (unsigned HOST_WIDE_INT)INTVAL(x) <= OC32_SRADR_END)
                         return true;
                 return false;
 
@@ -1078,15 +1077,19 @@ void oc32_print_operand_address(FILE *file, machine_mode mode, rtx x)
                         {
                                 fprintf(file, "+");
                                 output_addr_const(file, XEXP(plus, 0));
-                                fprintf(file, "+%ld", INTVAL(XEXP(plus, 1)));
+                                HOST_WIDE_INT offset = INTVAL(XEXP(plus, 1));
+                                if (offset >= 0)
+                                        fprintf(file, "+%ld", offset);
+                                else
+                                        fprintf(file, "%ld", offset);
                         }
                         else
-                                fprintf(file, "+INVALID");
+                                fprintf(file, "INVALID");
                 }
                 break;
 
                 default:
-                        fprintf(file, "+INVALID");
+                        fprintf(file, "INVALID");
                 }
                 break;
 
@@ -1265,13 +1268,13 @@ bool oc32_sr_address_p(rtx x)
                 rtx addr = XEXP(x, 0);
                 if (CONST_INT_P(addr))
                 {
-                        HOST_WIDE_INT val = INTVAL(addr);
+                        unsigned HOST_WIDE_INT val = INTVAL(addr);
                         return (val >= OC32_SRADR_START && val <= OC32_SRADR_END);
                 }
                 /* Also accept MEM-wrapped SR addresses (e.g. volatile MEM) */
                 if (MEM_P(addr) && CONST_INT_P(XEXP(addr, 0)))
                 {
-                        HOST_WIDE_INT val = INTVAL(XEXP(addr, 0));
+                        unsigned HOST_WIDE_INT val = INTVAL(XEXP(addr, 0));
                         return (val >= OC32_SRADR_START && val <= OC32_SRADR_END);
                 }
                 return false;
@@ -1298,14 +1301,29 @@ void oc32_expand_move(machine_mode mode, rtx *operands)
                         sr_val = INTVAL(sr_addr);
                 else if (MEM_P(sr_addr) && CONST_INT_P(XEXP(sr_addr, 0)))
                         sr_val = INTVAL(XEXP(sr_addr, 0));
+                else if (REG_P(sr_addr))
+                {
+                        /* sr_addr is a register holding the volatile MEM address.
+                           Extract the constant address from the outer op0's MEM_EXPR. */
+                        tree expr = MEM_EXPR(op0);
+                        if (expr && TREE_CODE(expr) == MEM_REF)
+                        {
+                                tree addr_tree = TREE_OPERAND(expr, 0);
+                                /* Walk through ADDR_EXPR / VIEW_CONVERT_EXPR to find constant */
+                                while (TREE_CODE(addr_tree) == ADDR_EXPR || TREE_CODE(addr_tree) == VIEW_CONVERT_EXPR)
+                                        addr_tree = TREE_OPERAND(addr_tree, 0);
+                                if (tree_fits_uhwi_p(addr_tree))
+                                        sr_val = (HOST_WIDE_INT)tree_to_uhwi(addr_tree);
+                        }
+                }
                 if (sr_val >= 0)
                 {
-                        if (sr_val >= OC32_SRADR_START && sr_val <= OC32_SRADR_END)
+                        if ((unsigned int)sr_val >= OC32_SRADR_START && (unsigned int)sr_val <= OC32_SRADR_END)
                         {
                                 /* Build a clean MEM address for WRSR if needed */
                                 rtx wrsr_op0 = op0;
-                                if (MEM_P(sr_addr))
-                                        wrsr_op0 = gen_rtx_MEM(SImode, XEXP(sr_addr, 0));
+                                if (MEM_P(sr_addr) || REG_P(sr_addr))
+                                        wrsr_op0 = gen_rtx_MEM(SImode, gen_rtx_CONST_INT(SImode, sr_val));
 
                                 emit_insn(gen_wrsr(wrsr_op0, op1));
                                 return;
@@ -1322,14 +1340,29 @@ void oc32_expand_move(machine_mode mode, rtx *operands)
                         sr_val = INTVAL(sr_addr);
                 else if (MEM_P(sr_addr) && CONST_INT_P(XEXP(sr_addr, 0)))
                         sr_val = INTVAL(XEXP(sr_addr, 0));
+                else if (REG_P(sr_addr))
+                {
+                        /* sr_addr is a register holding the volatile MEM address.
+                           Extract the constant address from the outer op1's MEM_EXPR. */
+                        tree expr = MEM_EXPR(op1);
+                        if (expr && TREE_CODE(expr) == MEM_REF)
+                        {
+                                tree addr_tree = TREE_OPERAND(expr, 0);
+                                /* Walk through ADDR_EXPR / VIEW_CONVERT_EXPR to find constant */
+                                while (TREE_CODE(addr_tree) == ADDR_EXPR || TREE_CODE(addr_tree) == VIEW_CONVERT_EXPR)
+                                        addr_tree = TREE_OPERAND(addr_tree, 0);
+                                if (tree_fits_uhwi_p(addr_tree))
+                                        sr_val = (HOST_WIDE_INT)tree_to_uhwi(addr_tree);
+                        }
+                }
                 if (sr_val >= 0)
                 {
-                        if (sr_val >= OC32_SRADR_START && sr_val <= OC32_SRADR_END)
+                        if ((unsigned int)sr_val >= OC32_SRADR_START && (unsigned int)sr_val <= OC32_SRADR_END)
                         {
                                 /* Build a clean MEM address for RDSR if needed */
                                 rtx rdsr_op1 = op1;
-                                if (MEM_P(sr_addr))
-                                        rdsr_op1 = gen_rtx_MEM(SImode, XEXP(sr_addr, 0));
+                                if (MEM_P(sr_addr) || REG_P(sr_addr))
+                                        rdsr_op1 = gen_rtx_MEM(SImode, gen_rtx_CONST_INT(SImode, sr_val));
 
                                 emit_insn(gen_rdsr(op0, rdsr_op1));
                                 return;

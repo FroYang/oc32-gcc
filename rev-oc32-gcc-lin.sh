@@ -4,10 +4,10 @@ set -o pipefail
 
 # 设置构建参数
 export OC32=$HOME/oc32
-export PREFIX=$OC32/windows
+export PREFIX=$OC32/linux
 export TARGET=oc32-none-elf    # 与 binutils 保持一致
 export SRC=$HOME/oc32/gcc/gcc-15.2.0
-export BUILD=$HOME/oc32/gcc/gcc-15.2.0-build-win
+export BUILD=$HOME/oc32/gcc/gcc-15.2.0-build-lin
 export PATH=$PATH:$OC32/linux/bin
 
 if [ ! -f "$OC32/linux/bin/${TARGET}-as" ] || [ ! -f "$OC32/linux/bin/${TARGET}-ld" ]; then
@@ -25,38 +25,10 @@ export ERROR_ON_WARNING=no
 export CFLAGS="$CFLAGS -Wno-error=discarded-qualifiers"
 export CXXFLAGS="$CXXFLAGS -Wno-error=discarded-qualifiers"
 
-# 确保目录存在
-mkdir -p $BUILD
 
-# 清理之前的构建
-rm -rf $BUILD/*
-
-echo "=== Building Stage Windows OC32-GCC ==="
+echo "=== Building Stage Linux OC32-GCC ==="
 cd $BUILD
 
-
-# 配置 GCC
-$SRC/configure \
-	--host=x86_64-w64-mingw32 \
-	--build=x86_64-linux-gnu \
-	--target=$TARGET \
-	--prefix=$PREFIX \
-	--enable-languages=c,c++ \
-	--without-headers \
-	--without-ppl \
-	--without-cloog \
-	--without-gnattools \
-	--disable-nls \
-	--disable-libssp \
-	--disable-newlib-supplied-syscalls \
-	--disable-libstdcxx-pch \
-	--disable-werror \
-	--disable-shared \
-	--disable-decimal-float \
-	--disable-threads \
-	--disable-target-zlib \
-	--enable-static \
-	--enable-multilib
 
 
 # 构建 GCC

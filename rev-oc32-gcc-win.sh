@@ -25,38 +25,7 @@ export ERROR_ON_WARNING=no
 export CFLAGS="$CFLAGS -Wno-error=discarded-qualifiers"
 export CXXFLAGS="$CXXFLAGS -Wno-error=discarded-qualifiers"
 
-# 确保目录存在
-mkdir -p $BUILD
-
-# 清理之前的构建
-rm -rf $BUILD/*
-
-echo "=== Building Stage Windows OC32-GCC ==="
 cd $BUILD
-
-
-# 配置 GCC
-$SRC/configure \
-	--host=x86_64-w64-mingw32 \
-	--build=x86_64-linux-gnu \
-	--target=$TARGET \
-	--prefix=$PREFIX \
-	--enable-languages=c,c++ \
-	--without-headers \
-	--without-ppl \
-	--without-cloog \
-	--without-gnattools \
-	--disable-nls \
-	--disable-libssp \
-	--disable-newlib-supplied-syscalls \
-	--disable-libstdcxx-pch \
-	--disable-werror \
-	--disable-shared \
-	--disable-decimal-float \
-	--disable-threads \
-	--disable-target-zlib \
-	--enable-static \
-	--enable-multilib
 
 
 # 构建 GCC

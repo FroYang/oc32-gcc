@@ -282,7 +282,7 @@ oc32_opcode(bfd_vma addr, unsigned int iword,
 				break;
 
 			case OP_RDSR_A:
-				fpr(stream, "R%d,  %d",
+				fpr(stream, "R%d,  0x%08x",
 					(iword >> 0) & 0x1F,
 					((iword >> 5) & 0xFFFF) << 2);
 				break;
