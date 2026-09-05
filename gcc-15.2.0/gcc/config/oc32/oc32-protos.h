@@ -27,11 +27,15 @@ extern void        oc32_print_operand_address (FILE *, machine_mode, rtx);
 extern void        oc32_expand_call (rtx, rtx, rtx, bool);
 extern void        oc32_expand_cbranch (rtx *);
 extern void        oc32_expand_cstore (rtx *);
+extern void        oc32_expand_and_sr (machine_mode, rtx *);
+extern void        oc32_expand_or_sr (machine_mode, rtx *);
 extern void        oc32_expand_move (machine_mode, rtx *);
 extern rtx         oc32_dynamic_chain_addr (rtx);
 extern void        oc32_profile_hook (void);
 extern rtx         oc32_initial_frame_addr (void);
 extern bool        oc32_sr_address_p (rtx);
+extern bool        oc32_sr_clrbit_p (rtx);
+extern bool        oc32_sr_setbit_p (rtx);
 
 #ifdef RTX_CODE
 void oc32_expand_atomic_compare_and_swap (rtx operands[]);

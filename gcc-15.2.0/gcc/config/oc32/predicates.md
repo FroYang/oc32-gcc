@@ -112,3 +112,13 @@
 (define_predicate "oc32_sr_address_operand"
   (and (match_code "mem")
        (match_test "oc32_sr_address_p (op)")))
+
+;; CBSR operand：32-bit value with exactly one bit cleared (e.g. 0xFFFFFFFE..0x7FFFFFFF)
+(define_predicate "oc32_cbsr_operand"
+  (and (match_code "const_int")
+       (match_test "oc32_sr_clrbit_p (op)")))
+
+;; SBSR operand：32-bit value with exactly one bit set (e.g. 0x00000001, 0x00000002, ... 0x80000000)
+(define_predicate "oc32_sbsr_operand"
+  (and (match_code "const_int")
+       (match_test "oc32_sr_setbit_p (op)")))

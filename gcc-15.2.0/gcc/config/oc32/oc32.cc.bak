@@ -1282,19 +1282,40 @@ bool oc32_sr_address_p(rtx x)
         return false;
 }
 
-/* Check if mask has exactly one bit set (for SBSR) */
-bool oc32_sr_setbit_p(rtx op)
+/* V3: relaxed check for store interception — accepts MEM(reg) via MEM_EXPR.
+   Do NOT use this in md file operand predicates. */
+bool oc32_sr_target_for_store_p(rtx x)
 {
-        unsigned HOST_WIDE_INT mask = (unsigned HOST_WIDE_INT)INTVAL(op) & 0xffffffffu;
-        return (mask != 0) && ((mask & (mask - 1)) == 0);
-}
+        if (!MEM_P(x) || GET_MODE(x) != SImode)
+                return false;
 
-/* Check if ~mask has exactly one bit set (for CBSR) */
-bool oc32_sr_clrbit_p(rtx op)
-{
-        unsigned HOST_WIDE_INT mask = (unsigned HOST_WIDE_INT)INTVAL(op) & 0xffffffffu;
-        unsigned HOST_WIDE_INT not_mask = (~mask) & 0xffffffffu;
-        return (not_mask != 0) && ((not_mask & (not_mask - 1)) == 0);
+        rtx addr = XEXP(x, 0);
+        if (CONST_INT_P(addr))
+        {
+                unsigned HOST_WIDE_INT val = INTVAL(addr);
+                return (val >= OC32_SRADR_START && val <= OC32_SRADR_END);
+        }
+        if (MEM_P(addr) && CONST_INT_P(XEXP(addr, 0)))
+        {
+                unsigned HOST_WIDE_INT val = INTVAL(XEXP(addr, 0));
+                return (val >= OC32_SRADR_START && val <= OC32_SRADR_END);
+        }
+        if (REG_P(addr))
+        {
+                tree expr = MEM_EXPR(x);
+                if (expr && TREE_CODE(expr) == MEM_REF)
+                {
+                        tree addr_tree = TREE_OPERAND(expr, 0);
+                        while (TREE_CODE(addr_tree) == ADDR_EXPR || TREE_CODE(addr_tree) == VIEW_CONVERT_EXPR)
+                                addr_tree = TREE_OPERAND(addr_tree, 0);
+                        if (tree_fits_uhwi_p(addr_tree))
+                        {
+                                unsigned HOST_WIDE_INT val = tree_to_uhwi(addr_tree);
+                                return (val >= OC32_SRADR_START && val <= OC32_SRADR_END);
+                        }
+                }
+        }
+        return false;
 }
 
 /* Forward-declare: search for a preceding RDSR→BINOP pattern that can be
@@ -1304,6 +1325,11 @@ bool oc32_sr_clrbit_p(rtx op)
 enum oc32_emit_sr_binop_result
 oc32_emit_sr_binop(rtx op0, rtx op1)
 {
+        FILE *fp = fopen("a.txt", "a");
+        if (fp)
+        {
+                fprintf(fp, "\n>>> [oc32_emit_sr_binop] v0.4 \n");
+        }
 
         enum oc32_emit_sr_binop_result result = OC32_SR_BINOP_FAIL;
         /* Step 1: Walk backward through emitted insns looking for AND/OR instruction.
@@ -1329,11 +1355,17 @@ oc32_emit_sr_binop(rtx op0, rtx op1)
                 /* insn dest == WRSR src ? */
                 if (rtx_equal_p(dest, op1))
                 {
+
+                        if (fp)
+                                fprintf(fp, "check 1 pass: insn destination = WRSR source\n");
+
                         /* is IOR ? */
                         if (GET_CODE(src) == IOR)
                         {
                                 binop_insn = insn;
                                 binop_code = GET_CODE(src);
+                                if (fp)
+                                        fprintf(fp, "check 2 pass: OR found\n");
                                 break;
                         }
                         /* is AND ? */
@@ -1341,6 +1373,8 @@ oc32_emit_sr_binop(rtx op0, rtx op1)
                         {
                                 binop_insn = insn;
                                 binop_code = GET_CODE(src);
+                                if (fp)
+                                        fprintf(fp, "check 2 pass: AND found\n");
                                 break;
                         }
                         /* if dest == src, but not AND/OR, return FAIL(default) */
@@ -1377,11 +1411,15 @@ oc32_emit_sr_binop(rtx op0, rtx op1)
                         {
                                 if (rtx_equal_p(rdsr_dest, binop_op0))
                                 {
+                                        if (fp)
+                                                fprintf(fp, "check 3 pass: insn destination = AND/OR op0\n");
                                         binop_mask = binop_op1;
                                         break;
                                 }
                                 else if (rtx_equal_p(rdsr_dest, binop_op1))
                                 {
+                                        if (fp)
+                                                fprintf(fp, "check 3 pass: insn destination = AND/OR op1\n");
                                         binop_mask = binop_op0;
                                         break;
                                 }
@@ -1392,6 +1430,15 @@ oc32_emit_sr_binop(rtx op0, rtx op1)
                 {
                         /* Then: confirm it is RDSR source == WRSR destination
                                 Compare MEM_EXPR instead of full MEM to ignore volatile flag */
+                        if (fp)
+                        {
+                                fprintf(fp, "  rdsr_src = ");
+                                print_rtl(fp, rdsr_src);
+                                fprintf(fp, "\n  wrsr_op0 = ");
+                                print_rtl(fp, op0);
+                                fprintf(fp, "\n");
+                        }
+
                         bool match = false;
                         rtx rdsr_addr = XEXP(rdsr_src, 0);
                         if (MEM_P(rdsr_addr))
@@ -1399,8 +1446,11 @@ oc32_emit_sr_binop(rtx op0, rtx op1)
                         match = rtx_equal_p(rdsr_addr, XEXP(op0, 0));
 
                         if (match)
-
+                        {
                                 rdsr_insn = insn;
+                                if (fp)
+                                        fprintf(fp, "check 4 pass: RDSR found\n");
+                        }
                 }
                 /* if dest != src -> AND/OR is not for SBSR/CBSR, return FAIL(default) */
         }
@@ -1412,29 +1462,44 @@ oc32_emit_sr_binop(rtx op0, rtx op1)
                 /* Case 1: mask is immediate */
                 if (CONST_INT_P(binop_mask))
                 {
+                        unsigned HOST_WIDE_INT mask = (unsigned HOST_WIDE_INT)INTVAL(binop_mask) & 0xffffffffu;
+                        if (fp)
+                        {
+                                fprintf(fp, "  BITMASK=0x%08x\n", mask);
+                                fprintf(fp, "  binop_code = %s\n", GET_RTX_NAME(binop_code));
+                        }
+
                         if (binop_code == IOR)
                         {
                                 /* Check sbsr: exactly one bit set */
-                                if (oc32_sr_setbit_p(binop_mask))
+                                if (mask != 0 && ((mask & (mask - 1)) == 0))
                                 {
                                         result = OC32_SR_BINOP_OK;
                                         emit_insn(gen_sbsr(op0, binop_mask));
+                                        if (fp)
+                                                fprintf(fp, "Bingo!! emit SBSR\n");
                                         return result;
                                 }
                         }
                         else if (binop_code == AND)
                         {
                                 /* Check cbsr: exactly one bit cleared (i.e., ~mask has exactly one bit set) */
-                                if (oc32_sr_clrbit_p(binop_mask))
+                                unsigned HOST_WIDE_INT not_mask = (~mask) & 0xffffffffu;
+                                if (not_mask != 0 && ((not_mask & (not_mask - 1)) == 0))
                                 {
                                         result = OC32_SR_BINOP_OK;
-                                        emit_insn(gen_cbsr(op0, binop_mask));
+                                        emit_insn(gen_sbsr(op0, binop_mask));
+                                        if (fp)
+                                                fprintf(fp, "Bingo!! emit CBSR\n");
                                         return result;
                                 }
                         }
                 }
                 else // Case 2: mask is register
                 {
+                        if (fp)
+                                fprintf(fp, "  BITMASK is a register\n");
+
                         /* Search backward from BINOP for instruction defining binop_mask */
                         for (rtx_insn *def_insn = prev_nonnote_insn(binop_insn);
                              def_insn;
@@ -1455,22 +1520,33 @@ oc32_emit_sr_binop(rtx op0, rtx op1)
                                 if (!rtx_equal_p(dest, binop_mask))
                                         continue;
 
-                                binop_mask = gen_rtx_CONST_INT(SImode, (unsigned HOST_WIDE_INT)INTVAL(src) & 0xffffffffu);
+                                unsigned HOST_WIDE_INT mask = (unsigned HOST_WIDE_INT)INTVAL(src) & 0xffffffffu;
+                                if (fp)
+                                {
+                                        fprintf(fp, "  BITMASK=0x%08x\n", mask);
+                                        fprintf(fp, "  binop_code = %s\n", GET_RTX_NAME(binop_code));
+                                }
+
                                 if (binop_code == IOR)
                                 {
-                                        if (oc32_sr_setbit_p(binop_mask))
+                                        if (mask != 0 && ((mask & (mask - 1)) == 0))
                                         {
                                                 result = OC32_SR_BINOP_OK;
-                                                emit_insn(gen_sbsr(op0, binop_mask));
+                                                emit_insn(gen_sbsr(op0, gen_rtx_CONST_INT(SImode, mask)));
+                                                if (fp)
+                                                        fprintf(fp, "Bingo!! emit SBSR\n");
                                                 return result;
                                         }
                                 }
                                 else if (binop_code == AND)
                                 {
-                                        if (oc32_sr_clrbit_p(binop_mask))
+                                        unsigned HOST_WIDE_INT not_mask = (~mask) & 0xffffffffu;
+                                        if (not_mask != 0 && ((not_mask & (not_mask - 1)) == 0))
                                         {
                                                 result = OC32_SR_BINOP_OK;
-                                                emit_insn(gen_cbsr(op0, binop_mask));
+                                                emit_insn(gen_cbsr(op0, gen_rtx_CONST_INT(SImode, mask)));
+                                                if (fp)
+                                                        fprintf(fp, "Bingo!! emit CBSR\n");
                                                 return result;
                                         }
                                 }
@@ -1479,6 +1555,12 @@ oc32_emit_sr_binop(rtx op0, rtx op1)
                                 break;
                         }
                 }
+        }
+
+        if (fp)
+        {
+                fprintf(fp, "FAIL: not SBSR/CBSR pattern\n");
+                fclose(fp);
         }
 
         return result;
