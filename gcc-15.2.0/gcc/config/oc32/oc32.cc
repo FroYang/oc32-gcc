@@ -1472,7 +1472,6 @@ bool oc32_emit_tbsr(rtx op)
                 /* Case 1: mask is immediate */
                 if (CONST_INT_P(and_mask))
                 {
-                        HOST_WIDE_INT mask_val = INTVAL(and_mask);
                         /* Check sbsr: exactly one bit set */
                         if (oc32_sr_setbit_p(and_mask))
                         {
@@ -1521,7 +1520,7 @@ bool oc32_emit_tbsr(rtx op)
    Returns true if a matching pattern is found.
    -op0: WRSR destination (mem const)
    -op1: WRSR source (register) */
-oc32_emit_sr_binop(rtx op0, rtx op1)
+bool oc32_emit_sr_binop(rtx op0, rtx op1)
 {
 
         /* Step 1: Walk backward through emitted insns looking for AND/OR instruction.
@@ -1737,7 +1736,6 @@ void oc32_expand_move(machine_mode mode, rtx *operands)
                 {
                         /* Build a clean MEM address for WRSR/SBSR/CBSR if needed */
                         rtx wrsr_op0 = op0;
-                        rtx binopsr_op1 = op1;
 
                         if (MEM_P(sr_addr) || REG_P(sr_addr))
                                 wrsr_op0 = gen_rtx_MEM(SImode, gen_rtx_CONST_INT(SImode, sr_val));
