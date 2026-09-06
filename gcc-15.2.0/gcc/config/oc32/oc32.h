@@ -154,12 +154,7 @@
 #define OC32_TLS    OC32_R17
 
 /* SR(special register) address range */
-#define OC32_SRADR_START 0x3FF00000ULL
-#define OC32_SRADR_END   0x3FF3FFFFULL
-enum oc32_emit_sr_binop_result {
-        OC32_SR_BINOP_FAIL = 0,
-        OC32_SR_BINOP_OK
-};
+#define OC32_SRADR_MASK 0x0003FFFFULL
 
 /* Virtual registers for frame and argument pointers */
 #define FIRST_PSEUDO_REGISTER 34

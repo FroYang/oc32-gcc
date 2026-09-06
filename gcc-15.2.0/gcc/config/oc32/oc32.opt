@@ -29,6 +29,10 @@ mzfsf
 Target Mask(ZFSF)
 Enable ZF operations support(OC32 ISA Ver 1.0 only).
 
+msr-section-addr=
+Target Joined Host_Wide_Int  Var(sr_section_addr) Init(1072693248) IntegerRange(805306368, 1073479680)
+Specify the start address of SR(special register) in memory map
+
 mcmodel=
 Target RejectNegative Joined Enum(oc32_cmodel_type) Var(oc32_code_model) Init(CMODEL_SMALL)
 Specify the code model used for accessing memory addresses.

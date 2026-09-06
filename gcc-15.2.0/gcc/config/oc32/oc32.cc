@@ -58,6 +58,52 @@
 #include "tree.h"   // 需要 DECL_SECTION_NAME, SYMBOL_REF_DECL
 #include "varasm.h" // 需要 current_function_section, section
 
+/* check is it in SR address range
+        -sr_section_addr: SR address high part mask
+        -OC32_SRADR_MASK: SR address low part mask */
+bool oc32_sr_address_range(HOST_WIDE_INT addr)
+{
+        unsigned HOST_WIDE_INT sr_base = (unsigned HOST_WIDE_INT)sr_section_addr & ~OC32_SRADR_MASK;
+        return ((unsigned HOST_WIDE_INT)addr >= sr_base && (unsigned HOST_WIDE_INT)addr <= (sr_base + OC32_SRADR_MASK));
+}
+
+/* check is it SR address predicates */
+bool oc32_sr_address_p(rtx x)
+{
+        if (MEM_P(x))
+        {
+                rtx addr = XEXP(x, 0);
+                if (CONST_INT_P(addr))
+                {
+                        HOST_WIDE_INT val = INTVAL(addr);
+                        return oc32_sr_address_range(val);
+                }
+                /* Also accept MEM-wrapped SR addresses (e.g. volatile MEM) */
+                if (MEM_P(addr) && CONST_INT_P(XEXP(addr, 0)))
+                {
+                        HOST_WIDE_INT val = INTVAL(XEXP(addr, 0));
+                        return oc32_sr_address_range(val);
+                }
+                return false;
+        }
+        return false;
+}
+
+/* Check if mask has exactly one bit set (for SBSR) */
+bool oc32_sr_setbit_p(rtx op)
+{
+        unsigned HOST_WIDE_INT mask = (unsigned HOST_WIDE_INT)INTVAL(op) & 0xffffffffu;
+        return (mask != 0) && ((mask & (mask - 1)) == 0);
+}
+
+/* Check if ~mask has exactly one bit set (for CBSR) */
+bool oc32_sr_clrbit_p(rtx op)
+{
+        unsigned HOST_WIDE_INT mask = (unsigned HOST_WIDE_INT)INTVAL(op) & 0xffffffffu;
+        unsigned HOST_WIDE_INT not_mask = (~mask) & 0xffffffffu;
+        return (not_mask != 0) && ((not_mask & (not_mask - 1)) == 0);
+}
+
 /* Per-function machine data.  */
 struct GTY(()) machine_function
 {
@@ -591,8 +637,8 @@ oc32_legitimate_address_p(machine_mode mode, rtx x, bool strict_p,
                 break;
 
         case CONST_INT:
-                /* SR addresses (OC32_SRADR_START~OC32_SRADR_END) are valid as-is */
-                if ((unsigned HOST_WIDE_INT)INTVAL(x) >= OC32_SRADR_START && (unsigned HOST_WIDE_INT)INTVAL(x) <= OC32_SRADR_END)
+                /* SR addresses are valid as-is */
+                if (oc32_sr_address_range(INTVAL(x)))
                         return true;
                 return false;
 
@@ -664,7 +710,7 @@ oc32_legitimize_address_1(rtx x, rtx scratch, machine_mode mode)
         bool is_local = true;
 
         /* if x is constant OC32_SRADR_START~OC32_SRADR_END, return as-is  */
-        if (CONST_INT_P(x) && (unsigned int)INTVAL(x) >= OC32_SRADR_START && (unsigned int)INTVAL(x) <= OC32_SRADR_END)
+        if (CONST_INT_P(x) && oc32_sr_address_range(INTVAL(x)))
         {
                 return x;
         }
@@ -1260,52 +1306,224 @@ oc32_can_change_mode_class(machine_mode from, machine_mode to,
 #undef TARGET_CAN_CHANGE_MODE_CLASS
 #define TARGET_CAN_CHANGE_MODE_CLASS oc32_can_change_mode_class
 
-/* check is it SR address for move*/
-bool oc32_sr_address_p(rtx x)
+/* Search for a preceding RDSR→JNZ/JZpattern that can be
+   folded into TBSR→JZ/JNZ(jump condition inverted)
+   Emit TBSR & Returns true if a matching pattern is found. */
+bool oc32_emit_tbsr_msb(rtx op)
 {
-        if (MEM_P(x))
+
+        /* Step 1: find RDSR
+                For each candidate insn:
+                - 1st check insn op0(destination) == JZ/JNZ op1(source)
+                - 2nd check insn code is RDSR (mem:SI (addr)) */
+        rtx_insn *insn;
+        rtx_insn *rdsr_insn = NULL;
+        rtx rdsr_src;
+        rtx rdsr_dest;
+        rtx rdsr_addr;
+
+        /* Walk backward to find RDSR */
+        for (insn = get_last_insn_anywhere(); insn; insn = prev_nonnote_insn(insn))
         {
-                rtx addr = XEXP(x, 0);
-                if (CONST_INT_P(addr))
-                {
-                        unsigned HOST_WIDE_INT val = INTVAL(addr);
-                        return (val >= OC32_SRADR_START && val <= OC32_SRADR_END);
-                }
-                /* Also accept MEM-wrapped SR addresses (e.g. volatile MEM) */
-                if (MEM_P(addr) && CONST_INT_P(XEXP(addr, 0)))
-                {
-                        unsigned HOST_WIDE_INT val = INTVAL(XEXP(addr, 0));
-                        return (val >= OC32_SRADR_START && val <= OC32_SRADR_END);
-                }
-                return false;
+                rtx set = single_set(insn);
+                if (!set)
+                        continue;
+
+                rdsr_dest = SET_DEST(set);
+                rdsr_src = SET_SRC(set);
+
+                /* 1st: check insn is load
+                   2nd: check operand matches (insn dest == jump op1) */
+                if (MEM_P(rdsr_src) && rtx_equal_p(rdsr_dest, op))
+                        break;
         }
-        return false;
+
+        if (insn)
+        {
+                /* Then: confirm it is RDSR source
+                        Compare MEM_EXPR instead of full MEM to ignore volatile flag */
+                bool match = false;
+                rdsr_addr = XEXP(rdsr_src, 0);
+                if (MEM_P(rdsr_addr))
+                        rdsr_addr = XEXP(rdsr_addr, 0); // 提取内层地址
+                if (CONST_INT_P(rdsr_addr))
+                        match = oc32_sr_address_range(INTVAL(rdsr_addr));
+
+                if (match)
+                {
+                        rdsr_insn = insn;
+                        rdsr_addr = gen_rtx_MEM(SImode, rdsr_addr);
+                }
+        }
+
+        /* Step 2: RDSR is matched
+                - emit TBSR */
+        if (rdsr_insn)
+        {
+                emit_insn(gen_tbsr(rdsr_addr, gen_rtx_CONST_INT(SImode, 0x80000000u)));
+                return 1;
+        }
+        return 0;
 }
 
-/* Check if mask has exactly one bit set (for SBSR) */
-bool oc32_sr_setbit_p(rtx op)
+/* Search for a preceding RDSR→AND→JNZ/JZpattern that can be
+   folded into TBSR→JZ/JNZ(jump condition inverted)
+   Emit TBSR & Returns true if a matching pattern is found. */
+bool oc32_emit_tbsr(rtx op)
 {
-        unsigned HOST_WIDE_INT mask = (unsigned HOST_WIDE_INT)INTVAL(op) & 0xffffffffu;
-        return (mask != 0) && ((mask & (mask - 1)) == 0);
+        /* Step 1: Walk backward through emitted insns looking for AND instruction.
+                JZ/JNZ is already confirmed by caller, so skip it and search backward.
+                For each candidate insn:
+                - 1st check insn op0(destination) == JZ/JNZ op1(source)
+                - 2nd check insn code is AND */
+        rtx_insn *insn;
+        rtx_insn *and_insn = NULL;
+        rtx and_mask = NULL;
+        rtx_insn *rdsr_insn = NULL;
+        rtx rdsr_src;
+        rtx rdsr_dest;
+        rtx rdsr_addr;
+
+        /* Find the destination matched AND */
+
+        for (insn = get_last_insn_anywhere(); insn; insn = prev_nonnote_insn(insn))
+        {
+                rtx set = single_set(insn);
+                if (!set)
+                        continue;
+
+                rtx dest = SET_DEST(set);
+                rtx src = SET_SRC(set);
+                /* insn dest == WRSR src ? */
+                if (rtx_equal_p(dest, op))
+                {
+                        /* is AND ? */
+                        if (GET_CODE(src) == AND)
+                        {
+                                and_insn = insn;
+                                break;
+                        }
+                        /* if dest == src, but not AND/OR, return FAIL(default) */
+                        break;
+                }
+        }
+
+        /* Step 2: AND is matched or skipped, find RDSR
+                For each candidate insn:
+                - 1st check insn op0(destination) == AND op1(source) / op2(source)
+                - 2nd check insn code is RDSR (mem:SI (addr)) */
+        if (and_insn)
+        {
+                /* Get the operands of AND */
+                rtx and_src = SET_SRC(single_set(and_insn));
+                rtx and_op0 = XEXP(and_src, 0);
+                rtx and_op1 = XEXP(and_src, 1);
+
+                /* Walk backward from AND to find RDSR */
+                for (insn = prev_nonnote_insn(and_insn); insn; insn = prev_nonnote_insn(insn))
+                {
+                        rtx set = single_set(insn);
+                        if (!set)
+                                continue;
+
+                        rdsr_dest = SET_DEST(set);
+                        rdsr_src = SET_SRC(set);
+
+                        /* 1st: check insn is load
+                           2nd: check operand matches (insn dest == AND op0/op1) */
+                        if (MEM_P(rdsr_src))
+                        {
+                                if (rtx_equal_p(rdsr_dest, and_op0))
+                                {
+                                        and_mask = and_op1;
+                                        break;
+                                }
+                                else if (rtx_equal_p(rdsr_dest, and_op1))
+                                {
+                                        and_mask = and_op0;
+                                        break;
+                                }
+                        }
+                }
+
+                if (insn)
+                {
+                        /* Then: confirm it is RDSR source
+                                Compare MEM_EXPR instead of full MEM to ignore volatile flag */
+                        bool match = false;
+                        rdsr_addr = XEXP(rdsr_src, 0);
+                        if (MEM_P(rdsr_addr))
+                                rdsr_addr = XEXP(rdsr_addr, 0); // 提取内层地址
+                        if (CONST_INT_P(rdsr_addr))
+                                match = oc32_sr_address_range(INTVAL(rdsr_addr));
+
+                        if (match)
+                        {
+                                rdsr_insn = insn;
+                                rdsr_addr = gen_rtx_MEM(SImode, rdsr_addr);
+                        }
+                }
+        }
+
+        /* Step 3: AND is matched, RDSR is matched
+                - check AND mask operand: sbsr_mask */
+        if (rdsr_insn)
+        {
+                /* Case 1: mask is immediate */
+                if (CONST_INT_P(and_mask))
+                {
+                        HOST_WIDE_INT mask_val = INTVAL(and_mask);
+                        /* Check sbsr: exactly one bit set */
+                        if (oc32_sr_setbit_p(and_mask))
+                        {
+                                emit_insn(gen_tbsr(rdsr_addr, and_mask));
+                                return 1;
+                        }
+                }
+                else // Case 2: mask is register
+                {
+                        /* Search backward from AND for instruction defining and_mask */
+                        for (rtx_insn *def_insn = prev_nonnote_insn(and_insn);
+                             def_insn;
+                             def_insn = prev_nonnote_insn(def_insn))
+                        {
+                                rtx set = single_set(def_insn);
+                                if (!set)
+                                        continue;
+
+                                rtx dest = SET_DEST(set);
+                                rtx src = SET_SRC(set);
+
+                                /* Must be (set (reg) (const_int ...)) form */
+                                if (!CONST_INT_P(src))
+                                        continue;
+
+                                /* dest == and_mask? */
+                                if (!rtx_equal_p(dest, and_mask))
+                                        continue;
+
+                                and_mask = gen_rtx_CONST_INT(SImode, (unsigned HOST_WIDE_INT)INTVAL(src) & 0xffffffffu);
+                                if (oc32_sr_setbit_p(and_mask))
+                                {
+                                        emit_insn(gen_tbsr(rdsr_addr, and_mask));
+                                        return 1;
+                                }
+                                /* dest == and_mask but mask doesn't match -> FAIL(default) */
+                                break;
+                        }
+                }
+        }
+        return 0;
 }
 
-/* Check if ~mask has exactly one bit set (for CBSR) */
-bool oc32_sr_clrbit_p(rtx op)
-{
-        unsigned HOST_WIDE_INT mask = (unsigned HOST_WIDE_INT)INTVAL(op) & 0xffffffffu;
-        unsigned HOST_WIDE_INT not_mask = (~mask) & 0xffffffffu;
-        return (not_mask != 0) && ((not_mask & (not_mask - 1)) == 0);
-}
-
-/* Forward-declare: search for a preceding RDSR→BINOP pattern that can be
+/* Search for a preceding RDSR→AND/OR→WRSR pattern that can be
    folded into a single SBSR/CBSR instruction.
    Returns true if a matching pattern is found.
-*/
-enum oc32_emit_sr_binop_result
+   -op0: WRSR destination (mem const)
+   -op1: WRSR source (register) */
 oc32_emit_sr_binop(rtx op0, rtx op1)
 {
 
-        enum oc32_emit_sr_binop_result result = OC32_SR_BINOP_FAIL;
         /* Step 1: Walk backward through emitted insns looking for AND/OR instruction.
                 WRSR is already confirmed by caller, so skip it and search backward.
                 For each candidate insn:
@@ -1417,9 +1635,8 @@ oc32_emit_sr_binop(rtx op0, rtx op1)
                                 /* Check sbsr: exactly one bit set */
                                 if (oc32_sr_setbit_p(binop_mask))
                                 {
-                                        result = OC32_SR_BINOP_OK;
                                         emit_insn(gen_sbsr(op0, binop_mask));
-                                        return result;
+                                        return 1;
                                 }
                         }
                         else if (binop_code == AND)
@@ -1427,9 +1644,8 @@ oc32_emit_sr_binop(rtx op0, rtx op1)
                                 /* Check cbsr: exactly one bit cleared (i.e., ~mask has exactly one bit set) */
                                 if (oc32_sr_clrbit_p(binop_mask))
                                 {
-                                        result = OC32_SR_BINOP_OK;
                                         emit_insn(gen_cbsr(op0, binop_mask));
-                                        return result;
+                                        return 1;
                                 }
                         }
                 }
@@ -1460,18 +1676,16 @@ oc32_emit_sr_binop(rtx op0, rtx op1)
                                 {
                                         if (oc32_sr_setbit_p(binop_mask))
                                         {
-                                                result = OC32_SR_BINOP_OK;
                                                 emit_insn(gen_sbsr(op0, binop_mask));
-                                                return result;
+                                                return 1;
                                         }
                                 }
                                 else if (binop_code == AND)
                                 {
                                         if (oc32_sr_clrbit_p(binop_mask))
                                         {
-                                                result = OC32_SR_BINOP_OK;
                                                 emit_insn(gen_cbsr(op0, binop_mask));
-                                                return result;
+                                                return 1;
                                         }
                                 }
 
@@ -1481,7 +1695,7 @@ oc32_emit_sr_binop(rtx op0, rtx op1)
                 }
         }
 
-        return result;
+        return 0;
 }
 
 /* Expand the patterns "movqi", "movqi" and "movsi".  The argument OP0 is the
@@ -1491,7 +1705,7 @@ void oc32_expand_move(machine_mode mode, rtx *operands)
         rtx op0 = operands[0];
         rtx op1 = operands[1];
 
-        /* Handle SR (Special Register) stores: OC32_SRADR_START~OC32_SRADR_END */
+        /* Handle SR (Special Register) stores */
         if (MEM_P(op0) && GET_MODE(op0) == SImode)
         {
                 if (!const0_operand(op1, mode))
@@ -1519,7 +1733,7 @@ void oc32_expand_move(machine_mode mode, rtx *operands)
                         }
                 }
 
-                if ((unsigned int)sr_val >= OC32_SRADR_START && (unsigned int)sr_val <= OC32_SRADR_END)
+                if (oc32_sr_address_range(sr_val))
                 {
                         /* Build a clean MEM address for WRSR/SBSR/CBSR if needed */
                         rtx wrsr_op0 = op0;
@@ -1528,18 +1742,15 @@ void oc32_expand_move(machine_mode mode, rtx *operands)
                         if (MEM_P(sr_addr) || REG_P(sr_addr))
                                 wrsr_op0 = gen_rtx_MEM(SImode, gen_rtx_CONST_INT(SImode, sr_val));
 
-                        enum oc32_emit_sr_binop_result result = oc32_emit_sr_binop(wrsr_op0, op1);
-                        if (result == OC32_SR_BINOP_OK)
-                        {
+                        if (oc32_emit_sr_binop(wrsr_op0, op1))
                                 return;
-                        }
 
                         emit_insn(gen_wrsr(wrsr_op0, op1));
                         return;
                 }
         }
 
-        /* Handle SR (Special Register) loads: OC32_SRADR_START~OC32_SRADR_END */
+        /* Handle SR (Special Register) loads */
         if (MEM_P(op1) && GET_MODE(op1) == SImode)
         {
                 rtx sr_addr = XEXP(op1, 0);
@@ -1563,7 +1774,7 @@ void oc32_expand_move(machine_mode mode, rtx *operands)
                                         sr_val = (HOST_WIDE_INT)tree_to_uhwi(addr_tree);
                         }
                 }
-                if ((unsigned int)sr_val >= OC32_SRADR_START && (unsigned int)sr_val <= OC32_SRADR_END)
+                if (oc32_sr_address_range(sr_val))
                 {
                         /* Build a clean MEM address for RDSR if needed */
                         rtx rdsr_op1 = op1;
@@ -1776,9 +1987,6 @@ void oc32_expand_cstore(rtx *operands)
 void oc32_expand_cbranch(rtx *operands)
 {
         rtx_code code = GET_CODE(operands[0]);
-        rtx ccflag_eq = gen_rtx_REG(SImode, OC32_R3);
-        rtx ccflag_lt = gen_rtx_REG(SImode, OC32_R4);
-        rtx ccflag_gt = gen_rtx_REG(SImode, OC32_R5);
 
         /* Ensure operand 1 are in registers */
         if (!register_operand(operands[1], SImode))
@@ -1788,9 +1996,10 @@ void oc32_expand_cbranch(rtx *operands)
            For unsigned comparisons (LTU, LEU, GTU, GEU), use 0-65535 range.
            For signed comparisons, use -32768 to 32767 range.  */
         bool valid_imm = false;
-        HOST_WIDE_INT val = INTVAL(operands[2]);
+        HOST_WIDE_INT val = -1;
         if (CONST_INT_P(operands[2]))
         {
+                val = INTVAL(operands[2]);
                 if (code == LTU || code == LEU || code == GTU || code == GEU)
                         valid_imm = (val >= 0 && val <= 65535);
                 else
@@ -1832,7 +2041,15 @@ void oc32_expand_cbranch(rtx *operands)
                 return;
 
         case GE:
-                emit_jump_insn(gen_jumpge(operands[1], operands[2], operands[3]));
+                /* if SR pattern matches, emit TBSR+JNZ */
+                if  (CONST_INT_P(operands[2]) && (val == 0) && (oc32_emit_tbsr_msb(operands[1])))
+                {
+                        emit_jump_insn(gen_jump_ne_z(gen_rtx_REG(SImode, OC32_R3), operands[3]));
+                }
+                else
+                {
+                        emit_jump_insn(gen_jumpge(operands[1], operands[2], operands[3]));
+                }
                 return;
 
         case GEU:
@@ -1840,7 +2057,15 @@ void oc32_expand_cbranch(rtx *operands)
                 return;
 
         case LT:
-                emit_jump_insn(gen_jumplt(operands[1], operands[2], operands[3]));
+                /* if SR pattern matches, emit TBSR+JNZ */
+                if (CONST_INT_P(operands[2]) && (val == 0) && (oc32_emit_tbsr_msb(operands[1])))
+                {
+                        emit_jump_insn(gen_jump_eq_z(gen_rtx_REG(SImode, OC32_R3), operands[3]));
+                }
+                else
+                {
+                        emit_jump_insn(gen_jumplt(operands[1], operands[2], operands[3]));
+                }
                 return;
 
         case LTU:
@@ -1872,7 +2097,15 @@ void oc32_expand_cbranch(rtx *operands)
         case EQ:
                 if (CONST_INT_P(operands[2]) && (val == 0))
                 {
-                        emit_jump_insn(gen_jump_eq_z(operands[1], operands[3]));
+                        /* if SR pattern matches, emit TBSR+JNZ */
+                        if (oc32_emit_tbsr(operands[1]))
+                        {
+                                emit_jump_insn(gen_jump_ne_z(gen_rtx_REG(SImode, OC32_R3), operands[3]));
+                        }
+                        else
+                        {
+                                emit_jump_insn(gen_jump_eq_z(operands[1], operands[3]));
+                        }
                 }
                 else
                 {
@@ -1883,7 +2116,15 @@ void oc32_expand_cbranch(rtx *operands)
         case NE:
                 if (CONST_INT_P(operands[2]) && (val == 0))
                 {
-                        emit_jump_insn(gen_jump_ne_z(operands[1], operands[3]));
+                        /* if SR pattern matches, emit TBSR+JZ */
+                        if (oc32_emit_tbsr(operands[1]))
+                        {
+                                emit_jump_insn(gen_jump_eq_z(gen_rtx_REG(SImode, OC32_R3), operands[3]));
+                        }
+                        else
+                        {
+                                emit_jump_insn(gen_jump_ne_z(operands[1], operands[3]));
+                        }
                 }
                 else
                 {

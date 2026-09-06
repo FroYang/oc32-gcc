@@ -25,8 +25,6 @@ MEMORY
   ssysc     (rx)   : ORIGIN = 0x10000800, LENGTH = 256
   strap     (rx)   : ORIGIN = 0x10000900, LENGTH = 256
   shint     (rx)   : ORIGIN = 0x10000A00, LENGTH = __INTSIZE
-  screg     (rw!x) : ORIGIN = 0x3FF00000, LENGTH = 32K
-  spreg     (rw!x) : ORIGIN = 0x3FF08000, LENGTH = 32K
   fusr      (rx)   : ORIGIN = 0x40000000, LENGTH = __USRSIZE
   sram      (rwx)  : ORIGIN = (0x40000000+__USRSIZE), LENGTH = __SRAMSIZE
 }
@@ -144,21 +142,6 @@ SECTIONS
     . = ORIGIN(shint) + LENGTH(shint);
   } ${RELOCATING+ > shint}
 
-  .srcore :
-  {
-    . = ALIGN(4);
-    *(.srcore)
-    FILL(0x00000000);
-    . = ORIGIN(screg) + LENGTH(screg);
-  } > screg
-
-  .srpher :
-  {
-    . = ALIGN(4);
-    *(.srpher)
-    FILL(0x00000000);
-    . = ORIGIN(spreg) + LENGTH(spreg);
-  } > spreg
 
   .text :
   {
