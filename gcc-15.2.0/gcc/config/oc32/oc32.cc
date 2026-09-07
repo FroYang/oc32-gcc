@@ -1306,9 +1306,14 @@ oc32_can_change_mode_class(machine_mode from, machine_mode to,
 #undef TARGET_CAN_CHANGE_MODE_CLASS
 #define TARGET_CAN_CHANGE_MODE_CLASS oc32_can_change_mode_class
 
-/* Search for a preceding RDSR→JNZ/JZpattern that can be
-   folded into TBSR→JZ/JNZ(jump condition inverted)
-   Emit TBSR & Returns true if a matching pattern is found. */
+/* Search for a preceding
+        {
+        RDSR(confirmed by oc32_emit_tbsr_msb)→
+        CMP(confirmed by oc32_expand_cbranch)→
+        JNZ/JZ(confirmed by oc32_expand_cbranch)
+        }
+  pattern that can be folded into TBSR→JZ/JNZ(jump condition inverted)
+  Emit TBSR & Returns true if a matching pattern is found. */
 bool oc32_emit_tbsr_msb(rtx op)
 {
 
@@ -1366,8 +1371,13 @@ bool oc32_emit_tbsr_msb(rtx op)
         return 0;
 }
 
-/* Search for a preceding RDSR→AND→JNZ/JZpattern that can be
-   folded into TBSR→JZ/JNZ(jump condition inverted)
+/* Search for a preceding
+        {
+        RDSR(confirmed by oc32_emit_tbsr)→
+        AND(confirmed by oc32_emit_tbsr)→
+        JNZ/JZ(confirmed by oc32_expand_cbranch)
+        }
+   pattern that can be folded into TBSR→JZ/JNZ(jump condition inverted)
    Emit TBSR & Returns true if a matching pattern is found. */
 bool oc32_emit_tbsr(rtx op)
 {
@@ -1515,11 +1525,16 @@ bool oc32_emit_tbsr(rtx op)
         return 0;
 }
 
-/* Search for a preceding RDSR→AND/OR→WRSR pattern that can be
-   folded into a single SBSR/CBSR instruction.
-   Returns true if a matching pattern is found.
-   -op0: WRSR destination (mem const)
-   -op1: WRSR source (register) */
+/* Search for a preceding 
+        {
+        RDSR(confirmed by oc32_emit_sr_binop)→
+        AND/OR(confirmed by oc32_emit_sr_binop)→
+        WRSR(confirmed by oc32_expand_move)
+        }
+  pattern that can be folded into a single SBSR/CBSR instruction.
+  Returns true if a matching pattern is found.
+  -op0: WRSR destination (mem const)
+  -op1: WRSR source (register) */
 bool oc32_emit_sr_binop(rtx op0, rtx op1)
 {
 
