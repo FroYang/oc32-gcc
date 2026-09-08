@@ -6,8 +6,8 @@ set -o pipefail
 export OC32=$HOME/oc32
 export PREFIX=$OC32/linux
 export TARGET=oc32-none-elf    # 与 binutils 保持一致
-export SRC=$HOME/oc32/gcc/gcc-15.2.0
-export BUILD=$HOME/oc32/gcc/gcc-15.2.0-build-lin
+export SRC=$HOME/oc32/gcc/gcc-15.3.0
+export BUILD=$HOME/oc32/gcc/gcc-15.3.0-build-lin
 export PATH=$PATH:$OC32/linux/bin
 
 if [ ! -f "$OC32/linux/bin/${TARGET}-as" ] || [ ! -f "$OC32/linux/bin/${TARGET}-ld" ]; then

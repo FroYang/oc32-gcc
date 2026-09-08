@@ -6,7 +6,7 @@ set -o pipefail
 export PREFIX=$HOME/oc32/linux
 export TARGET=oc32-none-elf 
 export SRC=$HOME/oc32/gcc/binutils-gdb
-export BUILD=$HOME/oc32/gcc/binutils-gdb-build
+export BUILD=$HOME/oc32/gcc/binutils-gdb-build-lin
 
 # 关闭把警告当错误处理，避免 Werror discarded-qualifiers 导致编译失败
 export ERROR_ON_WARNING=no
