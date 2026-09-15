@@ -58,6 +58,7 @@
 /* The best alignment to use in cases where we have a choice.  */
 #define FASTEST_ALIGNMENT 32
 
+#define BRANCH_COST(speed_p, predictable_p)  ((speed_p) ? ((predictable_p) ? 1 : 3) : 1)
 
 /* Align definitions of arrays, unions and structures so that
    initializations and copies can be made more efficient.  This is not

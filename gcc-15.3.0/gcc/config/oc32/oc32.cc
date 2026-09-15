@@ -2253,9 +2253,9 @@ oc32_rtx_costs(rtx x, machine_mode mode, int outer_code, int opno,
                 else if ((outer_code == PLUS || outer_code == XOR || outer_code == MULT) && satisfies_constraint_I(x))
                         *total = 0;
                 else if (satisfies_constraint_I(x))
-                        *total = 1; // 改为1：单个ADD指令
+                        *total = 0; // 立即数内嵌于指令，作为操作数无额外成本（指令成本由外层 SET/运算承担）
                 else if (satisfies_constraint_J(x))
-                        *total = 2; // MOVH+OR，两条指令
+                        *total = COSTS_N_INSNS(2); // MOVH+OR，两条指令
                 else
                         *total = COSTS_N_INSNS(3); // 内存加载，三条指令
                 return true;
@@ -2292,24 +2292,19 @@ oc32_rtx_costs(rtx x, machine_mode mode, int outer_code, int opno,
                 rtx then_part = XEXP(x, 1);
                 rtx else_part = XEXP(x, 2);
 
-                /* Case 1: cmov_ne — condition is a plain register (no comparison operator) */
-                if (!COMPARISON_P(cond) && REG_P(cond))
-                {
-                        *total = COSTS_N_INSNS(1);
-                        return true;
-                }
-
-                /* Case 2: cmov_z / cmov_nz — EQ/NE against const 0, result used as integer */
+                /* Case: cmov_z / cmov_nz — EQ/NE against const 0, result used as integer */
                 if ((GET_CODE(cond) == EQ || GET_CODE(cond) == NE) &&
                     REG_P(XEXP(cond, 0)) &&
                     CONST_INT_P(XEXP(cond, 1)) &&
                     INTVAL(XEXP(cond, 1)) == 0)
                 {
-                        *total = COSTS_N_INSNS(2); // OR + MOVZ/MOVNZ = 2 insns
+                        /* 作为 SET_SRC 时即单条 MOVZ/MOVNZ 指令，其指令成本
+                           已由外层 SET 计入，这里只记 0；独立出现时记一条指令。  */
+                        *total = (outer_code == SET ? 0 : COSTS_N_INSNS(1));
                         return true;
                 }
 
-                /* Case 3: cbranchsi4 — comparison with label_ref / pc */
+                /* Case: cbranchsi4 — comparison with label_ref / pc */
                 if ((LABEL_REF_P(then_part) && else_part == pc_rtx) ||
                     (LABEL_REF_P(else_part) && then_part == pc_rtx))
                 {
@@ -2317,9 +2312,11 @@ oc32_rtx_costs(rtx x, machine_mode mode, int outer_code, int opno,
                                             CONST_INT_P(XEXP(cond, 1)) &&
                                             INTVAL(XEXP(cond, 1)) == 0;
                         if (is_zero_eqne)
-                                *total = COSTS_N_INSNS(1); // jump_eq_z/jump_ne_z: 1 insn
+                                /* jump_eq_z / jump_ne_z：编码上永远是 1 条指令；但执行时（跳转发生）有流水线气泡/清空代价。  */
+                                *total = speed ? COSTS_N_INSNS(3) : COSTS_N_INSNS(1);
                         else
-                                *total = COSTS_N_INSNS(TARGET_ZFSF ? 3 : 2); // cmp + jump
+                                // cmp + jump
+                                *total = speed ? COSTS_N_INSNS(TARGET_ZFSF ? 5 : 4) : COSTS_N_INSNS(TARGET_ZFSF ? 3 : 2);
                         return true;
                 }
         }
