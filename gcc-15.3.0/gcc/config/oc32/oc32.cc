@@ -1891,7 +1891,8 @@ void oc32_expand_cstore(rtx *operands)
            For immediate operands, check if they are within the valid range
            for OC32's 16-bit immediate fields (-32768 to 32767 for signed,
            0 to 65535 for unsigned).  */
-        if (!register_operand(operands[2], SImode))
+        //if (!register_operand(operands[2], SImode))
+        if (!REG_P(operands[2]))
                 operands[2] = force_reg(SImode, operands[2]);
 
         /* Check if it is a valid immediate for OC32.
@@ -1907,7 +1908,8 @@ void oc32_expand_cstore(rtx *operands)
                         valid_imm = (val >= -32768 && val <= 32767);
         }
 
-        if (!register_operand(operands[3], SImode) && !valid_imm)
+        //if (!register_operand(operands[3], SImode) && !valid_imm)
+        if (!REG_P(operands[3]) && !valid_imm)
                 operands[3] = force_reg(SImode, operands[3]);
 
         switch (code)
@@ -2002,7 +2004,8 @@ void oc32_expand_cbranch(rtx *operands)
         rtx_code code = GET_CODE(operands[0]);
 
         /* Ensure operand 1 are in registers */
-        if (!register_operand(operands[1], SImode))
+        //if (!register_operand(operands[1], SImode))
+        if (!REG_P(operands[1]))
                 operands[1] = force_reg(SImode, operands[1]);
 
         /* Check if it is a valid immediate for OC32.
@@ -2019,7 +2022,8 @@ void oc32_expand_cbranch(rtx *operands)
                         valid_imm = (val >= -32768 && val <= 32767);
         }
 
-        if (!register_operand(operands[2], SImode) && !valid_imm)
+        //if (!register_operand(operands[2], SImode) && !valid_imm)
+        if (!REG_P(operands[2]) && !valid_imm)
                 operands[2] = force_reg(SImode, operands[2]);
 
         switch (code)

@@ -65,7 +65,7 @@ make -j$(nproc) V=2 all-gcc 2>&1 | tee make-all-gcc.log
 
 # 安装 GCC
 echo "=== 安装 GCC ==="
-sudo make install-gcc 2>&1 | tee make-install-gcc.log
+make install-gcc 2>&1 | tee make-install-gcc.log
 
 # build GCC libgcc
 echo "=== 编译 libgcc ==="
@@ -73,4 +73,4 @@ make -j1 V=2 all-target-libgcc 2>&1 | tee make-libgcc.log
 
 # 安装 libgcc
 echo "=== 安装 libgcc ==="
-sudo bash -c "export PATH=\"$BUILD/gcc:$PREFIX/bin:$PATH\" && make install-target-libgcc" 2>&1 | tee make-install-libgcc.log
+bash -c "export PATH=\"$BUILD/gcc:$PREFIX/bin:$PATH\" && make install-target-libgcc" 2>&1 | tee make-install-libgcc.log

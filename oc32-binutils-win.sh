@@ -44,6 +44,6 @@ make -j$(nproc) V=2 2>&1 | tee make.log
 
 # 安装 binutils
 echo "=== 安装 binutils ==="
-sudo make install 2>&1 | tee make-install.log
+make install 2>&1 | tee make-install.log
 
 echo "=== Windows binntils 构建完成 ==="
