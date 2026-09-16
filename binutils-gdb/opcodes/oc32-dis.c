@@ -151,9 +151,9 @@ oc32_opcode(bfd_vma addr, unsigned int iword,
 				break;
 
 			case OP_MOVH_I:
-				fpr(stream, "R%d,  0x%04x",
+				fpr(stream, "R%d,  0x%08x",
 					(iword >> 0) & 0x1F,
-					(iword >> 5) & 0xFFFF);
+					((iword >> 5) & 0xFFFF) << 16);
 				break;
 
 			/* Load instructions */

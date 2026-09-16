@@ -34,6 +34,11 @@
   (and (match_code "const_int")
        (match_test "IN_RANGE (INTVAL (op), 0, 31)")))
 
+(define_constraint "w"
+  "A constant for bit width (1..32)"
+  (and (match_code "const_int")
+       (match_test "IN_RANGE (INTVAL (op), 1, 32)")))
+
 (define_memory_constraint "W"
   "An OC32 register indirect memory operand: [base] or [base+reg]."
   (and (match_code "mem")

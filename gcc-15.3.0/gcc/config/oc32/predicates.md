@@ -35,11 +35,6 @@
        (and (match_code "const_int")
             (match_test "IN_RANGE (INTVAL (op), -32768, 32767)"))))
 
-(define_predicate "reg_or_s16_operand"
-  (if_then_else (match_code "const_int")
-    (match_test "INTVAL (op) >= -32768 && INTVAL (op) <= 32767")
-    (match_operand 0 "register_operand")))
-
 (define_predicate "oc32_ruimm_operand"
   (ior (match_code "reg")
        (match_code "subreg")
@@ -61,6 +56,12 @@
 (define_predicate "oc32_simm_operand"
   (and (match_code "const_int")
        (match_test "IN_RANGE (INTVAL (op), -32768, 32767)")))
+
+
+(define_predicate "oc32_mem_offset_operand"
+  (and (match_code "const_int")
+       (match_test "IN_RANGE (INTVAL (op), -131072, 131071)
+                    && (INTVAL (op) & 3) == 0")))
 
 (define_predicate "symbol_label_operand"
   (match_code "symbol_ref,label_ref,const,unspec"))

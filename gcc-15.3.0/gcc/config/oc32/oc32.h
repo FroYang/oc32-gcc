@@ -331,6 +331,12 @@ do {                                                    \
    valid memory address.  */
 #define MAX_REGS_PER_ADDRESS 2
 
+/* Post-increment/decrement addressing (LWI/SWI).  */
+#define HAVE_POST_INCREMENT   1
+#define HAVE_POST_DECREMENT   1
+#define HAVE_POST_MODIFY_DISP 1
+#define HAVE_POST_MODIFY_REG  1
+
 /* The ELIMINABLE_REGS macro specifies a table of register pairs used to
    eliminate unneeded registers that point into the stack frame. Note,
    the only elimination attempted by the compiler is to replace references

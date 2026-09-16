@@ -642,6 +642,26 @@ oc32_legitimate_address_p(machine_mode mode, rtx x, bool strict_p,
                         return true;
                 return false;
 
+        case POST_INC:
+        case POST_DEC:
+                base = XEXP(x, 0);
+                if (!REG_P(base))
+                        return false;
+                break;
+
+        case POST_MODIFY:
+        {
+                rtx inner = XEXP(x, 1);
+                base = XEXP(x, 0);
+                if (!REG_P(base) || GET_CODE(inner) != PLUS)
+                        return false;
+                /* 增量 = XEXP(inner, 1)，允许寄存器或 L 范围立即数 */
+                rtx inc = XEXP(inner, 1);
+                if (!REG_P(inc) && !satisfies_constraint_L(inc))
+                        return false;
+                break;
+        }
+
         default:
                 return false;
         }
@@ -715,13 +735,26 @@ oc32_legitimize_address_1(rtx x, rtx scratch, machine_mode mode)
                 return x;
         }
 
+        switch (GET_CODE(x))
+        {
+        /* Auto-increment addresses are generated only when valid; pass through.  */
+        case POST_INC:
+        case POST_DEC:
+        case POST_MODIFY:
+                return x;
+
         /* If x is [reg+reg], it's already a valid address, return as-is */
-        if (GET_CODE(x) == PLUS)
+        case PLUS:
         {
                 rtx op0 = XEXP(x, 0);
                 rtx op1 = XEXP(x, 1);
                 if (REG_P(op0) && REG_P(op1))
                         return x;
+                break;
+        }
+        
+        default:
+                break;
         }
 
         split_const(x, &base, &addend);
@@ -1525,7 +1558,7 @@ bool oc32_emit_tbsr(rtx op)
         return 0;
 }
 
-/* Search for a preceding 
+/* Search for a preceding
         {
         RDSR(confirmed by oc32_emit_sr_binop)→
         AND/OR(confirmed by oc32_emit_sr_binop)→
@@ -1891,7 +1924,7 @@ void oc32_expand_cstore(rtx *operands)
            For immediate operands, check if they are within the valid range
            for OC32's 16-bit immediate fields (-32768 to 32767 for signed,
            0 to 65535 for unsigned).  */
-        //if (!register_operand(operands[2], SImode))
+        // if (!register_operand(operands[2], SImode))
         if (!REG_P(operands[2]))
                 operands[2] = force_reg(SImode, operands[2]);
 
@@ -1908,7 +1941,7 @@ void oc32_expand_cstore(rtx *operands)
                         valid_imm = (val >= -32768 && val <= 32767);
         }
 
-        //if (!register_operand(operands[3], SImode) && !valid_imm)
+        // if (!register_operand(operands[3], SImode) && !valid_imm)
         if (!REG_P(operands[3]) && !valid_imm)
                 operands[3] = force_reg(SImode, operands[3]);
 
@@ -2004,7 +2037,7 @@ void oc32_expand_cbranch(rtx *operands)
         rtx_code code = GET_CODE(operands[0]);
 
         /* Ensure operand 1 are in registers */
-        //if (!register_operand(operands[1], SImode))
+        // if (!register_operand(operands[1], SImode))
         if (!REG_P(operands[1]))
                 operands[1] = force_reg(SImode, operands[1]);
 
@@ -2022,7 +2055,7 @@ void oc32_expand_cbranch(rtx *operands)
                         valid_imm = (val >= -32768 && val <= 32767);
         }
 
-        //if (!register_operand(operands[2], SImode) && !valid_imm)
+        // if (!register_operand(operands[2], SImode) && !valid_imm)
         if (!REG_P(operands[2]) && !valid_imm)
                 operands[2] = force_reg(SImode, operands[2]);
 
@@ -2059,7 +2092,7 @@ void oc32_expand_cbranch(rtx *operands)
 
         case GE:
                 /* if SR pattern matches, emit TBSR+JNZ */
-                if  (CONST_INT_P(operands[2]) && (val == 0) && (oc32_emit_tbsr_msb(operands[1])))
+                if (CONST_INT_P(operands[2]) && (val == 0) && (oc32_emit_tbsr_msb(operands[1])))
                 {
                         emit_jump_insn(gen_jump_ne_z(gen_rtx_REG(SImode, OC32_R3), operands[3]));
                 }
