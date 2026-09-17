@@ -1580,9 +1580,10 @@ bool oc32_emit_sr_binop(rtx op0, rtx op1)
         rtx_insn *binop_insn = NULL;
         rtx binop_mask = NULL;
         enum rtx_code binop_code;
+        rtx binop_pos = NULL;
         rtx_insn *rdsr_insn = NULL;
 
-        /* Find the destination matched AND/OR */
+        /* Find the destination matched AND/OR/MBF */
         for (insn = get_last_insn_anywhere(); insn; insn = prev_nonnote_insn(insn))
         {
                 rtx set = single_set(insn);
@@ -1591,6 +1592,41 @@ bool oc32_emit_sr_binop(rtx op0, rtx op1)
 
                 rtx dest = SET_DEST(set);
                 rtx src = SET_SRC(set);
+                /* MBF (bit-field insert): dest is a ZERO_EXTRACT on op1.
+                   Match single-bit insert (width == 1).  The inserted value
+                   is saved as binop_mask; the bit position as binop_pos. */
+                if (GET_CODE(dest) == ZERO_EXTRACT)
+                {
+                        rtx ze_reg = XEXP(dest, 0);
+                        rtx ze_width = XEXP(dest, 1);
+                        rtx ze_pos = XEXP(dest, 2);
+                        if (rtx_equal_p(ze_reg, op1))
+                        {
+                                /* This MBF read-modify-writes op1, so it is the
+                                   reaching definition for op1; any older AND/OR
+                                   producer would be stale and must not be used.
+                                   Only foldable if single-bit with a constant
+                                   position in [0,31]. */
+                                if (CONST_INT_P(ze_width)
+                                    && INTVAL(ze_width) == 1
+                                    && CONST_INT_P(ze_pos)
+                                    && INTVAL(ze_pos) >= 0
+                                    && INTVAL(ze_pos) < 32)
+                                {
+                                        binop_insn = insn;
+                                        binop_code = ZERO_EXTRACT;
+                                        binop_mask = src;      /* value to insert */
+                                        binop_pos = ze_pos;
+                                        break;
+                                }
+                                /* Defines op1 but not foldable (multi-bit or
+                                   non-const pos): stop, do not scan past it to
+                                   a stale older producer. */
+                                break;
+                        }
+                        /* ze_reg != op1: unrelated MBF on another register. */
+                        continue;
+                }
                 /* insn dest == WRSR src ? */
                 if (rtx_equal_p(dest, op1))
                 {
@@ -1613,16 +1649,31 @@ bool oc32_emit_sr_binop(rtx op0, rtx op1)
                 }
         }
 
-        /* Step 2: AND/OR is matched, find RDSR
+        /* Step 2: AND/OR/MBF is matched, find RDSR
                 For each candidate insn:
-                - 1st check insn op0(destination) == AND/OR op1(source) / op2(source)
+                - 1st check insn op0(destination) == AND/OR op1(source) / op2(source), or MBF op3
                 - 2nd check insn code is RDSR (mem:SI (addr)) */
         if (binop_insn)
         {
                 /* Get the operands of BINOP */
                 rtx binop_src = SET_SRC(single_set(binop_insn));
-                rtx binop_op0 = XEXP(binop_src, 0);
-                rtx binop_op1 = XEXP(binop_src, 1);
+                rtx binop_op0;
+                rtx binop_op1;
+                if (binop_code == ZERO_EXTRACT)
+                {
+                        /* MBF: (set (zero_extract (op1) ...) (src)).  The read
+                           reg is op1; the inserted value (saved in binop_mask by
+                           Step 1) is the other operand.  binop_src is the plain
+                           src rtx, not an AND/OR binary expression, so we cannot
+                           XEXP it. */
+                        binop_op0 = op1;
+                        binop_op1 = binop_mask;
+                }
+                else
+                {
+                        binop_op0 = XEXP(binop_src, 0);
+                        binop_op1 = XEXP(binop_src, 1);
+                }
                 rtx rdsr_src;
                 rtx rdsr_dest;
 
@@ -1670,10 +1721,58 @@ bool oc32_emit_sr_binop(rtx op0, rtx op1)
                 /* if dest != src -> AND/OR is not for SBSR/CBSR, return FAIL(default) */
         }
 
-        /* Step 3: AND/OR is matched, RDSR is matched
-                - check AND/OR mask operand: binop_mask */
+        /* Step 3: AND/OR/MBF is matched, RDSR is matched
+                - check AND/OR mask operand: binop_mask
+                  or MBF src operand: value=1/0 */
         if (rdsr_insn)
         {
+                /* MBF (ZERO_EXTRACT) path: width == 1 is guaranteed by Step 1.
+                   Resolve the inserted value (binop_mask = src) to a constant
+                   0/1, then emit SBSR (set bit at binop_pos) / CBSR (clear
+                   bit).  Only the common src forms (const_int, or a register
+                   holding a const_int) are handled; anything else falls
+                   through to the default WRSR. */
+                if (binop_code == ZERO_EXTRACT)
+                {
+                        HOST_WIDE_INT v = -1;
+                        if (CONST_INT_P(binop_mask))
+                                v = INTVAL(binop_mask);
+                        else if (REG_P(binop_mask))
+                        {
+                                for (rtx_insn *d = prev_nonnote_insn(binop_insn);
+                                     d;
+                                     d = prev_nonnote_insn(d))
+                                {
+                                        rtx s = single_set(d);
+                                        if (!s)
+                                                continue;
+                                        if (!rtx_equal_p(SET_DEST(s), binop_mask))
+                                                continue;
+                                        if (CONST_INT_P(SET_SRC(s)))
+                                                v = INTVAL(SET_SRC(s));
+                                        break;
+                                }
+                        }
+                        if (v == 1)
+                        {
+                                emit_insn(gen_sbsr(op0,
+                                        gen_rtx_CONST_INT(SImode,
+                                                (HOST_WIDE_INT)((unsigned HOST_WIDE_INT)1
+                                                                << INTVAL(binop_pos)))));
+                                return 1;
+                        }
+                        if (v == 0)
+                        {
+                                emit_insn(gen_cbsr(op0,
+                                        gen_rtx_CONST_INT(SImode,
+                                                (HOST_WIDE_INT)(~((unsigned HOST_WIDE_INT)1
+                                                                  << INTVAL(binop_pos))
+                                                                & 0xffffffffu))));
+                                return 1;
+                        }
+                        /* src not const 0/1 -> cannot fold -> FAIL(default) */
+                        return 0;
+                }
                 /* Case 1: mask is immediate */
                 if (CONST_INT_P(binop_mask))
                 {
@@ -1710,13 +1809,18 @@ bool oc32_emit_sr_binop(rtx op0, rtx op1)
                                 rtx dest = SET_DEST(set);
                                 rtx src = SET_SRC(set);
 
-                                /* Must be (set (reg) (const_int ...)) form */
-                                if (!CONST_INT_P(src))
-                                        continue;
-
-                                /* dest == binop_mask? */
+                                /* Is this a def of binop_mask?  Unrelated
+                                   insns (dest != binop_mask) are skipped so
+                                   we keep scanning for the real producer. */
                                 if (!rtx_equal_p(dest, binop_mask))
                                         continue;
+
+                                /* This is the reaching definition of
+                                   binop_mask.  Only foldable if it is a
+                                   const_int; otherwise stop here so we do not
+                                   match a stale older const def. */
+                                if (!CONST_INT_P(src))
+                                        break;
 
                                 binop_mask = gen_rtx_CONST_INT(SImode, (unsigned HOST_WIDE_INT)INTVAL(src) & 0xffffffffu);
                                 if (binop_code == IOR)
@@ -1745,8 +1849,38 @@ bool oc32_emit_sr_binop(rtx op0, rtx op1)
         return 0;
 }
 
+/* Fallback for SR-address recovery when MEM_EXPR is unavailable (e.g. the
+   container MEM synthesized by store_bit_field for a bitfield store/load
+   drops MEM_EXPR).  Walks backward through emitted insns looking for the
+   most recent (set (REG) (const_int)) that defines REG, and returns that
+   constant; returns -1 if REG is not a register, is defined by a non-const
+   expression, or no defining insn is found.  Callers must still gate the
+   result with oc32_sr_address_range(). */
+static HOST_WIDE_INT
+oc32_sr_val_from_reg_def (rtx reg)
+{
+        if (!REG_P(reg))
+                return -1;
+
+        for (rtx_insn *p = get_last_insn_anywhere(); p; p = prev_nonnote_insn(p))
+        {
+                /* If this insn sets/clobbers REG, it is the reaching definition. */
+                if (!reg_set_p(reg, p))
+                        continue;
+                rtx s = single_set(p);
+                if (s && REG_P(SET_DEST(s))
+                    && rtx_equal_p(SET_DEST(s), reg)
+                    && CONST_INT_P(SET_SRC(s)))
+                        return INTVAL(SET_SRC(s));
+                /* REG is set/clobbered by something that is not a simple
+                   const_int load: stop, we cannot recover a constant. */
+                return -1;
+        }
+        return -1;
+}
+
 /* Expand the patterns "movqi", "movqi" and "movsi".  The argument OP0 is the
-   destination and OP1 is the source.  This expands to set OP0 to OP1.  */
+   destination and OP1 is the source.  This expands to set OP0 to OP1. */
 void oc32_expand_move(machine_mode mode, rtx *operands)
 {
         rtx op0 = operands[0];
@@ -1769,14 +1903,73 @@ void oc32_expand_move(machine_mode mode, rtx *operands)
                         /* sr_addr is a register holding the volatile MEM address.
                            Extract the constant address from the outer op0's MEM_EXPR. */
                         tree expr = MEM_EXPR(op0);
+                        /* The MEM_EXPR may be a COMPONENT_REF / ARRAY_REF chain
+                           over the constant-address MEM_REF; descend to it. */
+                        while (expr && (TREE_CODE(expr) == COMPONENT_REF
+                                        || TREE_CODE(expr) == ARRAY_REF
+                                        || TREE_CODE(expr) == ARRAY_RANGE_REF))
+                                expr = TREE_OPERAND(expr, 0);
                         if (expr && TREE_CODE(expr) == MEM_REF)
                         {
                                 tree addr_tree = TREE_OPERAND(expr, 0);
-                                /* Walk through ADDR_EXPR / VIEW_CONVERT_EXPR to find constant */
-                                while (TREE_CODE(addr_tree) == ADDR_EXPR || TREE_CODE(addr_tree) == VIEW_CONVERT_EXPR)
+                                /* Walk through ADDR_EXPR / VIEW_CONVERT_EXPR /
+                                   NOP_EXPR / CONVERT_EXPR / NON_LVALUE_EXPR to find constant */
+                                while (TREE_CODE(addr_tree) == ADDR_EXPR
+                                       || TREE_CODE(addr_tree) == VIEW_CONVERT_EXPR
+                                       || TREE_CODE(addr_tree) == NOP_EXPR
+                                       || TREE_CODE(addr_tree) == CONVERT_EXPR
+                                       || TREE_CODE(addr_tree) == NON_LVALUE_EXPR)
                                         addr_tree = TREE_OPERAND(addr_tree, 0);
                                 if (tree_fits_uhwi_p(addr_tree))
                                         sr_val = (HOST_WIDE_INT)tree_to_uhwi(addr_tree);
+                        }
+                        /* Fallback: bitfield container MEMs lose MEM_EXPR.
+                           Recover the constant by tracing the register's
+                           defining (set (reg) (const_int)) insn. */
+                        if (sr_val == -1)
+                                sr_val = oc32_sr_val_from_reg_def(sr_addr);
+                }
+                else if (GET_CODE(sr_addr) == PLUS)
+                {
+                        /* sr_addr is (plus (reg) (const_int)) or (plus (reg) (reg)).
+                           The register holds an unknown value at this level, so fall
+                           back to MEM_EXPR to recover the original constant base
+                           address, then add the constant addend from the PLUS (if
+                           present) to reconstruct the full constant address. */
+                        tree expr = MEM_EXPR(op0);
+                        /* The MEM_EXPR may be a COMPONENT_REF / ARRAY_REF chain
+                           over the constant-address MEM_REF; descend to it. */
+                        while (expr && (TREE_CODE(expr) == COMPONENT_REF
+                                        || TREE_CODE(expr) == ARRAY_REF
+                                        || TREE_CODE(expr) == ARRAY_RANGE_REF))
+                                expr = TREE_OPERAND(expr, 0);
+                        if (expr && TREE_CODE(expr) == MEM_REF)
+                        {
+                                tree addr_tree = TREE_OPERAND(expr, 0);
+                                while (TREE_CODE(addr_tree) == ADDR_EXPR
+                                       || TREE_CODE(addr_tree) == VIEW_CONVERT_EXPR
+                                       || TREE_CODE(addr_tree) == NOP_EXPR
+                                       || TREE_CODE(addr_tree) == CONVERT_EXPR
+                                       || TREE_CODE(addr_tree) == NON_LVALUE_EXPR)
+                                        addr_tree = TREE_OPERAND(addr_tree, 0);
+                                if (tree_fits_uhwi_p(addr_tree))
+                                {
+                                        HOST_WIDE_INT base = (HOST_WIDE_INT)tree_to_uhwi(addr_tree);
+                                        rtx addend = XEXP(sr_addr, 1);
+                                        if (CONST_INT_P(addend))
+                                                base += INTVAL(addend);
+                                        sr_val = base;
+                                }
+                        }
+                        /* Fallback for PLUS: trace the base register's defining
+                           (set (reg) (const_int)) and add the constant addend. */
+                        if (sr_val == -1)
+                        {
+                                rtx base_reg = XEXP(sr_addr, 0);
+                                rtx addend_rtx = XEXP(sr_addr, 1);
+                                HOST_WIDE_INT b = oc32_sr_val_from_reg_def(base_reg);
+                                if (b != -1 && CONST_INT_P(addend_rtx))
+                                        sr_val = b + INTVAL(addend_rtx);
                         }
                 }
 
@@ -1785,7 +1978,7 @@ void oc32_expand_move(machine_mode mode, rtx *operands)
                         /* Build a clean MEM address for WRSR/SBSR/CBSR if needed */
                         rtx wrsr_op0 = op0;
 
-                        if (MEM_P(sr_addr) || REG_P(sr_addr))
+                        if (MEM_P(sr_addr) || REG_P(sr_addr) || GET_CODE(sr_addr) == PLUS)
                                 wrsr_op0 = gen_rtx_MEM(SImode, gen_rtx_CONST_INT(SImode, sr_val));
 
                         if (oc32_emit_sr_binop(wrsr_op0, op1))
@@ -1810,21 +2003,80 @@ void oc32_expand_move(machine_mode mode, rtx *operands)
                         /* sr_addr is a register holding the volatile MEM address.
                            Extract the constant address from the outer op1's MEM_EXPR. */
                         tree expr = MEM_EXPR(op1);
+                        /* The MEM_EXPR may be a COMPONENT_REF / ARRAY_REF chain
+                           over the constant-address MEM_REF; descend to it. */
+                        while (expr && (TREE_CODE(expr) == COMPONENT_REF
+                                        || TREE_CODE(expr) == ARRAY_REF
+                                        || TREE_CODE(expr) == ARRAY_RANGE_REF))
+                                expr = TREE_OPERAND(expr, 0);
                         if (expr && TREE_CODE(expr) == MEM_REF)
                         {
                                 tree addr_tree = TREE_OPERAND(expr, 0);
-                                /* Walk through ADDR_EXPR / VIEW_CONVERT_EXPR to find constant */
-                                while (TREE_CODE(addr_tree) == ADDR_EXPR || TREE_CODE(addr_tree) == VIEW_CONVERT_EXPR)
+                                /* Walk through ADDR_EXPR / VIEW_CONVERT_EXPR /
+                                   NOP_EXPR / CONVERT_EXPR / NON_LVALUE_EXPR to find constant */
+                                while (TREE_CODE(addr_tree) == ADDR_EXPR
+                                       || TREE_CODE(addr_tree) == VIEW_CONVERT_EXPR
+                                       || TREE_CODE(addr_tree) == NOP_EXPR
+                                       || TREE_CODE(addr_tree) == CONVERT_EXPR
+                                       || TREE_CODE(addr_tree) == NON_LVALUE_EXPR)
                                         addr_tree = TREE_OPERAND(addr_tree, 0);
                                 if (tree_fits_uhwi_p(addr_tree))
                                         sr_val = (HOST_WIDE_INT)tree_to_uhwi(addr_tree);
+                        }
+                        /* Fallback: bitfield container MEMs lose MEM_EXPR.
+                           Recover the constant by tracing the register's
+                           defining (set (reg) (const_int)) insn. */
+                        if (sr_val == -1)
+                                sr_val = oc32_sr_val_from_reg_def(sr_addr);
+                }
+                else if (GET_CODE(sr_addr) == PLUS)
+                {
+                        /* sr_addr is (plus (reg) (const_int)) or (plus (reg) (reg)).
+                           The register holds an unknown value at this level, so fall
+                           back to MEM_EXPR to recover the original constant base
+                           address, then add the constant addend from the PLUS (if
+                           present) to reconstruct the full constant address. */
+                        tree expr = MEM_EXPR(op1);
+                        /* The MEM_EXPR may be a COMPONENT_REF / ARRAY_REF chain
+                           over the constant-address MEM_REF; descend to it. */
+                        while (expr && (TREE_CODE(expr) == COMPONENT_REF
+                                        || TREE_CODE(expr) == ARRAY_REF
+                                        || TREE_CODE(expr) == ARRAY_RANGE_REF))
+                                expr = TREE_OPERAND(expr, 0);
+                        if (expr && TREE_CODE(expr) == MEM_REF)
+                        {
+                                tree addr_tree = TREE_OPERAND(expr, 0);
+                                while (TREE_CODE(addr_tree) == ADDR_EXPR
+                                       || TREE_CODE(addr_tree) == VIEW_CONVERT_EXPR
+                                       || TREE_CODE(addr_tree) == NOP_EXPR
+                                       || TREE_CODE(addr_tree) == CONVERT_EXPR
+                                       || TREE_CODE(addr_tree) == NON_LVALUE_EXPR)
+                                        addr_tree = TREE_OPERAND(addr_tree, 0);
+                                if (tree_fits_uhwi_p(addr_tree))
+                                {
+                                        HOST_WIDE_INT base = (HOST_WIDE_INT)tree_to_uhwi(addr_tree);
+                                        rtx addend = XEXP(sr_addr, 1);
+                                        if (CONST_INT_P(addend))
+                                                base += INTVAL(addend);
+                                        sr_val = base;
+                                }
+                        }
+                        /* Fallback for PLUS: trace the base register's defining
+                           (set (reg) (const_int)) and add the constant addend. */
+                        if (sr_val == -1)
+                        {
+                                rtx base_reg = XEXP(sr_addr, 0);
+                                rtx addend_rtx = XEXP(sr_addr, 1);
+                                HOST_WIDE_INT b = oc32_sr_val_from_reg_def(base_reg);
+                                if (b != -1 && CONST_INT_P(addend_rtx))
+                                        sr_val = b + INTVAL(addend_rtx);
                         }
                 }
                 if (oc32_sr_address_range(sr_val))
                 {
                         /* Build a clean MEM address for RDSR if needed */
                         rtx rdsr_op1 = op1;
-                        if (MEM_P(sr_addr) || REG_P(sr_addr))
+                        if (MEM_P(sr_addr) || REG_P(sr_addr) || GET_CODE(sr_addr) == PLUS)
                                 rdsr_op1 = gen_rtx_MEM(SImode, gen_rtx_CONST_INT(SImode, sr_val));
 
                         emit_insn(gen_rdsr(op0, rdsr_op1));
