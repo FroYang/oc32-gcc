@@ -1414,11 +1414,13 @@ bool oc32_emit_tbsr_msb(rtx op)
    Emit TBSR & Returns true if a matching pattern is found. */
 bool oc32_emit_tbsr(rtx op)
 {
-        /* Step 1: Walk backward through emitted insns looking for AND instruction.
+        /* Step 1: Walk backward through emitted insns looking for AND or EBF
+                instruction producing op.
                 JZ/JNZ is already confirmed by caller, so skip it and search backward.
                 For each candidate insn:
                 - 1st check insn op0(destination) == JZ/JNZ op1(source)
-                - 2nd check insn code is AND */
+                - 2nd check insn code is AND or EBF (zero_extract width=1).
+                op may be fed through a zero_extend (struct bit-field test). */
         rtx_insn *insn;
         rtx_insn *and_insn = NULL;
         rtx and_mask = NULL;
@@ -1426,8 +1428,12 @@ bool oc32_emit_tbsr(rtx op)
         rtx rdsr_src;
         rtx rdsr_dest;
         rtx rdsr_addr;
+        enum rtx_code prod_code = AND;     /* AND or ZERO_EXTRACT */
+        rtx cur_reg = op;
+        rtx ebf_src_reg = NULL;
+        rtx ebf_pos = NULL;
 
-        /* Find the destination matched AND */
+        /* Find the destination matched AND or EBF */
 
         for (insn = get_last_insn_anywhere(); insn; insn = prev_nonnote_insn(insn))
         {
@@ -1437,54 +1443,115 @@ bool oc32_emit_tbsr(rtx op)
 
                 rtx dest = SET_DEST(set);
                 rtx src = SET_SRC(set);
-                /* insn dest == WRSR src ? */
-                if (rtx_equal_p(dest, op))
+
+                /* Match dest == cur_reg; dest may be a subreg of cur_reg
+                   (zero_extract writes a QI subreg). */
+                rtx dest_reg = dest;
+                if (GET_CODE(dest) == SUBREG)
+                        dest_reg = XEXP(dest, 0);
+                if (!rtx_equal_p(dest_reg, cur_reg))
+                        continue;
+
+                /* EBF: (set ... (zero_extract (src_reg) (1) (pos))) */
+                if (GET_CODE(src) == ZERO_EXTRACT)
                 {
-                        /* is AND ? */
-                        if (GET_CODE(src) == AND)
+                        rtx ze_reg = XEXP(src, 0);
+                        rtx ze_width = XEXP(src, 1);
+                        rtx ze_pos = XEXP(src, 2);
+                        if (REG_P(ze_reg)
+                            && CONST_INT_P(ze_width) && INTVAL(ze_width) == 1
+                            && CONST_INT_P(ze_pos)
+                            && INTVAL(ze_pos) >= 0 && INTVAL(ze_pos) < 32)
                         {
                                 and_insn = insn;
+                                prod_code = ZERO_EXTRACT;
+                                ebf_src_reg = ze_reg;
+                                ebf_pos = ze_pos;
                                 break;
                         }
-                        /* if dest == src, but not AND/OR, return FAIL(default) */
+                        /* defines cur_reg but not foldable EBF -> stop */
                         break;
                 }
+                /* zero_extend: peel and continue tracing the inner reg */
+                if (GET_CODE(src) == ZERO_EXTEND)
+                {
+                        cur_reg = XEXP(src, 0);
+                        continue;
+                }
+                /* is AND ? */
+                if (GET_CODE(src) == AND)
+                {
+                        and_insn = insn;
+                        prod_code = AND;
+                        break;
+                }
+                /* if dest == src, but not AND/EBF, return FAIL(default) */
+                break;
         }
 
-        /* Step 2: AND is matched or skipped, find RDSR
+        /* Step 2: AND/EBF is matched or skipped, find RDSR
                 For each candidate insn:
-                - 1st check insn op0(destination) == AND op1(source) / op2(source)
+                - AND: check insn op0(destination) == AND op1(source) / op2(source)
+                - EBF: check insn op0(destination) == EBF source register
                 - 2nd check insn code is RDSR (mem:SI (addr)) */
         if (and_insn)
         {
-                /* Get the operands of AND */
-                rtx and_src = SET_SRC(single_set(and_insn));
-                rtx and_op0 = XEXP(and_src, 0);
-                rtx and_op1 = XEXP(and_src, 1);
-
-                /* Walk backward from AND to find RDSR */
-                for (insn = prev_nonnote_insn(and_insn); insn; insn = prev_nonnote_insn(insn))
+                if (prod_code == ZERO_EXTRACT)
                 {
-                        rtx set = single_set(insn);
-                        if (!set)
-                                continue;
-
-                        rdsr_dest = SET_DEST(set);
-                        rdsr_src = SET_SRC(set);
-
-                        /* 1st: check insn is load
-                           2nd: check operand matches (insn dest == AND op0/op1) */
-                        if (MEM_P(rdsr_src))
+                        /* Walk backward from EBF to find RDSR feeding its
+                           source register. */
+                        for (insn = prev_nonnote_insn(and_insn); insn;
+                             insn = prev_nonnote_insn(insn))
                         {
-                                if (rtx_equal_p(rdsr_dest, and_op0))
-                                {
-                                        and_mask = and_op1;
+                                rtx set = single_set(insn);
+                                if (!set)
+                                        continue;
+                                rtx d = SET_DEST(set);
+                                if (GET_CODE(d) == SUBREG)
+                                        d = XEXP(d, 0);
+                                if (!rtx_equal_p(d, ebf_src_reg))
+                                        continue;
+                                rdsr_dest = d;
+                                rdsr_src = SET_SRC(set);
+                                if (MEM_P(rdsr_src))
                                         break;
-                                }
-                                else if (rtx_equal_p(rdsr_dest, and_op1))
+                                /* non-load def of ebf_src_reg -> stop */
+                                break;
+                        }
+                        and_mask = NULL;
+                }
+                else
+                {
+                        /* Get the operands of AND */
+                        rtx and_src = SET_SRC(single_set(and_insn));
+                        rtx and_op0 = XEXP(and_src, 0);
+                        rtx and_op1 = XEXP(and_src, 1);
+
+                        /* Walk backward from AND to find RDSR */
+                        for (insn = prev_nonnote_insn(and_insn); insn;
+                             insn = prev_nonnote_insn(insn))
+                        {
+                                rtx set = single_set(insn);
+                                if (!set)
+                                        continue;
+
+                                rdsr_dest = SET_DEST(set);
+                                rdsr_src = SET_SRC(set);
+
+                                /* 1st: check insn is load
+                                   2nd: check operand matches (insn dest == AND op0/op1) */
+                                if (MEM_P(rdsr_src))
                                 {
-                                        and_mask = and_op0;
-                                        break;
+                                        if (rtx_equal_p(rdsr_dest, and_op0))
+                                        {
+                                                and_mask = and_op1;
+                                                break;
+                                        }
+                                        else if (rtx_equal_p(rdsr_dest, and_op1))
+                                        {
+                                                and_mask = and_op0;
+                                                break;
+                                        }
                                 }
                         }
                 }
@@ -1508,10 +1575,21 @@ bool oc32_emit_tbsr(rtx op)
                 }
         }
 
-        /* Step 3: AND is matched, RDSR is matched
-                - check AND mask operand: sbsr_mask */
+        /* Step 3: AND/EBF is matched, RDSR is matched
+                - check AND mask operand: sbsr_mask
+                  or EBF bit position: mask = 1 << pos */
         if (rdsr_insn)
         {
+                /* EBF: width == 1 is guaranteed by Step 1, so the mask
+                   (1 << pos) is always a single bit. */
+                if (prod_code == ZERO_EXTRACT)
+                {
+                        emit_insn(gen_tbsr(rdsr_addr,
+                                gen_rtx_CONST_INT(SImode,
+                                        (HOST_WIDE_INT)((unsigned HOST_WIDE_INT)1
+                                                        << INTVAL(ebf_pos)))));
+                        return 1;
+                }
                 /* Case 1: mask is immediate */
                 if (CONST_INT_P(and_mask))
                 {
@@ -1536,13 +1614,16 @@ bool oc32_emit_tbsr(rtx op)
                                 rtx dest = SET_DEST(set);
                                 rtx src = SET_SRC(set);
 
-                                /* Must be (set (reg) (const_int ...)) form */
-                                if (!CONST_INT_P(src))
-                                        continue;
-
-                                /* dest == and_mask? */
+                                /* Is this a def of and_mask?  Unrelated insns
+                                   are skipped; the reaching def of and_mask
+                                   stops the scan. */
                                 if (!rtx_equal_p(dest, and_mask))
                                         continue;
+
+                                /* Only foldable if const_int; otherwise stop
+                                   so we do not match a stale older const def. */
+                                if (!CONST_INT_P(src))
+                                        break;
 
                                 and_mask = gen_rtx_CONST_INT(SImode, (unsigned HOST_WIDE_INT)INTVAL(src) & 0xffffffffu);
                                 if (oc32_sr_setbit_p(and_mask))
