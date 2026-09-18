@@ -752,7 +752,7 @@ oc32_legitimize_address_1(rtx x, rtx scratch, machine_mode mode)
                         return x;
                 break;
         }
-        
+
         default:
                 break;
         }
@@ -1370,10 +1370,16 @@ bool oc32_emit_tbsr_msb(rtx op)
                 rdsr_dest = SET_DEST(set);
                 rdsr_src = SET_SRC(set);
 
-                /* 1st: check insn is load
-                   2nd: check operand matches (insn dest == jump op1) */
-                if (MEM_P(rdsr_src) && rtx_equal_p(rdsr_dest, op))
+                /* 1st: check operand matches (insn dest == jump op1) */
+
+                if (!rtx_equal_p(rdsr_dest, op))
+                        continue;
+
+                /* 2nd: check insn is load, return failed if not */
+                if (MEM_P(rdsr_src))
                         break;
+                else
+                        return 0;
         }
 
         if (insn)
@@ -1398,7 +1404,7 @@ bool oc32_emit_tbsr_msb(rtx op)
                 - emit TBSR */
         if (rdsr_insn)
         {
-                emit_insn(gen_tbsr(rdsr_addr, gen_rtx_CONST_INT(SImode, 0x80000000u)));
+                emit_insn(gen_tbsr(rdsr_addr, gen_rtx_CONST_INT(SImode, (HOST_WIDE_INT)(0x80000000u & 0xffffffffu))));
                 return 1;
         }
         return 0;
@@ -1428,13 +1434,12 @@ bool oc32_emit_tbsr(rtx op)
         rtx rdsr_src;
         rtx rdsr_dest;
         rtx rdsr_addr;
-        enum rtx_code prod_code = AND;     /* AND or ZERO_EXTRACT */
+        enum rtx_code prod_code = AND; /* AND or ZERO_EXTRACT */
         rtx cur_reg = op;
         rtx ebf_src_reg = NULL;
         rtx ebf_pos = NULL;
 
         /* Find the destination matched AND or EBF */
-
         for (insn = get_last_insn_anywhere(); insn; insn = prev_nonnote_insn(insn))
         {
                 rtx set = single_set(insn);
@@ -1458,10 +1463,7 @@ bool oc32_emit_tbsr(rtx op)
                         rtx ze_reg = XEXP(src, 0);
                         rtx ze_width = XEXP(src, 1);
                         rtx ze_pos = XEXP(src, 2);
-                        if (REG_P(ze_reg)
-                            && CONST_INT_P(ze_width) && INTVAL(ze_width) == 1
-                            && CONST_INT_P(ze_pos)
-                            && INTVAL(ze_pos) >= 0 && INTVAL(ze_pos) < 32)
+                        if (REG_P(ze_reg) && CONST_INT_P(ze_width) && INTVAL(ze_width) == 1 && CONST_INT_P(ze_pos) && INTVAL(ze_pos) >= 0 && INTVAL(ze_pos) < 32)
                         {
                                 and_insn = insn;
                                 prod_code = ZERO_EXTRACT;
@@ -1470,7 +1472,7 @@ bool oc32_emit_tbsr(rtx op)
                                 break;
                         }
                         /* defines cur_reg but not foldable EBF -> stop */
-                        break;
+                        return 0;
                 }
                 /* zero_extend: peel and continue tracing the inner reg */
                 if (GET_CODE(src) == ZERO_EXTEND)
@@ -1486,7 +1488,7 @@ bool oc32_emit_tbsr(rtx op)
                         break;
                 }
                 /* if dest == src, but not AND/EBF, return FAIL(default) */
-                break;
+                return 0;
         }
 
         /* Step 2: AND/EBF is matched or skipped, find RDSR
@@ -1516,7 +1518,7 @@ bool oc32_emit_tbsr(rtx op)
                                 if (MEM_P(rdsr_src))
                                         break;
                                 /* non-load def of ebf_src_reg -> stop */
-                                break;
+                                return 0;
                         }
                         and_mask = NULL;
                 }
@@ -1538,8 +1540,11 @@ bool oc32_emit_tbsr(rtx op)
                                 rdsr_dest = SET_DEST(set);
                                 rdsr_src = SET_SRC(set);
 
-                                /* 1st: check insn is load
-                                   2nd: check operand matches (insn dest == AND op0/op1) */
+                                /* 1st: check operand matches (insn dest == AND op0/op1) */
+                                if (!rtx_equal_p(rdsr_dest, and_op0) && !rtx_equal_p(rdsr_dest, and_op1))
+                                        continue;
+
+                                /* 2nd: check insn is load */
                                 if (MEM_P(rdsr_src))
                                 {
                                         if (rtx_equal_p(rdsr_dest, and_op0))
@@ -1553,6 +1558,8 @@ bool oc32_emit_tbsr(rtx op)
                                                 break;
                                         }
                                 }
+                                else
+                                        return 0;
                         }
                 }
 
@@ -1572,6 +1579,8 @@ bool oc32_emit_tbsr(rtx op)
                                 rdsr_insn = insn;
                                 rdsr_addr = gen_rtx_MEM(SImode, rdsr_addr);
                         }
+                        else
+                                return 0;
                 }
         }
 
@@ -1584,10 +1593,7 @@ bool oc32_emit_tbsr(rtx op)
                    (1 << pos) is always a single bit. */
                 if (prod_code == ZERO_EXTRACT)
                 {
-                        emit_insn(gen_tbsr(rdsr_addr,
-                                gen_rtx_CONST_INT(SImode,
-                                        (HOST_WIDE_INT)((unsigned HOST_WIDE_INT)1
-                                                        << INTVAL(ebf_pos)))));
+                        emit_insn(gen_tbsr(rdsr_addr, gen_rtx_CONST_INT(SImode, (HOST_WIDE_INT)((unsigned HOST_WIDE_INT)1 << INTVAL(ebf_pos)))));
                         return 1;
                 }
                 /* Case 1: mask is immediate */
@@ -1599,6 +1605,8 @@ bool oc32_emit_tbsr(rtx op)
                                 emit_insn(gen_tbsr(rdsr_addr, and_mask));
                                 return 1;
                         }
+                        else
+                                return 0;
                 }
                 else // Case 2: mask is register
                 {
@@ -1623,7 +1631,7 @@ bool oc32_emit_tbsr(rtx op)
                                 /* Only foldable if const_int; otherwise stop
                                    so we do not match a stale older const def. */
                                 if (!CONST_INT_P(src))
-                                        break;
+                                        return 0;
 
                                 and_mask = gen_rtx_CONST_INT(SImode, (unsigned HOST_WIDE_INT)INTVAL(src) & 0xffffffffu);
                                 if (oc32_sr_setbit_p(and_mask))
@@ -1632,7 +1640,7 @@ bool oc32_emit_tbsr(rtx op)
                                         return 1;
                                 }
                                 /* dest == and_mask but mask doesn't match -> FAIL(default) */
-                                break;
+                                return 0;
                         }
                 }
         }
@@ -1688,28 +1696,27 @@ bool oc32_emit_sr_binop(rtx op0, rtx op1)
                                    producer would be stale and must not be used.
                                    Only foldable if single-bit with a constant
                                    position in [0,31]. */
-                                if (CONST_INT_P(ze_width)
-                                    && INTVAL(ze_width) == 1
-                                    && CONST_INT_P(ze_pos)
-                                    && INTVAL(ze_pos) >= 0
-                                    && INTVAL(ze_pos) < 32)
+                                if (CONST_INT_P(ze_width) && INTVAL(ze_width) == 1 && CONST_INT_P(ze_pos) && INTVAL(ze_pos) >= 0 && INTVAL(ze_pos) < 32)
                                 {
                                         binop_insn = insn;
                                         binop_code = ZERO_EXTRACT;
-                                        binop_mask = src;      /* value to insert */
+                                        binop_mask = src; /* value to insert */
                                         binop_pos = ze_pos;
                                         break;
                                 }
                                 /* Defines op1 but not foldable (multi-bit or
                                    non-const pos): stop, do not scan past it to
                                    a stale older producer. */
-                                break;
+                                return 0;
                         }
                         /* ze_reg != op1: unrelated MBF on another register. */
                         continue;
                 }
                 /* insn dest == WRSR src ? */
-                if (rtx_equal_p(dest, op1))
+                rtx dest_reg = dest;
+                if (GET_CODE(dest) == SUBREG)
+                        dest_reg = XEXP(dest, 0);
+                if (rtx_equal_p(dest_reg, op1))
                 {
                         /* is IOR ? */
                         if (GET_CODE(src) == IOR)
@@ -1726,7 +1733,7 @@ bool oc32_emit_sr_binop(rtx op0, rtx op1)
                                 break;
                         }
                         /* if dest == src, but not AND/OR, return FAIL(default) */
-                        break;
+                        return 0;
                 }
         }
 
@@ -1768,8 +1775,11 @@ bool oc32_emit_sr_binop(rtx op0, rtx op1)
                         rdsr_dest = SET_DEST(set);
                         rdsr_src = SET_SRC(set);
 
-                        /* 1st: check insn is load
-                           2nd: check operand matches (insn dest == BINOP op0/op1) */
+                        /* 1st: check operand matches (insn dest == AND op0/op1) */
+                        if (!rtx_equal_p(rdsr_dest, binop_op0) && !rtx_equal_p(rdsr_dest, binop_op1))
+                                continue;
+
+                        /* 2nd: check insn is load */
                         if (MEM_P(rdsr_src))
                         {
                                 if (rtx_equal_p(rdsr_dest, binop_op0))
@@ -1782,6 +1792,8 @@ bool oc32_emit_sr_binop(rtx op0, rtx op1)
                                         binop_mask = binop_op0;
                                         break;
                                 }
+                                else
+                                        return 0;
                         }
                 }
 
@@ -1793,13 +1805,23 @@ bool oc32_emit_sr_binop(rtx op0, rtx op1)
                         rtx rdsr_addr = XEXP(rdsr_src, 0);
                         if (MEM_P(rdsr_addr))
                                 rdsr_addr = XEXP(rdsr_addr, 0); // 提取内层地址
-                        match = rtx_equal_p(rdsr_addr, XEXP(op0, 0));
+                        if (CONST_INT_P(rdsr_addr))
+                        {
+                                rtx op0_addr = XEXP(op0, 0);
+                                if (MEM_P(op0_addr))
+                                        op0_addr = XEXP(op0_addr, 0); // 同样提取内层地址
+                                if (CONST_INT_P(op0_addr))
+                                        match = (INTVAL(rdsr_addr) == INTVAL(op0_addr)) && oc32_sr_address_range(INTVAL(rdsr_addr));
+                        }
 
                         if (match)
-
                                 rdsr_insn = insn;
+                        else
+                                return 0;
                 }
-                /* if dest != src -> AND/OR is not for SBSR/CBSR, return FAIL(default) */
+                else
+                        /* if dest != src -> AND/OR is not for SBSR/CBSR, return FAIL(default) */
+                        return 0;
         }
 
         /* Step 3: AND/OR/MBF is matched, RDSR is matched
@@ -1837,18 +1859,18 @@ bool oc32_emit_sr_binop(rtx op0, rtx op1)
                         if (v == 1)
                         {
                                 emit_insn(gen_sbsr(op0,
-                                        gen_rtx_CONST_INT(SImode,
-                                                (HOST_WIDE_INT)((unsigned HOST_WIDE_INT)1
-                                                                << INTVAL(binop_pos)))));
+                                                   gen_rtx_CONST_INT(SImode,
+                                                                     (HOST_WIDE_INT)((unsigned HOST_WIDE_INT)1
+                                                                                     << INTVAL(binop_pos)))));
                                 return 1;
                         }
                         if (v == 0)
                         {
                                 emit_insn(gen_cbsr(op0,
-                                        gen_rtx_CONST_INT(SImode,
-                                                (HOST_WIDE_INT)(~((unsigned HOST_WIDE_INT)1
-                                                                  << INTVAL(binop_pos))
-                                                                & 0xffffffffu))));
+                                                   gen_rtx_CONST_INT(SImode,
+                                                                     (HOST_WIDE_INT)(~((unsigned HOST_WIDE_INT)1
+                                                                                       << INTVAL(binop_pos)) &
+                                                                                     0xffffffffu))));
                                 return 1;
                         }
                         /* src not const 0/1 -> cannot fold -> FAIL(default) */
@@ -1938,7 +1960,7 @@ bool oc32_emit_sr_binop(rtx op0, rtx op1)
    expression, or no defining insn is found.  Callers must still gate the
    result with oc32_sr_address_range(). */
 static HOST_WIDE_INT
-oc32_sr_val_from_reg_def (rtx reg)
+oc32_sr_val_from_reg_def(rtx reg)
 {
         if (!REG_P(reg))
                 return -1;
@@ -1949,9 +1971,7 @@ oc32_sr_val_from_reg_def (rtx reg)
                 if (!reg_set_p(reg, p))
                         continue;
                 rtx s = single_set(p);
-                if (s && REG_P(SET_DEST(s))
-                    && rtx_equal_p(SET_DEST(s), reg)
-                    && CONST_INT_P(SET_SRC(s)))
+                if (s && REG_P(SET_DEST(s)) && rtx_equal_p(SET_DEST(s), reg) && CONST_INT_P(SET_SRC(s)))
                         return INTVAL(SET_SRC(s));
                 /* REG is set/clobbered by something that is not a simple
                    const_int load: stop, we cannot recover a constant. */
@@ -1986,20 +2006,14 @@ void oc32_expand_move(machine_mode mode, rtx *operands)
                         tree expr = MEM_EXPR(op0);
                         /* The MEM_EXPR may be a COMPONENT_REF / ARRAY_REF chain
                            over the constant-address MEM_REF; descend to it. */
-                        while (expr && (TREE_CODE(expr) == COMPONENT_REF
-                                        || TREE_CODE(expr) == ARRAY_REF
-                                        || TREE_CODE(expr) == ARRAY_RANGE_REF))
+                        while (expr && (TREE_CODE(expr) == COMPONENT_REF || TREE_CODE(expr) == ARRAY_REF || TREE_CODE(expr) == ARRAY_RANGE_REF))
                                 expr = TREE_OPERAND(expr, 0);
                         if (expr && TREE_CODE(expr) == MEM_REF)
                         {
                                 tree addr_tree = TREE_OPERAND(expr, 0);
                                 /* Walk through ADDR_EXPR / VIEW_CONVERT_EXPR /
                                    NOP_EXPR / CONVERT_EXPR / NON_LVALUE_EXPR to find constant */
-                                while (TREE_CODE(addr_tree) == ADDR_EXPR
-                                       || TREE_CODE(addr_tree) == VIEW_CONVERT_EXPR
-                                       || TREE_CODE(addr_tree) == NOP_EXPR
-                                       || TREE_CODE(addr_tree) == CONVERT_EXPR
-                                       || TREE_CODE(addr_tree) == NON_LVALUE_EXPR)
+                                while (TREE_CODE(addr_tree) == ADDR_EXPR || TREE_CODE(addr_tree) == VIEW_CONVERT_EXPR || TREE_CODE(addr_tree) == NOP_EXPR || TREE_CODE(addr_tree) == CONVERT_EXPR || TREE_CODE(addr_tree) == NON_LVALUE_EXPR)
                                         addr_tree = TREE_OPERAND(addr_tree, 0);
                                 if (tree_fits_uhwi_p(addr_tree))
                                         sr_val = (HOST_WIDE_INT)tree_to_uhwi(addr_tree);
@@ -2020,18 +2034,12 @@ void oc32_expand_move(machine_mode mode, rtx *operands)
                         tree expr = MEM_EXPR(op0);
                         /* The MEM_EXPR may be a COMPONENT_REF / ARRAY_REF chain
                            over the constant-address MEM_REF; descend to it. */
-                        while (expr && (TREE_CODE(expr) == COMPONENT_REF
-                                        || TREE_CODE(expr) == ARRAY_REF
-                                        || TREE_CODE(expr) == ARRAY_RANGE_REF))
+                        while (expr && (TREE_CODE(expr) == COMPONENT_REF || TREE_CODE(expr) == ARRAY_REF || TREE_CODE(expr) == ARRAY_RANGE_REF))
                                 expr = TREE_OPERAND(expr, 0);
                         if (expr && TREE_CODE(expr) == MEM_REF)
                         {
                                 tree addr_tree = TREE_OPERAND(expr, 0);
-                                while (TREE_CODE(addr_tree) == ADDR_EXPR
-                                       || TREE_CODE(addr_tree) == VIEW_CONVERT_EXPR
-                                       || TREE_CODE(addr_tree) == NOP_EXPR
-                                       || TREE_CODE(addr_tree) == CONVERT_EXPR
-                                       || TREE_CODE(addr_tree) == NON_LVALUE_EXPR)
+                                while (TREE_CODE(addr_tree) == ADDR_EXPR || TREE_CODE(addr_tree) == VIEW_CONVERT_EXPR || TREE_CODE(addr_tree) == NOP_EXPR || TREE_CODE(addr_tree) == CONVERT_EXPR || TREE_CODE(addr_tree) == NON_LVALUE_EXPR)
                                         addr_tree = TREE_OPERAND(addr_tree, 0);
                                 if (tree_fits_uhwi_p(addr_tree))
                                 {
@@ -2086,20 +2094,14 @@ void oc32_expand_move(machine_mode mode, rtx *operands)
                         tree expr = MEM_EXPR(op1);
                         /* The MEM_EXPR may be a COMPONENT_REF / ARRAY_REF chain
                            over the constant-address MEM_REF; descend to it. */
-                        while (expr && (TREE_CODE(expr) == COMPONENT_REF
-                                        || TREE_CODE(expr) == ARRAY_REF
-                                        || TREE_CODE(expr) == ARRAY_RANGE_REF))
+                        while (expr && (TREE_CODE(expr) == COMPONENT_REF || TREE_CODE(expr) == ARRAY_REF || TREE_CODE(expr) == ARRAY_RANGE_REF))
                                 expr = TREE_OPERAND(expr, 0);
                         if (expr && TREE_CODE(expr) == MEM_REF)
                         {
                                 tree addr_tree = TREE_OPERAND(expr, 0);
                                 /* Walk through ADDR_EXPR / VIEW_CONVERT_EXPR /
                                    NOP_EXPR / CONVERT_EXPR / NON_LVALUE_EXPR to find constant */
-                                while (TREE_CODE(addr_tree) == ADDR_EXPR
-                                       || TREE_CODE(addr_tree) == VIEW_CONVERT_EXPR
-                                       || TREE_CODE(addr_tree) == NOP_EXPR
-                                       || TREE_CODE(addr_tree) == CONVERT_EXPR
-                                       || TREE_CODE(addr_tree) == NON_LVALUE_EXPR)
+                                while (TREE_CODE(addr_tree) == ADDR_EXPR || TREE_CODE(addr_tree) == VIEW_CONVERT_EXPR || TREE_CODE(addr_tree) == NOP_EXPR || TREE_CODE(addr_tree) == CONVERT_EXPR || TREE_CODE(addr_tree) == NON_LVALUE_EXPR)
                                         addr_tree = TREE_OPERAND(addr_tree, 0);
                                 if (tree_fits_uhwi_p(addr_tree))
                                         sr_val = (HOST_WIDE_INT)tree_to_uhwi(addr_tree);
@@ -2120,18 +2122,12 @@ void oc32_expand_move(machine_mode mode, rtx *operands)
                         tree expr = MEM_EXPR(op1);
                         /* The MEM_EXPR may be a COMPONENT_REF / ARRAY_REF chain
                            over the constant-address MEM_REF; descend to it. */
-                        while (expr && (TREE_CODE(expr) == COMPONENT_REF
-                                        || TREE_CODE(expr) == ARRAY_REF
-                                        || TREE_CODE(expr) == ARRAY_RANGE_REF))
+                        while (expr && (TREE_CODE(expr) == COMPONENT_REF || TREE_CODE(expr) == ARRAY_REF || TREE_CODE(expr) == ARRAY_RANGE_REF))
                                 expr = TREE_OPERAND(expr, 0);
                         if (expr && TREE_CODE(expr) == MEM_REF)
                         {
                                 tree addr_tree = TREE_OPERAND(expr, 0);
-                                while (TREE_CODE(addr_tree) == ADDR_EXPR
-                                       || TREE_CODE(addr_tree) == VIEW_CONVERT_EXPR
-                                       || TREE_CODE(addr_tree) == NOP_EXPR
-                                       || TREE_CODE(addr_tree) == CONVERT_EXPR
-                                       || TREE_CODE(addr_tree) == NON_LVALUE_EXPR)
+                                while (TREE_CODE(addr_tree) == ADDR_EXPR || TREE_CODE(addr_tree) == VIEW_CONVERT_EXPR || TREE_CODE(addr_tree) == NOP_EXPR || TREE_CODE(addr_tree) == CONVERT_EXPR || TREE_CODE(addr_tree) == NON_LVALUE_EXPR)
                                         addr_tree = TREE_OPERAND(addr_tree, 0);
                                 if (tree_fits_uhwi_p(addr_tree))
                                 {
@@ -2424,7 +2420,7 @@ void oc32_expand_cbranch(rtx *operands)
                 return;
 
         case GE:
-                /* if SR pattern matches, emit TBSR+JNZ */
+                /* if SR/CMP pattern matches, emit TBSR+JNZ */
                 if (CONST_INT_P(operands[2]) && (val == 0) && (oc32_emit_tbsr_msb(operands[1])))
                 {
                         emit_jump_insn(gen_jump_ne_z(gen_rtx_REG(SImode, OC32_R3), operands[3]));
@@ -2440,7 +2436,7 @@ void oc32_expand_cbranch(rtx *operands)
                 return;
 
         case LT:
-                /* if SR pattern matches, emit TBSR+JNZ */
+                /* if SR/CMP pattern matches, emit TBSR+JNZ */
                 if (CONST_INT_P(operands[2]) && (val == 0) && (oc32_emit_tbsr_msb(operands[1])))
                 {
                         emit_jump_insn(gen_jump_eq_z(gen_rtx_REG(SImode, OC32_R3), operands[3]));
