@@ -34,8 +34,8 @@
 * ============================================================ */
 .section .boot, "ax"
 .global _start, __FUSE_PID, __FUSE_LID, __FUSE_TSN
-.global __FUSE_BPCON, __FUSE_IOSCCON, __FUSE_LVDCON, __FUSE_VTSCON, __FUSE_AMPCON
-.global __FUSE_ABUFCON, __FUSE_CMP0CON, __FUSE_CMP1CON, __FUSE_CMP2CON, __FUSE_VTTABLE
+.global __FUSE_REGTIM0, __FUSE_REGTIM1, __FUSE_REGTIM2, __FUSE_REGTIM3, 
+.global __FUSE_VTTABLE
 .global __FUSE_REGSAVE
 .type _start, @function
 _start:
@@ -50,50 +50,20 @@ bit6~4: hardware interrupt entry offset 4/8/16/32/64/128/256/512
     WRSR    CMODE,  R9
 
 /* Load Hardware Trim */
-	MOVH	R9,  __FUSE_BPCON
-	OR		R9,  R9,  __FUSE_BPCON
-	LW		R10,  [R9]
+	MOVH	R9,  __FUSE_REGTIM0
+	OR		R9,  R9,  __FUSE_REGTIM0
+	LWI		R10,  [R9]
 	WRSR	BPCON,  R10
 
-	MOVH	R9,  __FUSE_IOSCCON
-	OR		R9,  R9,  __FUSE_IOSCCON
-	LW		R10,  [R9]
+	LWI		R10,  [R9]
 	WRSR	IOSCCON,  R10
 
-	MOVH	R9,  __FUSE_LVDCON
-	OR		R9,  R9,  __FUSE_LVDCON
-	LW		R10,  [R9]
+	LWI		R10,  [R9]
 	WRSR	LVDCON,  R10
 
-	MOVH	R9,  __FUSE_VTSCON
-	OR		R9,  R9,  __FUSE_VTSCON
-	LW		R10,  [R9]
+	LWI		R10,  [R9]
 	WRSR	VTSCON,  R10
 
-	MOVH	R9,  __FUSE_AMPCON
-	OR		R9,  R9,  __FUSE_AMPCON
-	LW		R10,  [R9]
-	WRSR	AMPCON,  R10
-
-	MOVH	R9,  __FUSE_ABUFCON
-	OR		R9,  R9,  __FUSE_ABUFCON
-	LW		R10,  [R9]
-	WRSR	ABUFCON,  R10
-
-	MOVH	R9,  __FUSE_CMP0CON
-	OR		R9,  R9,  __FUSE_CMP0CON
-	LW		R10,  [R9]
-	WRSR	CMP0CON,  R10
-
-	MOVH	R9,  __FUSE_CMP1CON
-	OR		R9,  R9,  __FUSE_CMP1CON
-	LW		R10,  [R9]
-	WRSR	CMP1CON,  R10
-
-	MOVH	R9,  __FUSE_CMP2CON
-	OR		R9,  R9,  __FUSE_CMP2CON
-	LW		R10,  [R9]
-	WRSR	CMP2CON,  R10
 
 /* Save __FUSE_REGSAVE value into interrupt section (SRAM) for fast read */
 	MOVH	R9,  __FUSE_REGSAVE
@@ -118,59 +88,67 @@ bit6~4: hardware interrupt entry offset 4/8/16/32/64/128/256/512
 * ============================================================ */
 .org	_start + 3072
 
-/* Product ID (ASCII) - 16 bytes */
+/* Product ID - 16 bytes */
 __FUSE_PID:
-.word	0x00000000
-.word	0x00000000
-.word	0x00000000
+.word	0x00000000  /* Device ID */
+.word	0x00000000  /* Revision ID */
+.word	0x00000000  
 .word	0x00000000
 
-/* LOT ID (ASCII) - 16 bytes */
+/* LOT ID - 16 bytes */
 __FUSE_LID:
 .word	0x00000000
 .word	0x00000000
 .word	0x00000000
 .word	0x00000000
 
-/* Test Serial Number - 16 bytes */
+/* Test Serial Number(UID) - 16 bytes */
 __FUSE_TSN:
 .word	0x00000000
 .word	0x00000000
 .word	0x00000000
 .word	0x00000000
 
-/* Hardware Trim Value */
-__FUSE_BPCON:
-.word	0x00000000
-
-__FUSE_IOSCCON:
-.word	0x00000000
-
-__FUSE_LVDCON:
-.word	0x00000000
-
-__FUSE_VTSCON:
-.word	0x00000000
-
-__FUSE_AMPCON:
-.word	0x00000000
-
-__FUSE_ABUFCON:
-.word	0x00000000
-
-__FUSE_CMP0CON:
-.word	0x00000000
-
-__FUSE_CMP1CON:
-.word	0x00000000
-
-__FUSE_CMP2CON:
-.word	0x00000000
-
 /* Model options */
 __FUSE_REGSAVE:
 /* 0: this model supports R0~R7 hardware stacks for interrupt */
 /* 1: this model supports R0~R31 hardware stacks for interrupt */
+.word	0x00000000
+
+/* reserved */
+.word	0x00000000
+.word	0x00000000
+.word	0x00000000
+.word	0x00000000
+.word	0x00000000
+.word	0x00000000
+.word	0x00000000
+
+/* Hardware Trim Value */
+/* REG trim0(same for all models): BPCON, IOSCCON, LVDCON, VTSCON */
+__FUSE_REGTRIM0:
+.word	0x00000000
+.word	0x00000000
+.word	0x00000000
+.word	0x00000000
+
+/* REG trim1~3(different base on models):  */
+__FUSE_REGTRIM1:
+.word	0x00000000
+.word	0x00000000
+.word	0x00000000
+.word	0x00000000
+
+__FUSE_REGTRIM2:
+.word	0x00000000
+.word	0x00000000
+.word	0x00000000
+.word	0x00000000
+
+__FUSE_REGTRIM3:
+.word	0x00000000
+.word	0x00000000
+.word	0x00000000
 .word	0x00000000
 
 /* VTS -> ADC -> Temperature Table(128 bytes/points)*/
