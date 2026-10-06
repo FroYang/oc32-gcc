@@ -2261,10 +2261,13 @@ void oc32_expand_cstore(rtx *operands)
            For unsigned comparisons (LTU, LEU, GTU, GEU), use 0-65535 range.
            For signed comparisons, use -32768 to 32767 range.  */
         bool valid_imm = false;
+        HOST_WIDE_INT val = -1;
         if (CONST_INT_P(operands[3]))
         {
-                HOST_WIDE_INT val = INTVAL(operands[3]);
-                if (code == LTU || code == LEU || code == GTU || code == GEU)
+                val = INTVAL(operands[3]);
+                if (code == EQ || code == NE)
+                        valid_imm = (val >= -32768 && val <= 65535);
+                else if (code == LTU || code == LEU || code == GTU || code == GEU)
                         valid_imm = (val >= 0 && val <= 65535);
                 else
                         valid_imm = (val >= -32768 && val <= 32767);
@@ -2337,11 +2340,25 @@ void oc32_expand_cstore(rtx *operands)
                 break;
 
         case EQ:
-                emit_insn(gen_seq(operands[0], operands[2], operands[3]));
+                if (CONST_INT_P(operands[3]) && (val > 0))
+                {
+                        emit_insn(gen_sequ(operands[0], operands[2], operands[3]));
+                }
+                else
+                {
+                        emit_insn(gen_seq(operands[0], operands[2], operands[3]));
+                }
                 break;
 
         case NE:
-                emit_insn(gen_sne(operands[0], operands[2], operands[3]));
+                if (CONST_INT_P(operands[3]) && (val > 0))
+                {
+                        emit_insn(gen_sneu(operands[0], operands[2], operands[3]));
+                }
+                else
+                {
+                        emit_insn(gen_sne(operands[0], operands[2], operands[3]));
+                }
                 break;
 
         case LTGT:
@@ -2378,7 +2395,9 @@ void oc32_expand_cbranch(rtx *operands)
         if (CONST_INT_P(operands[2]))
         {
                 val = INTVAL(operands[2]);
-                if (code == LTU || code == LEU || code == GTU || code == GEU)
+                if (code == EQ || code == NE)
+                        valid_imm = (val >= -32768 && val <= 65535);
+                else if (code == LTU || code == LEU || code == GTU || code == GEU)
                         valid_imm = (val >= 0 && val <= 65535);
                 else
                         valid_imm = (val >= -32768 && val <= 32767);
@@ -2486,6 +2505,10 @@ void oc32_expand_cbranch(rtx *operands)
                                 emit_jump_insn(gen_jump_eq_z(operands[1], operands[3]));
                         }
                 }
+                else if (CONST_INT_P(operands[2]) && (val > 0))
+                {
+                        emit_jump_insn(gen_jumpequ(operands[1], operands[2], operands[3]));
+                }
                 else
                 {
                         emit_jump_insn(gen_jumpeq(operands[1], operands[2], operands[3]));
@@ -2504,6 +2527,10 @@ void oc32_expand_cbranch(rtx *operands)
                         {
                                 emit_jump_insn(gen_jump_ne_z(operands[1], operands[3]));
                         }
+                }
+                else if (CONST_INT_P(operands[2]) && (val > 0))
+                {
+                        emit_jump_insn(gen_jumpneu(operands[1], operands[2], operands[3]));
                 }
                 else
                 {

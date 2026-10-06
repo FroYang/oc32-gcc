@@ -34,7 +34,7 @@
 * ============================================================ */
 .section .boot, "ax"
 .global _start, __FUSE_PID, __FUSE_LID, __FUSE_TSN
-.global __FUSE_REGTIM0, __FUSE_REGTIM1, __FUSE_REGTIM2, __FUSE_REGTIM3, 
+.global __FUSE_REGTRIM0, __FUSE_REGTRIM1, __FUSE_REGTRIM2, __FUSE_REGTRIM3, 
 .global __FUSE_VTTABLE
 .global __FUSE_REGSAVE
 .type _start, @function
@@ -50,8 +50,8 @@ bit6~4: hardware interrupt entry offset 4/8/16/32/64/128/256/512
     WRSR    CMODE,  R9
 
 /* Load Hardware Trim */
-	MOVH	R9,  __FUSE_REGTIM0
-	OR		R9,  R9,  __FUSE_REGTIM0
+	MOVH	R9,  __FUSE_REGTRIM0
+	OR		R9,  R9,  __FUSE_REGTRIM0
 	LWI		R10,  [R9]
 	WRSR	BPCON,  R10
 
