@@ -1,4 +1,1 @@
-��print *, "Hello world!"
-��end ! { dg-error "Invalid character" }
-! { dg-do compile }
-! { dg-error "Unexpected end of file" "" { target "*-*-*" } 0 }
+牰湩⁴Ⱚ∠效汬⁯潷汲Ⅴਢ﻿湥⁤‡⁻杤攭牲牯∠湉慶楬⁤档牡捡整≲素ℊ笠搠ⵧ潤挠浯楰敬素ℊ笠搠ⵧ牥潲⁲唢敮灸捥整⁤湥⁤景映汩≥∠•⁻慴杲瑥∠⴪⴪∪素〠素

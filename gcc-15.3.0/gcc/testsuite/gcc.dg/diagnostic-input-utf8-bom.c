@@ -1,4 +1,4 @@
-﻿int 1;
+int 1;
 /* { dg-do compile } */
 /* { dg-options "-fdiagnostics-show-caret" } */
 

@@ -1,3 +1,3 @@
-﻿print *, "Hello world"
+print *, "Hello world"
 end
 ! { dg-do compile }

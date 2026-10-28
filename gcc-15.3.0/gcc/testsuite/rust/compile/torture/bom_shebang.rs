@@ -1,2 +1,2 @@
-﻿#!/usr/bin/cat
+#!/usr/bin/cat
 pub fn main () { }

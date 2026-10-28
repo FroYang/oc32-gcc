@@ -1,4 +1,4 @@
-﻿/* Target Code for oc32
+/* Target Code for oc32
    Copyright (C) 2015-2023 Free Software Foundation, Inc.
 
    This file is part of GCC.

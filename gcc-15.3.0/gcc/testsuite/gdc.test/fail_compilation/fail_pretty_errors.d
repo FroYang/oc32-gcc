@@ -1,4 +1,4 @@
-﻿/*
+/*
 REQUIRED_ARGS: -verrors=context
 TEST_OUTPUT:
 ---

@@ -1,2 +1,2 @@
-﻿// UTF8 BOM
+// UTF8 BOM
 pub fn main () { }

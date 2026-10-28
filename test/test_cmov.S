@@ -1,9 +1,8 @@
 	.file	"test_cmov.c"
 # GNU C23 (GCC) version 15.3.0 (oc32-none-elf)
-#	compiled by GNU C version 15.2.0, GMP version 6.2.1, MPFR version 4.1.0, MPC version 1.2.1, isl version isl-0.24-GMP
-
+#	compiled by GNU C version 15.2.0, GMP version 6.3.0, MPFR version 4.2.2, MPC version 1.3.1, isl version none
 # GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
-# options passed: -mzfsf -Os
+# options passed: -mzfsf -Os -ffreestanding
 	.section	.text
 	.align 2
 	.global	test_cmov0

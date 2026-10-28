@@ -1,4 +1,4 @@
-﻿// { dg-do compile }
+// { dg-do compile }
 ﻿module object; // { dg-error "character 0xfeff is not a valid token" }
 
 extern(C):

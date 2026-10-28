@@ -1,4 +1,4 @@
-﻿/**
+/**
  * D header file for Solaris.
  *
  * $(LINK2 http://src.illumos.org/source/xref/illumos-gate/usr/src/head/link.h, illumos link.h)

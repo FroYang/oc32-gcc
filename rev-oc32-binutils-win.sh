@@ -5,8 +5,8 @@ set -o pipefail
 # 设置构建参数
 export PREFIX=$HOME/oc32/windows
 export TARGET=oc32-none-elf
-export SRC=$HOME/oc32/gcc/binutils-gdb
-export BUILD=$HOME/oc32/gcc/binutils-gdb-build-win
+export SRC=$HOME/GitHub/oc32-gcc/binutils-gdb
+export BUILD=$HOME/GitHub/oc32-gcc/binutils-gdb-build-win
 
 # 设置 POSIX 版本的 MinGW 工具链
 export CC=x86_64-w64-mingw32-gcc-posix
