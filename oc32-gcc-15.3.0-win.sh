@@ -69,7 +69,7 @@ make install-gcc 2>&1 | tee make-install-gcc.log
 
 # build GCC libgcc
 echo "=== 编译 libgcc ==="
-make -j1 V=2 all-target-libgcc 2>&1 | tee make-libgcc.log
+make -j$(nproc) V=2 all-target-libgcc 2>&1 | tee make-libgcc.log
 
 # 安装 libgcc
 echo "=== 安装 libgcc ==="

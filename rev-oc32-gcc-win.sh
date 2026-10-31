@@ -6,9 +6,10 @@ set -o pipefail
 export OC32=$HOME/oc32
 export PREFIX=$OC32/windows
 export TARGET=oc32-none-elf    # 与 binutils 保持一致
-export SRC=$HOME/oc32/gcc/gcc-15.3.0
-export BUILD=$HOME/oc32/gcc/gcc-15.3.0-build-win
+export SRC=$HOME/GitHub/oc32-gcc/gcc-15.3.0
+export BUILD=$HOME/GitHub/oc32-gcc/gcc-15.3.0-build-win
 export PATH=$PATH:$OC32/linux/bin
+
 
 if [ ! -f "$OC32/linux/bin/${TARGET}-as" ] || [ ! -f "$OC32/linux/bin/${TARGET}-ld" ]; then
 	echo "错误：未找到binutils工具，请先构建binutils"
@@ -38,7 +39,7 @@ make install-gcc 2>&1 | tee make-install-gcc.log
 
 # build GCC libgcc
 echo "=== 编译 libgcc ==="
-make -j1 V=2 all-target-libgcc 2>&1 | tee make-libgcc.log
+make -j$(nproc) V=2 all-target-libgcc 2>&1 | tee make-libgcc.log
 
 # 安装 libgcc
 echo "=== 安装 libgcc ==="

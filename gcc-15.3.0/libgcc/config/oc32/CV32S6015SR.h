@@ -292,1159 +292,1846 @@
 #define DAC1DC 0x83FC
 
 //---------------------------------------------------------------;
-// CV32S6015 Register bit definition for ASM                     ;
+// CV32S6015 Register bit definition                             ;
 //---------------------------------------------------------------;
-//-------------------
-//	CMODE
-#define UWSRP 0
-#define HISE 1
-#define SRME 2
-
-//-------------------
-//	HRF
-#define VTSAFCLR 14
-#define VTSAF 15
-#define WDT0RFCLR 18
-#define WDT0RF 19
-#define WDT1RFCLR 20
-#define WDT1RF 21
-#define LVDRFCLR 22
-#define LVDRF 23
-#define DBGRFCLR 24
-#define DBGRF 25
-#define IERFCLR 26
-#define IERF 27
-#define PORFCLR 30
-#define PORF 31
-
-//-------------------
-//	ALMCON
-#define VTSARE 14
 
-//-------------------
-//	BPCON
-#define HOLD 30
-#define SLEEP 31
-
-//-------------------
-//	CLKCON
-#define IOSCH 0
-#define IOSCUTE 1
-#define IOSCUTL 2
-#define PLLE 4
-#define PLLM 5
-#define XHOSCE 6
-#define CSF 7
-#define FLMCG 15
-#define CRCMCG 16
-#define ADCMCG 18
-
-//-------------------
-//	FLUCON
-#define FLUKS 15
-#define FLUWIPC 20
-#define FLUSC 21
-#define FLUSS 22
-#define FLURUCS 23
-#define FLURRE 27
-#define FLDCTP 28
-#define FLUIE 29
-#define FLUOCLR 30
-#define FLUOPF 31
-
-//-------------------
-//	ADC0CON
-#define ADC0E 0
-#define ADC0DMADA 1
-#define ADC0UCS 7
-#define ADC0P0REE 17
-#define ADC0P0FEE 18
-#define ADC0P1REE 24
-#define ADC0P1FEE 25
-#define ADC0ESDLYP 27
-
-//-------------------
-//	ADC0E0CC
-#define ADC0E0CCLR 30
-#define ADC0E0CF 31
-
-//-------------------
-//	ADC0E1CC
-#define ADC0E1CCLR 30
-#define ADC0E1CF 31
-
-//-------------------
-//	ADC0E2CC
-#define ADC0E2CCLR 30
-#define ADC0E2CF 31
-
-//-------------------
-//	ADC0E3CC
-#define ADC0E3CCLR 30
-#define ADC0E3CF 31
-
-//-------------------
-//	ADC0E4CC
-#define ADC0E4CCLR 30
-#define ADC0E4CF 31
-
-//-------------------
-//	ADC0E5CC
-#define ADC0E5CCLR 30
-#define ADC0E5CF 31
-
-//-------------------
-//	ADC0E6CC
-#define ADC0E6CCLR 30
-#define ADC0E6CF 31
-
-//-------------------
-//	ADC0E7CC
-#define ADC0E7CCLR 30
-#define ADC0E7CF 31
-
-//-------------------
-//	ADC0DC0
-#define ADC0E0DMAE 7
-#define ADC0E1DMAE 15
-#define ADC0E2DMAE 23
-#define ADC0E3DMAE 31
-
-//-------------------
-//	ADC0DC1
-#define ADC0E4DMAE 7
-#define ADC0E5DMAE 15
-#define ADC0E6DMAE 23
-#define ADC0E7DMAE 31
-
-//-------------------
-//	ADC0WW0
-#define ADC0E0IB 12
-#define ADC0E1IB 13
-#define ADC0E2IB 14
-#define ADC0E3IB 15
-#define ADC0E4IB 28
-#define ADC0E5IB 29
-#define ADC0E6IB 30
-#define ADC0E7IB 31
-
-//-------------------
-//	ADC0WC0
-#define ADC0W0E0E 0
-#define ADC0W0E1E 1
-#define ADC0W0E2E 2
-#define ADC0W0E3E 3
-#define ADC0W0E4E 4
-#define ADC0W0E5E 5
-#define ADC0W0E6E 6
-#define ADC0W0E7E 7
-#define ADC0E0OV 8
-#define ADC0E1OV 9
-#define ADC0E2OV 10
-#define ADC0E3OV 11
-#define ADC0E4OV 12
-#define ADC0E5OV 13
-#define ADC0E6OV 14
-#define ADC0E7OV 15
-#define ADC0W0E0CLR 16
-#define ADC0W0E1CLR 18
-#define ADC0W0E2CLR 20
-#define ADC0W0E3CLR 22
-#define ADC0W0E4CLR 24
-#define ADC0W0E5CLR 26
-#define ADC0W0E6CLR 28
-#define ADC0W0E7CLR 30
-#define ADC0W0E0F 17
-#define ADC0W0E1F 19
-#define ADC0W0E2F 21
-#define ADC0W0E3F 23
-#define ADC0W0E4F 25
-#define ADC0W0E5F 27
-#define ADC0W0E6F 29
-#define ADC0W0E7F 31
-
-//-------------------
-//	ADC0WC1
-#define ADC0W1E0E 0
-#define ADC0W1E1E 1
-#define ADC0W1E2E 2
-#define ADC0W1E3E 3
-#define ADC0W1E4E 4
-#define ADC0W1E5E 5
-#define ADC0W1E6E 6
-#define ADC0W1E7E 7
-#define ADC0E0IE 8
-#define ADC0E1IE 9
-#define ADC0E2IE 10
-#define ADC0E3IE 11
-#define ADC0E4IE 12
-#define ADC0E5IE 13
-#define ADC0E6IE 14
-#define ADC0E7IE 15
-#define ADC0W1E0CLR 16
-#define ADC0W1E1CLR 18
-#define ADC0W1E2CLR 20
-#define ADC0W1E3CLR 22
-#define ADC0W1E4CLR 24
-#define ADC0W1E5CLR 26
-#define ADC0W1E6CLR 28
-#define ADC0W1E7CLR 30
-#define ADC0W1E0F 17
-#define ADC0W1E1F 19
-#define ADC0W1E2F 21
-#define ADC0W1E3F 23
-#define ADC0W1E4F 25
-#define ADC0W1E5F 27
-#define ADC0W1E6F 29
-#define ADC0W1E7F 31
-
-//-------------------
-//	ADC1CON
-#define ADC1E 0
-#define ADC1DMADA 1
-#define ADC1UCS 7
-#define ADC1P0REE 17
-#define ADC1P0FEE 18
-#define ADC1P1REE 24
-#define ADC1P1FEE 25
-#define ADC1ESDLYP 27
-
-//-------------------
-//	ADC1E0CC
-#define ADC1E0CCLR 30
-#define ADC1E0CF 31
-
-//-------------------
-//	ADC1E1CC
-#define ADC1E1CCLR 30
-#define ADC1E1CF 31
-
-//-------------------
-//	ADC1E2CC
-#define ADC1E2CCLR 30
-#define ADC1E2CF 31
-
-//-------------------
-//	ADC1E3CC
-#define ADC1E3CCLR 30
-#define ADC1E3CF 31
-
-//-------------------
-//	ADC1E4CC
-#define ADC1E4CCLR 30
-#define ADC1E4CF 31
-
-//-------------------
-//	ADC1E5CC
-#define ADC1E5CCLR 30
-#define ADC1E5CF 31
-
-//-------------------
-//	ADC1E6CC
-#define ADC1E6CCLR 30
-#define ADC1E6CF 31
-
-//-------------------
-//	ADC1E7CC
-#define ADC1E7CCLR 30
-#define ADC1E7CF 31
-
-//-------------------
-//	ADC1DC0
-#define ADC1E0DMAE 7
-#define ADC1E1DMAE 15
-#define ADC1E2DMAE 23
-#define ADC1E3DMAE 31
-
-//-------------------
-//	ADC1DC1
-#define ADC1E4DMAE 7
-#define ADC1E5DMAE 15
-#define ADC1E6DMAE 23
-#define ADC1E7DMAE 31
-
-//-------------------
-//	ADC1WC0
-#define ADC1W0E0E 0
-#define ADC1W0E1E 1
-#define ADC1W0E2E 2
-#define ADC1W0E3E 3
-#define ADC1W0E4E 4
-#define ADC1W0E5E 5
-#define ADC1W0E6E 6
-#define ADC1W0E7E 7
-#define ADC1E0OV 8
-#define ADC1E1OV 9
-#define ADC1E2OV 10
-#define ADC1E3OV 11
-#define ADC1E4OV 12
-#define ADC1E5OV 13
-#define ADC1E6OV 14
-#define ADC1E7OV 15
-#define ADC1W0E0CLR 16
-#define ADC1W0E1CLR 18
-#define ADC1W0E2CLR 20
-#define ADC1W0E3CLR 22
-#define ADC1W0E4CLR 24
-#define ADC1W0E5CLR 26
-#define ADC1W0E6CLR 28
-#define ADC1W0E7CLR 30
-#define ADC1W0E0F 17
-#define ADC1W0E1F 19
-#define ADC1W0E2F 21
-#define ADC1W0E3F 23
-#define ADC1W0E4F 25
-#define ADC1W0E5F 27
-#define ADC1W0E6F 29
-#define ADC1W0E7F 31
-
-//-------------------
-//	ADC1WC1
-#define ADC1W1E0E 0
-#define ADC1W1E1E 1
-#define ADC1W1E2E 2
-#define ADC1W1E3E 3
-#define ADC1W1E4E 4
-#define ADC1W1E5E 5
-#define ADC1W1E6E 6
-#define ADC1W1E7E 7
-#define ADC1E0IE 8
-#define ADC1E1IE 9
-#define ADC1E2IE 10
-#define ADC1E3IE 11
-#define ADC1E4IE 12
-#define ADC1E5IE 13
-#define ADC1E6IE 14
-#define ADC1E7IE 15
-#define ADC1W1E0CLR 16
-#define ADC1W1E1CLR 18
-#define ADC1W1E2CLR 20
-#define ADC1W1E3CLR 22
-#define ADC1W1E4CLR 24
-#define ADC1W1E5CLR 26
-#define ADC1W1E6CLR 28
-#define ADC1W1E7CLR 30
-#define ADC1W1E0F 17
-#define ADC1W1E1F 19
-#define ADC1W1E2F 21
-#define ADC1W1E3F 23
-#define ADC1W1E4F 25
-#define ADC1W1E5F 27
-#define ADC1W1E6F 29
-#define ADC1W1E7F 31
-
-//-------------------
-//	VTSCON
-#define VTSE 0
-
-//-------------------
-//	LVDCON
-#define LVDE 0
-#define LVDRE 1
-#define LVDWE 2
-#define LVDIE 3
-#define LVDECLR 30
-#define LVDEF 31
-
-//-------------------
-//	CMP0CON
-#define CMP0S 0
-#define CMP0E 1
-#define CMP0RFE 6
-#define CMP0FFE 7
-#define CMP0OE 11
-#define CMP0IE 15
-#define CMP0ECLR 30
-#define CMP0EF 31
-
-//-------------------
-//	CMP1CON
-#define CMP1S 0
-#define CMP1E 1
-#define CMP1RFE 6
-#define CMP1FFE 7
-#define CMP1OE 11
-#define CMP1IE 15
-#define CMP1ECLR 30
-#define CMP1EF 31
-
-//-------------------
-//	CMP2CON
-#define CMP2S 0
-#define CMP2E 1
-#define CMP2RFE 6
-#define CMP2FFE 7
-#define CMP2OE 11
-#define CMP2IE 15
-#define CMP2ECLR 30
-#define CMP2EF 31
-
-//-------------------
-//	AMPCON
-#define AMP0E 3
-#define AMP1E 11
-#define AMP2E 19
-#define AMP3E 27
-
-//-------------------
-//	CCP0CON
-#define CCP0E 0
-#define CCP0UT 1
-#define CCP0VFE 11
-#define CCP0IE 15
-#define CCP0FC0L 20
-#define CCP0FC1L 21
-#define CCP0FC0E 22
-#define CCP0FC1E 23
-#define CCP0FC 24
-#define CCP0COV 25
-#define CCP0FCLR 26
-#define CCP0FF 27
-#define CCP0GCLR 28
-#define CCP0GF 29
-#define CCP0CCLR 30
-#define CCP0CF 31
-
-//-------------------
-//	CCP0OUT
-#define CCP0POE 0
-#define CCP0NOE 1
-#define CCP0FPO 2
-#define CCP0FNO 3
-#define CCP0PIO 4
-#define CCP0NIO 5
-#define CCP0GUE 10
-#define CCP0GDE 11
-#define CCP0GINV 12
-#define CCP0CFM 13
-#define CCP0SBR 19
-#define CCP0GFM 22
-
-//-------------------
-//	CCP1CON
-#define CCP1E 0
-#define CCP1UT 1
-#define CCP1VFE 11
-#define CCP1IE 15
-#define CCP1FC0L 20
-#define CCP1FC1L 21
-#define CCP1FC0E 22
-#define CCP1FC1E 23
-#define CCP1FC 24
-#define CCP1COV 25
-#define CCP1FCLR 26
-#define CCP1FF 27
-#define CCP1GCLR 28
-#define CCP1GF 29
-#define CCP1CCLR 30
-#define CCP1CF 31
-
-//-------------------
-//	CCP1OUT
-#define CCP1POE 0
-#define CCP1NOE 1
-#define CCP1FPO 2
-#define CCP1FNO 3
-#define CCP1PIO 4
-#define CCP1NIO 5
-#define CCP1GUE 10
-#define CCP1GDE 11
-#define CCP1GINV 12
-#define CCP1CFM 13
-#define CCP1SBR 19
-#define CCP1GFM 22
-
-//-------------------
-//	CCP2CON
-#define CCP2E 0
-#define CCP2UT 1
-#define CCP2VFE 11
-#define CCP2IE 15
-#define CCP2FC0L 20
-#define CCP2FC1L 21
-#define CCP2FC0E 22
-#define CCP2FC1E 23
-#define CCP2FC 24
-#define CCP2COV 25
-#define CCP2FCLR 26
-#define CCP2FF 27
-#define CCP2GCLR 28
-#define CCP2GF 29
-#define CCP2CCLR 30
-#define CCP2CF 31
-
-//-------------------
-//	CCP2OUT
-#define CCP2POE 0
-#define CCP2NOE 1
-#define CCP2FPO 2
-#define CCP2FNO 3
-#define CCP2PIO 4
-#define CCP2NIO 5
-#define CCP2GUE 10
-#define CCP2GDE 11
-#define CCP2GINV 12
-#define CCP2CFM 13
-#define CCP2SBR 19
-#define CCP2GFM 22
-
-//-------------------
-//	CCP3CON
-#define CCP3E 0
-#define CCP3UT 1
-#define CCP3VFE 11
-#define CCP3IE 15
-#define CCP3FC0L 20
-#define CCP3FC1L 21
-#define CCP3FC0E 22
-#define CCP3FC1E 23
-#define CCP3FC 24
-#define CCP3COV 25
-#define CCP3FCLR 26
-#define CCP3FF 27
-#define CCP3GCLR 28
-#define CCP3GF 29
-#define CCP3CCLR 30
-#define CCP3CF 31
-
-//-------------------
-//	CCP3OUT
-#define CCP3POE 0
-#define CCP3NOE 1
-#define CCP3FPO 2
-#define CCP3FNO 3
-#define CCP3PIO 4
-#define CCP3NIO 5
-#define CCP3GUE 10
-#define CCP3GDE 11
-#define CCP3GINV 12
-#define CCP3CFM 13
-#define CCP3SBR 19
-#define CCP3GFM 22
-
-//-------------------
-//	CCP4CON
-#define CCP4E 0
-#define CCP4UT 1
-#define CCP4VFE 11
-#define CCP4IE 15
-#define CCP4FC0L 20
-#define CCP4FC1L 21
-#define CCP4FC0E 22
-#define CCP4FC1E 23
-#define CCP4FC 24
-#define CCP4COV 25
-#define CCP4FCLR 26
-#define CCP4FF 27
-#define CCP4GCLR 28
-#define CCP4GF 29
-#define CCP4CCLR 30
-#define CCP4CF 31
-
-//-------------------
-//	CCP4OUT
-#define CCP4POE 0
-#define CCP4NOE 1
-#define CCP4FPO 2
-#define CCP4FNO 3
-#define CCP4PIO 4
-#define CCP4NIO 5
-#define CCP4GUE 10
-#define CCP4GDE 11
-#define CCP4GINV 12
-#define CCP4CFM 13
-#define CCP4SBR 19
-#define CCP4GFM 22
-
-//-------------------
-//	CCP5CON
-#define CCP5E 0
-#define CCP5UT 1
-#define CCP5VFE 11
-#define CCP5IE 15
-#define CCP5FC0L 20
-#define CCP5FC1L 21
-#define CCP5FC0E 22
-#define CCP5FC1E 23
-#define CCP5FC 24
-#define CCP5COV 25
-#define CCP5FCLR 26
-#define CCP5FF 27
-#define CCP5GCLR 28
-#define CCP5GF 29
-#define CCP5CCLR 30
-#define CCP5CF 31
-
-//-------------------
-//	CCP5OUT
-#define CCP5POE 0
-#define CCP5NOE 1
-#define CCP5FPO 2
-#define CCP5FNO 3
-#define CCP5PIO 4
-#define CCP5NIO 5
-#define CCP5GUE 10
-#define CCP5GDE 11
-#define CCP5GINV 12
-#define CCP5CFM 13
-#define CCP5SBR 19
-#define CCP5GFM 22
-
-//-------------------
-//	MP0CON
-#define MP0W0E 0
-#define MP0W1E 1
-#define MP0W2E 2
-#define MP0W3E 3
-#define MP0W4E 4
-#define MP0W5E 5
-#define MP0W6E 6
-#define MP0W7E 7
-#define MP0CO 11
-#define MP0LSM 12
-#define MP0LSKS 13
-#define MP0IE 14
-#define MP0W0CLR 16
-#define MP0W0F 17
-#define MP0W1CLR 18
-#define MP0W1F 19
-#define MP0W2CLR 20
-#define MP0W2F 21
-#define MP0W3CLR 22
-#define MP0W3F 23
-#define MP0W4CLR 24
-#define MP0W4F 25
-#define MP0W5CLR 26
-#define MP0W5F 27
-#define MP0W6CLR 28
-#define MP0W6F 29
-#define MP0W7CLR 30
-#define MP0W7F 31
-
-//-------------------
-//	MP1CON
-#define MP1W0E 0
-#define MP1W1E 1
-#define MP1W2E 2
-#define MP1W3E 3
-#define MP1W4E 4
-#define MP1W5E 5
-#define MP1W6E 6
-#define MP1W7E 7
-#define MP1CO 11
-#define MP1LSM 12
-#define MP1LSKS 13
-#define MP1IE 14
-#define MP1W0CLR 16
-#define MP1W0F 17
-#define MP1W1CLR 18
-#define MP1W1F 19
-#define MP1W2CLR 20
-#define MP1W2F 21
-#define MP1W3CLR 22
-#define MP1W3F 23
-#define MP1W4CLR 24
-#define MP1W4F 25
-#define MP1W5CLR 26
-#define MP1W5F 27
-#define MP1W6CLR 28
-#define MP1W6F 29
-#define MP1W7CLR 30
-#define MP1W7F 31
-
-//-------------------
-//	MP2CON
-#define MP2W0E 0
-#define MP2W1E 1
-#define MP2W2E 2
-#define MP2W3E 3
-#define MP2W4E 4
-#define MP2W5E 5
-#define MP2W6E 6
-#define MP2W7E 7
-#define MP2CO 11
-#define MP2LSM 12
-#define MP2LSKS 13
-#define MP2IE 14
-#define MP2W0CLR 16
-#define MP2W0F 17
-#define MP2W1CLR 18
-#define MP2W1F 19
-#define MP2W2CLR 20
-#define MP2W2F 21
-#define MP2W3CLR 22
-#define MP2W3F 23
-#define MP2W4CLR 24
-#define MP2W4F 25
-#define MP2W5CLR 26
-#define MP2W5F 27
-#define MP2W6CLR 28
-#define MP2W6F 29
-#define MP2W7CLR 30
-#define MP2W7F 31
-
-//-------------------
-//	ABUFCON
-#define ABUFE 5
-
-//-------------------
-//	WDT0CON
-#define WDT0E 0
-#define WDT0RE 1
-#define WDT0WE 2
-#define WDT0IE 3
-#define WDT0TO 31
-
-//-------------------
-//	WDT1CON
-#define WDT1E 0
-#define WDT1RE 1
-#define WDT1WE 2
-#define WDT1IE 3
-#define WDT1TO 31
-
-//-------------------
-//	SPI0CON
-#define SPI0E 0
-#define SPI0KS 1
-#define SPI0CIH 2
-#define SPI0DSP 3
-#define SPI0S 8
-#define SPI0HD 9
-#define SPI0HDR 10
-#define SPI0LF 11
-#define SPI0DMAE 12
-#define SPI0MSOE 13
-#define SPI0SIOP 14
-#define SPI0PORTS 15
-#define SPI0IE 17
-#define SPI0TCLR 30
-#define SPI0TBV 31
-
-//-------------------
-//	SPI1CON
-#define SPI1E 0
-#define SPI1KS 1
-#define SPI1CIH 2
-#define SPI1DSP 3
-#define SPI1S 8
-#define SPI1HD 9
-#define SPI1HDR 10
-#define SPI1LF 11
-#define SPI1DMAE 12
-#define SPI1MSOE 13
-#define SPI1SIOP 14
-#define SPI1PORTS 15
-#define SPI1IE 17
-#define SPI1TCLR 30
-#define SPI1TBV 31
-
-//-------------------
-//	UT0CON
-#define UT0E 0
-#define UT0TKS 1
-#define UT0RE 7
-#define UT0HD 20
-#define UT0TDMAE 21
-#define UT0RDMAE 22
-#define UT0PORTS 23
-#define UT0IE 24
-#define UT0RERR 27
-#define UT0TCLR 28
-#define UT0TBV 29
-#define UT0RCLR 30
-#define UT0RBV 31
-
-//-------------------
-//	UT1CON
-#define UT1E 0
-#define UT1TKS 1
-#define UT1RE 7
-#define UT1HD 20
-#define UT1TDMAE 21
-#define UT1RDMAE 22
-#define UT1PORTS 23
-#define UT1IE 24
-#define UT1RERR 27
-#define UT1TCLR 28
-#define UT1TBV 29
-#define UT1RCLR 30
-#define UT1RBV 31
-
-//-------------------
-//	PLLCON
-#define PFOM 29
-#define PFOCLR 30
-#define PFO 31
-
-//-------------------
-//	IICCON
-#define IICE 0
-#define IICKS 1
-#define IICS 2
-#define IICTX 3
-#define IICHE 6
-#define IICSAM 7
-#define IICSCL 16
-#define IICDMAE 17
-#define IICPORTS 18
-#define IICIE 19
-#define IICBSTA 20
-#define IICSLE 21
-#define IICBSTART 22
-#define IICBSTOP 23
-#define IICCCLR 24
-#define IICCLTO 25
-#define IICHCLR 26
-#define IICHNACK 27
-#define IICTCLR 28
-#define IICTBV 29
-#define IICRCLR 30
-#define IICRBV 31
-
-//-------------------
-//	CRCCON
-#define CRCREFI 5
-#define CRCREFO 6
-#define CRCCPLO 7
-#define CRCKS 12
-#define CRCIE 13
-#define CRCRVB 14
-#define CRCCCLR 30
-#define CRCCF 31
-
-//-------------------
-//	T0CON
-#define T0E 0
-#define T0UT 1
-#define T0OIE 11
-#define T0RS 18
-#define T0RGE 19
-#define T0ENCP 26
-#define T0CD 29
-#define T0OCLR 30
-#define T0OV 31
-
-//-------------------
-//	T0ECON
-#define T0ETC 12
-#define T0ET 13
-#define T0EPC 19
-#define T0PS 20
-#define T0PGE 21
-#define T0SBR 24
-#define T0EIE 25
-#define T0ECLR 30
-#define T0EF 31
-
-//-------------------
-//	T1CON
-#define T1E 0
-#define T1UT 1
-#define T1OIE 11
-#define T1RS 18
-#define T1RGE 19
-#define T1ENCP 26
-#define T1CD 29
-#define T1OCLR 30
-#define T1OV 31
-
-//-------------------
-//	T1ECON
-#define T1ETC 12
-#define T1ET 13
-#define T1EPC 19
-#define T1PS 20
-#define T1PGE 21
-#define T1SBR 24
-#define T1EIE 25
-#define T1ECLR 30
-#define T1EF 31
-
-//-------------------
-//	T2CON
-#define T2E 0
-#define T2UT 1
-#define T2OIE 11
-#define T2RS 18
-#define T2RGE 19
-#define T2ENCP 26
-#define T2CD 29
-#define T2OCLR 30
-#define T2OV 31
-
-//-------------------
-//	T2ECON
-#define T2ETC 12
-#define T2ET 13
-#define T2EPC 19
-#define T2PS 20
-#define T2PGE 21
-#define T2SBR 24
-#define T2EIE 25
-#define T2ECLR 30
-#define T2EF 31
-
-//-------------------
-//	T3CON
-#define T3E 0
-#define T3UT 1
-#define T3OIE 11
-#define T3RS 18
-#define T3RGE 19
-#define T3ENCP 26
-#define T3CD 29
-#define T3OCLR 30
-#define T3OV 31
-
-//-------------------
-//	T3ECON
-#define T3ETC 12
-#define T3ET 13
-#define T3EPC 19
-#define T3PS 20
-#define T3PGE 21
-#define T3SBR 24
-#define T3EIE 25
-#define T3ECLR 30
-#define T3EF 31
-
-//-------------------
-//	T4CON
-#define T4E 0
-#define T4UT 1
-#define T4OIE 11
-#define T4RS 18
-#define T4RGE 19
-#define T4ENCP 26
-#define T4CD 29
-#define T4OCLR 30
-#define T4OV 31
-
-//-------------------
-//	T4ECON
-#define T4ETC 12
-#define T4ET 13
-#define T4EPC 19
-#define T4PS 20
-#define T4PGE 21
-#define T4SBR 24
-#define T4EIE 25
-#define T4ECLR 30
-#define T4EF 31
-
-//-------------------
-//	T5CON
-#define T5E 0
-#define T5UT 1
-#define T5OIE 11
-#define T5RS 18
-#define T5RGE 19
-#define T5ENCP 26
-#define T5CD 29
-#define T5OCLR 30
-#define T5OV 31
-
-//-------------------
-//	T5ECON
-#define T5ETC 12
-#define T5ET 13
-#define T5EPC 19
-#define T5PS 20
-#define T5PGE 21
-#define T5SBR 24
-#define T5EIE 25
-#define T5ECLR 30
-#define T5EF 31
-
-//-------------------
-//	T6CON
-#define T6E 0
-#define T6UT 1
-#define T6OIE 11
-#define T6RS 18
-#define T6RGE 19
-#define T6ENCP 26
-#define T6CD 29
-#define T6OCLR 30
-#define T6OV 31
-
-//-------------------
-//	T6ECON
-#define T6ETC 12
-#define T6ET 13
-#define T6EPC 19
-#define T6PS 20
-#define T6PGE 21
-#define T6SBR 24
-#define T6EIE 25
-#define T6ECLR 30
-#define T6EF 31
-
-//-------------------
-//	T7CON
-#define T7E 0
-#define T7UT 1
-#define T7OIE 11
-#define T7RS 18
-#define T7RGE 19
-#define T7ENCP 26
-#define T7CD 29
-#define T7OCLR 30
-#define T7OV 31
-
-//-------------------
-//	T7ECON
-#define T7ETC 12
-#define T7ET 13
-#define T7EPC 19
-#define T7PS 20
-#define T7PGE 21
-#define T7SBR 24
-#define T7EIE 25
-#define T7ECLR 30
-#define T7EF 31
-
-//-------------------
-//	UBCON
-#define UE 0
-#define USRSM 1
-#define UFS 2
-#define ULT 4
-#define UDPPU 6
-#define UDNPU 7
-#define UXM 16
-#define UIE 17
-#define URSBF 18
-#define UBRSM 27
-#define UBSPD 29
-#define UBCLR 30
-#define UBRST 31
-
-//-------------------
-//	UFCON
-#define USOFE 16
-#define UMISS 29
-#define USCLR 30
-#define USOF 31
-
-//-------------------
-//	UE0CON
-#define UE0DOS 16
-#define UE0DIS 17
-#define UE0SOS 18
-#define UE0SIS 19
-#define UE0STALL 20
-#define ULTS 21
-#define UE0CERRH 22
-#define UE0CTP 23
-#define UE0NCLR 24
-#define UE0INACK 25
-#define UE0CCLR 26
-#define UE0CERR 27
-#define UE0OCLR 28
-#define UE0OPF 29
-#define UE0ICLR 30
-#define UE0IPF 31
-
-//-------------------
-//	UE1CON
-#define UE1OS 16
-#define UE1IS 17
-#define UE1ODATA0 18
-#define UE1IDATA0 19
-#define UE1OSTALL 20
-#define UE1ISTALL 21
-#define UE1CERRH 22
-#define UE1NOHS 23
-#define UE1NCLR 24
-#define UE1INACK 25
-#define UE1CCLR 26
-#define UE1CERR 27
-#define UE1OCLR 28
-#define UE1OPF 29
-#define UE1ICLR 30
-#define UE1IPF 31
-
-//-------------------
-//	UE2CON
-#define UE2OS 16
-#define UE2IS 17
-#define UE2ODATA0 18
-#define UE2IDATA0 19
-#define UE2OSTALL 20
-#define UE2ISTALL 21
-#define UE2CERRH 22
-#define UE2NOHS 23
-#define UE2NCLR 24
-#define UE2INACK 25
-#define UE2CCLR 26
-#define UE2CERR 27
-#define UE2OCLR 28
-#define UE2OPF 29
-#define UE2ICLR 30
-#define UE2IPF 31
-
-//-------------------
-//	UE3CON
-#define UE3OS 16
-#define UE3IS 17
-#define UE3ODATA0 18
-#define UE3IDATA0 19
-#define UE3OSTALL 20
-#define UE3ISTALL 21
-#define UE3CERRH 22
-#define UE3NOHS 23
-#define UE3NCLR 24
-#define UE3INACK 25
-#define UE3CCLR 26
-#define UE3CERR 27
-#define UE3OCLR 28
-#define UE3OPF 29
-#define UE3ICLR 30
-#define UE3IPF 31
-
-//-------------------
-//	UE4CON
-#define UE4OS 16
-#define UE4IS 17
-#define UE4ODATA0 18
-#define UE4IDATA0 19
-#define UE4OSTALL 20
-#define UE4ISTALL 21
-#define UE4CERRH 22
-#define UE4NOHS 23
-#define UE4NCLR 24
-#define UE4INACK 25
-#define UE4CCLR 26
-#define UE4CERR 27
-#define UE4OCLR 28
-#define UE4OPF 29
-#define UE4ICLR 30
-#define UE4IPF 31
-
-//-------------------
-//	DAC0CON
-#define DAC0E 16
-#define DAC0IE 17
-#define DAC0DMAE 18
-#define DAC0DMAL 19
-#define DAC0CS 20
-#define DAC0IM 21
-#define DAC0TE 22
-#define DAC0CCLR 30
-#define DAC0CF 31
-
-//-------------------
-//	DAC1CON
-#define DAC1E 16
-#define DAC1IE 17
-#define DAC1DMAE 18
-#define DAC1DMAL 19
-#define DAC1CS 20
-#define DAC1IM 21
-#define DAC1TE 22
-#define DAC1CCLR 30
-#define DAC1CF 31
+//---------------------------------------------------------------;
+// CV32S6015 Register bit definition                             ;
+//---------------------------------------------------------------;
+#define ENABLE          1
+#define DISABLE         0
+#define HIGH            1
+#define LOW             0
+
+
+//-------------------
+//    CMODE
+#define UWSRP_POS       0U
+#define HISE_POS        1U
+#define SRME_POS        2U
+#define SFBR_POS        3U
+#define HIAS_POS        4U
+#define UWSRP           (0x01U << UWSRP_POS)
+#define HISE            (0x01U << HISE_POS)
+#define SRME            (0x01U << SRME_POS)
+#define SFBR            (0x01U << SFBR_POS)
+#define HIAS            (0x0FU << HIAS_POS)
+
+//-------------------
+//    HIE
+#define SERRHIE_POS     0U
+#define CMP0HIE_POS     1U
+#define CMP1HIE_POS     2U
+#define CCP0HIE_POS     3U
+#define CCP1HIE_POS     4U
+#define CCP2HIE_POS     5U
+#define CCP3HIE_POS     6U
+#define CCP4HIE_POS     7U
+#define CCP5HIE_POS     8U
+#define T0HIE_POS       9U
+#define T1HIE_POS       10U
+#define T2HIE_POS       11U
+#define T3HIE_POS       12U
+#define T4HIE_POS       13U
+#define T5HIE_POS       14U
+#define T6HIE_POS       15U
+#define T7HIE_POS       16U
+#define WDTHIE_POS      17U
+#define ADC0HIE_POS     18U
+#define ADC1HIE_POS     19U
+#define UT0HIE_POS      20U
+#define UT1HIE_POS      21U
+#define SPI0HIE_POS     22U
+#define SPI1HIE_POS     23U
+#define IICHIE_POS      24U
+#define MPWM0HIE_POS    25U
+#define MPWM1HIE_POS    26U
+#define MPWM2HIE_POS    27U
+#define DACHIE_POS      28U
+#define FLCRCHIE_POS    29U
+#define PAHIE_POS       30U
+#define PBHIE_POS       31U
+#define SERRHIE         (0x01U << SERRHIE_POS)
+#define CMP0HIE         (0x01U << CMP0HIE_POS)
+#define CMP1HIE         (0x01U << CMP1HIE_POS)
+#define CCP0HIE         (0x01U << CCP0HIE_POS)
+#define CCP1HIE         (0x01U << CCP1HIE_POS)
+#define CCP2HIE         (0x01U << CCP2HIE_POS)
+#define CCP3HIE         (0x01U << CCP3HIE_POS)
+#define CCP4HIE         (0x01U << CCP4HIE_POS)
+#define CCP5HIE         (0x01U << CCP5HIE_POS)
+#define T0HIE           (0x01U << T0HIE_POS)
+#define T1HIE           (0x01U << T1HIE_POS)
+#define T2HIE           (0x01U << T2HIE_POS)
+#define T3HIE           (0x01U << T3HIE_POS)
+#define T4HIE           (0x01U << T4HIE_POS)
+#define T5HIE           (0x01U << T5HIE_POS)
+#define T6HIE           (0x01U << T6HIE_POS)
+#define T7HIE           (0x01U << T7HIE_POS)
+#define WDTHIE          (0x01U << WDTHIE_POS)
+#define ADC0HIE         (0x01U << ADC0HIE_POS)
+#define ADC1HIE         (0x01U << ADC1HIE_POS)
+#define UT0HIE          (0x01U << UT0HIE_POS)
+#define UT1HIE          (0x01U << UT1HIE_POS)
+#define SPI0HIE         (0x01U << SPI0HIE_POS)
+#define SPI1HIE         (0x01U << SPI1HIE_POS)
+#define IICHIE          (0x01U << IICHIE_POS)
+#define MPWM0HIE        (0x01U << MPWM0HIE_POS)
+#define MPWM1HIE        (0x01U << MPWM1HIE_POS)
+#define MPWM2HIE        (0x01U << MPWM2HIE_POS)
+#define DACHIE          (0x01U << DACHIE_POS)
+#define FLCRCHIE        (0x01U << FLCRCHIE_POS)
+#define PAHIE           (0x01U << PAHIE_POS)
+#define PBHIE           (0x01U << PBHIE_POS)
+
+//-------------------
+//    HIPRM
+#define SERRHIPRM_POS     0U
+#define CMP0HIPRM_POS     1U
+#define CMP1HIPRM_POS     2U
+#define CCP0HIPRM_POS     3U
+#define CCP1HIPRM_POS     4U
+#define CCP2HIPRM_POS     5U
+#define CCP3HIPRM_POS     6U
+#define CCP4HIPRM_POS     7U
+#define CCP5HIPRM_POS     8U
+#define T0HIPRM_POS       9U
+#define T1HIPRM_POS       10U
+#define T2HIPRM_POS       11U
+#define T3HIPRM_POS       12U
+#define T4HIPRM_POS       13U
+#define T5HIPRM_POS       14U
+#define T6HIPRM_POS       15U
+#define T7HIPRM_POS       16U
+#define WDTHIPRM_POS      17U
+#define ADC0HIPRM_POS     18U
+#define ADC1HIPRM_POS     19U
+#define UT0HIPRM_POS      20U
+#define UT1HIPRM_POS      21U
+#define SPI0HIPRM_POS     22U
+#define SPI1HIPRM_POS     23U
+#define IICHIPRM_POS      24U
+#define MPWM0HIPRM_POS    25U
+#define MPWM1HIPRM_POS    26U
+#define MPWM2HIPRM_POS    27U
+#define DACHIPRM_POS      28U
+#define FLCRCHIPRM_POS    29U
+#define PAHIPRM_POS       30U
+#define PBHIPRM_POS       31U
+#define SERRHIPRM         (0x01U << SERRHIPRM_POS)
+#define CMP0HIPRM         (0x01U << CMP0HIPRM_POS)
+#define CMP1HIPRM         (0x01U << CMP1HIPRM_POS)
+#define CCP0HIPRM         (0x01U << CCP0HIPRM_POS)
+#define CCP1HIPRM         (0x01U << CCP1HIPRM_POS)
+#define CCP2HIPRM         (0x01U << CCP2HIPRM_POS)
+#define CCP3HIPRM         (0x01U << CCP3HIPRM_POS)
+#define CCP4HIPRM         (0x01U << CCP4HIPRM_POS)
+#define CCP5HIPRM         (0x01U << CCP5HIPRM_POS)
+#define T0HIPRM           (0x01U << T0HIPRM_POS)
+#define T1HIPRM           (0x01U << T1HIPRM_POS)
+#define T2HIPRM           (0x01U << T2HIPRM_POS)
+#define T3HIPRM           (0x01U << T3HIPRM_POS)
+#define T4HIPRM           (0x01U << T4HIPRM_POS)
+#define T5HIPRM           (0x01U << T5HIPRM_POS)
+#define T6HIPRM           (0x01U << T6HIPRM_POS)
+#define T7HIPRM           (0x01U << T7HIPRM_POS)
+#define WDTHIPRM          (0x01U << WDTHIPRM_POS)
+#define ADC0HIPRM         (0x01U << ADC0HIPRM_POS)
+#define ADC1HIPRM         (0x01U << ADC1HIPRM_POS)
+#define UT0HIPRM          (0x01U << UT0HIPRM_POS)
+#define UT1HIPRM          (0x01U << UT1HIPRM_POS)
+#define SPI0HIPRM         (0x01U << SPI0HIPRM_POS)
+#define SPI1HIPRM         (0x01U << SPI1HIPRM_POS)
+#define IICHIPRM          (0x01U << IICHIPRM_POS)
+#define MPWM0HIPRM        (0x01U << MPWM0HIPRM_POS)
+#define MPWM1HIPRM        (0x01U << MPWM1HIPRM_POS)
+#define MPWM2HIPRM        (0x01U << MPWM2HIPRM_POS)
+#define DACHIPRM          (0x01U << DACHIPRM_POS)
+#define FLCRCHIPRM        (0x01U << FLCRCHIPRM_POS)
+#define PAHIPRM           (0x01U << PAHIPRM_POS)
+#define PBHIPRM           (0x01U << PBHIPRM_POS)
+
+//-------------------
+//    HIPL0
+#define LVDHIPL0_POS    0U
+#define HRFHIPL0_POS    0U
+#define PLLHIPL0_POS    0U
+#define CMP0HIPL0_POS   1U
+#define CMP1HIPL0_POS   2U
+#define CCP0HIPL0_POS   3U
+#define CCP1HIPL0_POS   4U
+#define CCP2HIPL0_POS   5U
+#define CCP3HIPL0_POS   6U
+#define CCP4HIPL0_POS   7U
+#define CCP5HIPL0_POS   8U
+#define T0HIPL0_POS     9U
+#define T1HIPL0_POS     10U
+#define T2HIPL0_POS     11U
+#define T3HIPL0_POS     12U
+#define T4HIPL0_POS     13U
+#define T5HIPL0_POS     14U
+#define T6HIPL0_POS     15U
+#define T7HIPL0_POS     16U
+#define WDTHIPL0_POS    17U
+#define ADC0HIPL0_POS   18U
+#define ADC1HIPL0_POS   19U
+#define UT0HIPL0_POS    20U
+#define UT1HIPL0_POS    21U
+#define SPI0HIPL0_POS   22U
+#define SPI1HIPL0_POS   23U
+#define IICHIPL0_POS    24U
+#define MPWM0HIPL0_POS  25U
+#define MPWM1HIPL0_POS  26U
+#define MPWM2HIPL0_POS  27U
+#define DACHIPL0_POS    28U
+#define FLHIPL0_POS     29U
+#define CRCHIPL0_POS    29U
+#define PAHIPL0_POS     30U
+#define PBHIPL0_POS     31U
+#define LVDHIPL0        (0x01U << LVDHIPL0_POS)
+#define HRFHIPL0        (0x01U << HRFHIPL0_POS)
+#define PLLHIPL0        (0x01U << PLLHIPL0_POS)
+#define CMP0HIPL0       (0x01U << CMP0HIPL0_POS)
+#define CMP1HIPL0       (0x01U << CMP1HIPL0_POS)
+#define CCP0HIPL0       (0x01U << CCP0HIPL0_POS)
+#define CCP1HIPL0       (0x01U << CCP1HIPL0_POS)
+#define CCP2HIPL0       (0x01U << CCP2HIPL0_POS)
+#define CCP3HIPL0       (0x01U << CCP3HIPL0_POS)
+#define CCP4HIPL0       (0x01U << CCP4HIPL0_POS)
+#define CCP5HIPL0       (0x01U << CCP5HIPL0_POS)
+#define T0HIPL0         (0x01U << T0HIPL0_POS)
+#define T1HIPL0         (0x01U << T1HIPL0_POS)
+#define T2HIPL0         (0x01U << T2HIPL0_POS)
+#define T3HIPL0         (0x01U << T3HIPL0_POS)
+#define T4HIPL0         (0x01U << T4HIPL0_POS)
+#define T5HIPL0         (0x01U << T5HIPL0_POS)
+#define T6HIPL0         (0x01U << T6HIPL0_POS)
+#define T7HIPL0         (0x01U << T7HIPL0_POS)
+#define WDTHIPL0        (0x01U << WDTHIPL0_POS)
+#define ADC0HIPL0       (0x01U << ADC0HIPL0_POS)
+#define ADC1HIPL0       (0x01U << ADC1HIPL0_POS)
+#define UT0HIPL0        (0x01U << UT0HIPL0_POS)
+#define UT1HIPL0        (0x01U << UT1HIPL0_POS)
+#define SPI0HIPL0       (0x01U << SPI0HIPL0_POS)
+#define SPI1HIPL0       (0x01U << SPI1HIPL0_POS)
+#define IICHIPL0        (0x01U << IICHIPL0_POS)
+#define MPWM0HIPL0      (0x01U << MPWM0HIPL0_POS)
+#define MPWM1HIPL0      (0x01U << MPWM1HIPL0_POS)
+#define MPWM2HIPL0      (0x01U << MPWM2HIPL0_POS)
+#define DACHIPL0        (0x01U << DACHIPL0_POS)
+#define FLHIPL0         (0x01U << FLHIPL0_POS)
+#define CRCHIPL0        (0x01U << CRCHIPL0_POS)
+#define PAHIPL0         (0x01U << PAHIPL0_POS)
+#define PBHIPL0         (0x01U << PBHIPL0_POS)
+
+//-------------------
+//    HIPL1
+#define LVDHIPL1_POS    0U
+#define HRFHIPL1_POS    0U
+#define PLLHIPL1_POS    0U
+#define CMP0HIPL1_POS   1U
+#define CMP1HIPL1_POS   2U
+#define CCP0HIPL1_POS   3U
+#define CCP1HIPL1_POS   4U
+#define CCP2HIPL1_POS   5U
+#define CCP3HIPL1_POS   6U
+#define CCP4HIPL1_POS   7U
+#define CCP5HIPL1_POS   8U
+#define T0HIPL1_POS     9U
+#define T1HIPL1_POS     10U
+#define T2HIPL1_POS     11U
+#define T3HIPL1_POS     12U
+#define T4HIPL1_POS     13U
+#define T5HIPL1_POS     14U
+#define T6HIPL1_POS     15U
+#define T7HIPL1_POS     16U
+#define WDTHIPL1_POS    17U
+#define ADC0HIPL1_POS   18U
+#define ADC1HIPL1_POS   19U
+#define UT0HIPL1_POS    20U
+#define UT1HIPL1_POS    21U
+#define SPI0HIPL1_POS   22U
+#define SPI1HIPL1_POS   23U
+#define IICHIPL1_POS    24U
+#define MPWM0HIPL1_POS  25U
+#define MPWM1HIPL1_POS  26U
+#define MPWM2HIPL1_POS  27U
+#define DACHIPL1_POS    28U
+#define FLHIPL1_POS     29U
+#define CRCHIPL1_POS    29U
+#define PAHIPL1_POS     30U
+#define PBHIPL1_POS     31U
+#define LVDHIPL1        (0x01U << LVDHIPL1_POS)
+#define HRFHIPL1        (0x01U << HRFHIPL1_POS)
+#define PLLHIPL1        (0x01U << PLLHIPL1_POS)
+#define CMP0HIPL1       (0x01U << CMP0HIPL1_POS)
+#define CMP1HIPL1       (0x01U << CMP1HIPL1_POS)
+#define CCP0HIPL1       (0x01U << CCP0HIPL1_POS)
+#define CCP1HIPL1       (0x01U << CCP1HIPL1_POS)
+#define CCP2HIPL1       (0x01U << CCP2HIPL1_POS)
+#define CCP3HIPL1       (0x01U << CCP3HIPL1_POS)
+#define CCP4HIPL1       (0x01U << CCP4HIPL1_POS)
+#define CCP5HIPL1       (0x01U << CCP5HIPL1_POS)
+#define T0HIPL1         (0x01U << T0HIPL1_POS)
+#define T1HIPL1         (0x01U << T1HIPL1_POS)
+#define T2HIPL1         (0x01U << T2HIPL1_POS)
+#define T3HIPL1         (0x01U << T3HIPL1_POS)
+#define T4HIPL1         (0x01U << T4HIPL1_POS)
+#define T5HIPL1         (0x01U << T5HIPL1_POS)
+#define T6HIPL1         (0x01U << T6HIPL1_POS)
+#define T7HIPL1         (0x01U << T7HIPL1_POS)
+#define WDTHIPL1        (0x01U << WDTHIPL1_POS)
+#define ADC0HIPL1       (0x01U << ADC0HIPL1_POS)
+#define ADC1HIPL1       (0x01U << ADC1HIPL1_POS)
+#define UT0HIPL1        (0x01U << UT0HIPL1_POS)
+#define UT1HIPL1        (0x01U << UT1HIPL1_POS)
+#define SPI0HIPL1       (0x01U << SPI0HIPL1_POS)
+#define SPI1HIPL1       (0x01U << SPI1HIPL1_POS)
+#define IICHIPL1        (0x01U << IICHIPL1_POS)
+#define MPWM0HIPL1      (0x01U << MPWM0HIPL1_POS)
+#define MPWM1HIPL1      (0x01U << MPWM1HIPL1_POS)
+#define MPWM2HIPL1      (0x01U << MPWM2HIPL1_POS)
+#define DACHIPL1        (0x01U << DACHIPL1_POS)
+#define FLHIPL1         (0x01U << FLHIPL1_POS)
+#define CRCHIPL1        (0x01U << CRCHIPL1_POS)
+#define PAHIPL1         (0x01U << PAHIPL1_POS)
+#define PBHIPL1         (0x01U << PBHIPL1_POS)
+
+//-------------------
+//    HRF
+#define VTSAFCLR_POS    14U
+#define VTSAF_POS       15U
+#define WDT0RFCLR_POS   18U
+#define WDT0RF_POS      19U
+#define WDT1RFCLR_POS   20U
+#define WDT1RF_POS      21U
+#define LVDRFCLR_POS    22U
+#define LVDRF_POS       23U
+#define DBGRFCLR_POS    24U
+#define DBGRF_POS       25U
+#define IERFCLR_POS     26U
+#define IERF_POS        27U
+#define PORFCLR_POS     30U
+#define PORF_POS        31U
+#define VTSAFCLR        (0x01U << VTSAFCLR_POS)
+#define VTSAF           (0x01U << VTSAF_POS)
+#define WDT0RFCLR       (0x01U << WDT0RFCLR_POS)
+#define WDT0RF          (0x01U << WDT0RF_POS)
+#define WDT1RFCLR       (0x01U << WDT1RFCLR_POS)
+#define WDT1RF          (0x01U << WDT1RF_POS)
+#define LVDRFCLR        (0x01U << LVDRFCLR_POS)
+#define LVDRF           (0x01U << LVDRF_POS)
+#define DBGRFCLR        (0x01U << DBGRFCLR_POS)
+#define DBGRF           (0x01U << DBGRF_POS)
+#define IERFCLR         (0x01U << IERFCLR_POS)
+#define IERF            (0x01U << IERF_POS)
+#define PORFCLR         (0x01U << PORFCLR_POS)
+#define PORF            (0x01U << PORF_POS)
+
+//-------------------
+//    ALMCON
+#define UXARE_POS       12U
+#define VTSARE_POS      13U
+#define UXARE           (0x01U << UXARE_POS)
+#define VTSARE          (0x01U << VTSARE_POS)
+
+//-------------------
+//    BPCON
+#define BTC_POS         0U
+#define BVC_POS         8U
+#define REG15C_POS      16U
+#define REG33C_POS      24U
+#define HOLD_POS        30U
+#define SLEEP_POS       31U
+#define BTC             (0x0FU << BTC_POS)
+#define BVC             (0x0FU << BVC_POS)
+#define REG15C          (0x1FU << REG15C_POS)
+#define REG33C          (0x1FU << REG33C_POS)
+#define HOLD            (0x01U << HOLD_POS)
+#define SLEEP           (0x01U << SLEEP_POS)
+
+//-------------------
+//    DMACON
+#define DMACH0_POS      0U
+#define DMACH1_POS      4U
+#define DMACH2_POS      8U
+#define DMACH3_POS      12U
+#define DMACH0          (0x0FU << DMACH0_POS)
+#define DMACH1          (0x0FU << DMACH1_POS)
+#define DMACH2          (0x0FU << DMACH2_POS)
+#define DMACH3          (0x0FU << DMACH3_POS)
+
+//-------------------
+//    VTSCON
+#define VTSE_POS        0U
+#define VTST_POS        4U
+#define VTSE            (0x01U << VTSE_POS)
+#define VTST            (0x1FU << VTST_POS)
+
+//-------------------
+//    LVDCON
+#define LVDE_POS        0U
+#define LVDRE_POS       1U
+#define LVDWE_POS       2U
+#define LVDIE_POS       3U
+#define LVDVP_POS       4U
+#define LVDECLR_POS     30U
+#define LVDEF_POS       31U
+#define LVDE            (0x01U << LVDE_POS)
+#define LVDRE           (0x01U << LVDRE_POS)
+#define LVDWE           (0x01U << LVDWE_POS)
+#define LVDIE           (0x01U << LVDIE_POS)
+#define LVDVP           (0x0FU << LVDVP_POS)
+#define LVDECLR         (0x01U << LVDECLR_POS)
+#define LVDEF           (0x01U << LVDEF_POS)
+
+//-------------------
+//    CLKCON
+#define IOSCH_POS       0U
+#define IOSCUTE_POS     1U
+#define IOSCUTL_POS     2U
+#define UXCDRE_POS      3U
+#define PLLE_POS        4U
+#define PLLM_POS        5U
+#define XHOSCE_POS      6U
+#define CSF_POS         7U
+#define CSWT_POS        8U
+#define FLMCG_POS       15U
+#define CRCMCG_POS      16U
+#define USBMCG_POS      17U
+#define ADCMCG_POS      18U
+#define DACMCG_POS      20U
+#define IOSCH           (0x01U << IOSCH_POS)
+#define IOSCUTE         (0x01U << IOSCUTE_POS)
+#define IOSCUTL         (0x01U << IOSCUTL_POS)
+#define UXCDRE          (0x01U << UXCDRE_POS)
+#define PLLE            (0x01U << PLLE_POS)
+#define PLLM            (0x01U << PLLM_POS)
+#define XHOSCE          (0x01U << XHOSCE_POS)
+#define CSF             (0x01U << CSF_POS)
+#define CSWT            (0x7FU << CSWT_POS)
+#define FLMCG           (0x01U << FLMCG_POS)
+#define CRCMCG          (0x01U << CRCMCG_POS)
+#define USBMCG          (0x01U << USBMCG_POS)
+#define ADCMCG          (0x01U << ADCMCG_POS)
+#define DACMCG          (0x01U << DACMCG_POS)
+
+//-------------------
+//    PLLCON
+#define PFM_POS         0U
+#define PFD_POS         8U
+#define PFCNT_POS       16U
+#define PFOM_POS        29U
+#define PFOCLR_POS      30U
+#define PFO_POS         31U
+#define PFM             (0xFFU << PFM_POS)
+#define PFD             (0x07U << PFD_POS)
+#define PFCNT           (0x3FFU << PFCNT_POS)
+#define PFOM            (0x01U << PFOM_POS)
+#define PFOCLR          (0x01U << PFOCLR_POS)
+#define PFO             (0x01U << PFO_POS)
+
+//-------------------
+//    IOSCCON
+#define IOSCHFT_POS     0U
+#define IOSCHRT_POS     12U
+#define IOSCLFT_POS     16U
+#define IOSCLRT_POS     28U
+#define IOSCHFT         (0x3FFU << IOSCHFT_POS)
+#define IOSCHRT         (0x03U << IOSCHRT_POS)
+#define IOSCLFT         (0x3FFU << IOSCLFT_POS)
+#define IOSCLRT         (0x03U << IOSCLRT_POS)
+
+//-------------------
+//    FLCCON
+#define FLCI_POS        0U
+#define FLCC_POS        8U
+#define FLCDL_POS       10U
+#define FLCLC_POS       12U
+#define FLTSHSL_POS     16U
+#define FLCAC_POS       20U
+#define FLBANK0V_POS    28U
+#define FLBANK1V_POS    29U
+#define FLBANK2V_POS    30U
+#define FLBANK3V_POS    31U
+#define FLCI            (0xFFU << FLCI_POS)
+#define FLCC            (0x03U << FLCC_POS)
+#define FLCDL           (0x03U << FLCDL_POS)
+#define FLCLC           (0x0FU << FLCLC_POS)
+#define FLTSHSL         (0x0FU << FLTSHSL_POS)
+#define FLCAC           (0x1FU << FLCAC_POS)
+#define FLBANK0V        (0x01U << FLBANK0V_POS)
+#define FLBANK1V        (0x01U << FLBANK1V_POS)
+#define FLBANK2V        (0x01U << FLBANK2V_POS)
+#define FLBANK3V        (0x01U << FLBANK3V_POS)
+
+//-------------------
+//    FLUCON
+#define FLUI_POS        0U
+#define FLUC_POS        8U
+#define FLUDC_POS       10U
+#define FLUT_POS        12U
+#define FLUKS_POS       15U
+#define FLULC_POS       16U
+#define FLUWIPC_POS     20U
+#define FLUSC_POS       21U
+#define FLUSS_POS       22U
+#define FLURUCS_POS     23U
+#define FLURRC_POS      24U
+#define FLURRE_POS      27U
+#define FLDCTP_POS      28U
+#define FLUIE_POS       29U
+#define FLUOCLR_POS     30U
+#define FLUOPF_POS      31U
+
+#define FLUI            (0xFFU << FLUI_POS)
+#define FLUC            (0x03U << FLUC_POS)
+#define FLUDC           (0x03U << FLUDC_POS)
+#define FLUT            (0x07U << FLUT_POS)
+#define FLUKS           (0x01U << FLUKS_POS)
+#define FLULC           (0x0FU << FLULC_POS)
+#define FLUWIPC         (0x01U << FLUWIPC_POS)
+#define FLUSC           (0x01U << FLUSC_POS)
+#define FLUSS           (0x01U << FLUSS_POS)
+#define FLURUCS         (0x01U << FLURUCS_POS)
+#define FLURRC          (0x07U << FLURRC_POS)
+#define FLURRE          (0x01U << FLURRE_POS)
+#define FLDCTP          (0x01U << FLDCTP_POS)
+#define FLUIE           (0x01U << FLUIE_POS)
+#define FLUOCLR         (0x01U << FLUOCLR_POS)
+#define FLUOPF          (0x01U << FLUOPF_POS)
+
+//-------------------
+//    ADCxCON
+#define ADCE_POS        0U
+#define ADCDMADA_POS    1U
+#define ADCDMABM_POS    2U
+#define ADCCCD_POS      4U
+#define ADCUCS_POS      7U
+#define ADCRS_POS       8U
+#define ADCP0ES_POS     12U
+#define ADCP0REE_POS    17U
+#define ADCP0FEE_POS    18U
+#define ADCP1ES_POS     19U
+#define ADCP1REE_POS    24U
+#define ADCP1FEE_POS    25U
+#define ADCESDLYP_POS   27U
+#define ADCESDLYU_POS   28U
+#define ADCE            (0x01U << ADCE_POS)
+#define ADCDMADA        (0x01U << ADCDMADA_POS)
+#define ADCDMABM        (0x03U << ADCDMABM_POS)
+#define ADCCCD          (0x07U << ADCCCD_POS)
+#define ADCUCS          (0x01U << ADCUCS_POS)
+#define ADCRS           (0x0FU << ADCRS_POS)
+#define ADCP0ES         (0x1FU << ADCP0ES_POS)
+#define ADCP0REE        (0x01U << ADCP0REE_POS)
+#define ADCP0FEE        (0x01U << ADCP0FEE_POS)
+#define ADCP1ES         (0x1FU << ADCP1ES_POS)
+#define ADCP1REE        (0x01U << ADCP1REE_POS)
+#define ADCP1FEE        (0x01U << ADCP1FEE_POS)
+#define ADCESDLYP       (0x01U << ADCESDLYP_POS)
+#define ADCESDLYU       (0x0FU << ADCESDLYU_POS)
+
+//-------------------
+//    ADCxExCC
+#define ADCED_POS       0U
+#define ADCEIS_POS      12U
+#define ADCEES_POS      16U
+#define ADCESDLY_POS    20U
+#define ADCEPL_POS      24U
+#define ADCEST_POS      27U
+#define ADCECCLR_POS    30U
+#define ADCECF_POS      31U
+#define ADCED           (0xFFFU << ADCED_POS)
+#define ADCEIS          (0x0FU << ADCEIS_POS)
+#define ADCEES          (0x0FU << ADCEES_POS)
+#define ADCESDLY        (0x0FU << ADCESDLY_POS)
+#define ADCEPL          (0x07U << ADCEPL_POS)
+#define ADCEST          (0x07U << ADCEST_POS)
+#define ADCECCLR        (0x01U << ADCECCLR_POS)
+#define ADCECF          (0x01U << ADCECF_POS)
+
+//-------------------
+//    ADCDC0
+#define ADCE0DC_POS     0U
+#define ADCE0DMAE_POS   7U
+#define ADCE1DC_POS     8U
+#define ADCE1DMAE_POS   15U
+#define ADCE2DC_POS     16U
+#define ADCE2DMAE_POS   23U
+#define ADCE3DC_POS     24U
+#define ADCE3DMAE_POS   31U
+#define ADCE0DC         (0x7FU << ADCE0DC_POS)
+#define ADCE0DMAE       (0x01U << ADCE0DMAE_POS)
+#define ADCE1DC         (0x7FU << ADCE1DC_POS)
+#define ADCE1DMAE       (0x01U << ADCE1DMAE_POS)
+#define ADCE2DC         (0x7FU << ADCE2DC_POS)
+#define ADCE2DMAE       (0x01U << ADCE2DMAE_POS)
+#define ADCE3DC         (0x7FU << ADCE3DC_POS)
+#define ADCE3DMAE       (0x01U << ADCE3DMAE_POS)
+
+//-------------------
+//    ADCDC1
+#define ADCE4DC_POS     0U
+#define ADCE4DMAE_POS   7U
+#define ADCE5DC_POS     8U
+#define ADCE5DMAE_POS   15U
+#define ADCE6DC_POS     16U
+#define ADCE6DMAE_POS   23U
+#define ADCE7DC_POS     24U
+#define ADCE7DMAE_POS   31U
+#define ADCE4DC         (0x7FU << ADCE4DC_POS)
+#define ADCE4DMAE       (0x01U << ADCE4DMAE_POS)
+#define ADCE5DC         (0x7FU << ADCE5DC_POS)
+#define ADCE5DMAE       (0x01U << ADCE5DMAE_POS)
+#define ADCE6DC         (0x7FU << ADCE6DC_POS)
+#define ADCE6DMAE       (0x01U << ADCE6DMAE_POS)
+#define ADCE7DC         (0x7FU << ADCE7DC_POS)
+#define ADCE7DMAE       (0x01U << ADCE7DMAE_POS)
+
+//-------------------
+//    ADCWW0
+#define ADCWW0T_POS     0U
+#define ADCE0IB_POS     12U
+#define ADCE1IB_POS     13U
+#define ADCE2IB_POS     14U
+#define ADCE3IB_POS     15U
+#define ADCWW0B_POS     16U
+#define ADCE4IB_POS     28U
+#define ADCE5IB_POS     29U
+#define ADCE6IB_POS     30U
+#define ADCE7IB_POS     31U
+#define ADCWW0T         (0xFFFU << ADCWW0T_POS)
+#define ADCE0IB         (0x01U << ADCE0IB_POS)
+#define ADCE1IB         (0x01U << ADCE1IB_POS)
+#define ADCE2IB         (0x01U << ADCE2IB_POS)
+#define ADCE3IB         (0x01U << ADCE3IB_POS)
+#define ADCWW0B         (0xFFFU << ADCWW0B_POS)
+#define ADCE4IB         (0x01U << ADCE4IB_POS)
+#define ADCE5IB         (0x01U << ADCE5IB_POS)
+#define ADCE6IB         (0x01U << ADCE6IB_POS)
+#define ADCE7IB         (0x01U << ADCE7IB_POS)
+
+//-------------------
+//    ADCWW1
+#define ADCWW1T_POS     0U
+#define ADCWW1B_POS     16U
+#define ADCRC_POS       30U
+#define ADCWW1T         (0xFFFU << ADCWW1T_POS)
+#define ADCWW1B         (0xFFFU << ADCWW1B_POS)
+#define ADCRC           (0x3U << ADCRC_POS)
+
+//-------------------
+//    ADCWC0
+#define ADCW0E0E_POS    0U
+#define ADCW0E1E_POS    1U
+#define ADCW0E2E_POS    2U
+#define ADCW0E3E_POS    3U
+#define ADCW0E4E_POS    4U
+#define ADCW0E5E_POS    5U
+#define ADCW0E6E_POS    6U
+#define ADCW0E7E_POS    7U
+#define ADCE0OV_POS     8U
+#define ADCE1OV_POS     9U
+#define ADCE2OV_POS     10U
+#define ADCE3OV_POS     11U
+#define ADCE4OV_POS     12U
+#define ADCE5OV_POS     13U
+#define ADCE6OV_POS     14U
+#define ADCE7OV_POS     15U
+#define ADCW0E0CLR_POS  16U
+#define ADCW0E1CLR_POS  18U
+#define ADCW0E2CLR_POS  20U
+#define ADCW0E3CLR_POS  22U
+#define ADCW0E4CLR_POS  24U
+#define ADCW0E5CLR_POS  26U
+#define ADCW0E6CLR_POS  28U
+#define ADCW0E7CLR_POS  30U
+#define ADCW0E0F_POS    17U
+#define ADCW0E1F_POS    19U
+#define ADCW0E2F_POS    21U
+#define ADCW0E3F_POS    23U
+#define ADCW0E4F_POS    25U
+#define ADCW0E5F_POS    27U
+#define ADCW0E6F_POS    29U
+#define ADCW0E7F_POS    31U
+
+#define ADCW0E0E        (0x01U << ADCW0E0E_POS)
+#define ADCW0E1E        (0x01U << ADCW0E1E_POS)
+#define ADCW0E2E        (0x01U << ADCW0E2E_POS)
+#define ADCW0E3E        (0x01U << ADCW0E3E_POS)
+#define ADCW0E4E        (0x01U << ADCW0E4E_POS)
+#define ADCW0E5E        (0x01U << ADCW0E5E_POS)
+#define ADCW0E6E        (0x01U << ADCW0E6E_POS)
+#define ADCW0E7E        (0x01U << ADCW0E7E_POS)
+#define ADCE0OV         (0x01U << ADCE0OV_POS)
+#define ADCE1OV         (0x01U << ADCE1OV_POS)
+#define ADCE2OV         (0x01U << ADCE2OV_POS)
+#define ADCE3OV         (0x01U << ADCE3OV_POS)
+#define ADCE4OV         (0x01U << ADCE4OV_POS)
+#define ADCE5OV         (0x01U << ADCE5OV_POS)
+#define ADCE6OV         (0x01U << ADCE6OV_POS)
+#define ADCE7OV         (0x01U << ADCE7OV_POS)
+#define ADCW0E0CLR      (0x01U << ADCW0E0CLR_POS)
+#define ADCW0E1CLR      (0x01U << ADCW0E1CLR_POS)
+#define ADCW0E2CLR      (0x01U << ADCW0E2CLR_POS)
+#define ADCW0E3CLR      (0x01U << ADCW0E3CLR_POS)
+#define ADCW0E4CLR      (0x01U << ADCW0E4CLR_POS)
+#define ADCW0E5CLR      (0x01U << ADCW0E5CLR_POS)
+#define ADCW0E6CLR      (0x01U << ADCW0E6CLR_POS)
+#define ADCW0E7CLR      (0x01U << ADCW0E7CLR_POS)
+#define ADCW0E0F        (0x01U << ADCW0E0F_POS)
+#define ADCW0E1F        (0x01U << ADCW0E1F_POS)
+#define ADCW0E2F        (0x01U << ADCW0E2F_POS)
+#define ADCW0E3F        (0x01U << ADCW0E3F_POS)
+#define ADCW0E4F        (0x01U << ADCW0E4F_POS)
+#define ADCW0E5F        (0x01U << ADCW0E5F_POS)
+#define ADCW0E6F        (0x01U << ADCW0E6F_POS)
+#define ADCW0E7F        (0x01U << ADCW0E7F_POS)
+
+//-------------------
+//    ADCWC1
+#define ADCW1E0E_POS    0U
+#define ADCW1E1E_POS    1U
+#define ADCW1E2E_POS    2U
+#define ADCW1E3E_POS    3U
+#define ADCW1E4E_POS    4U
+#define ADCW1E5E_POS    5U
+#define ADCW1E6E_POS    6U
+#define ADCW1E7E_POS    7U
+#define ADCE0IE_POS     8U
+#define ADCE1IE_POS     9U
+#define ADCE2IE_POS     10U
+#define ADCE3IE_POS     11U
+#define ADCE4IE_POS     12U
+#define ADCE5IE_POS     13U
+#define ADCE6IE_POS     14U
+#define ADCE7IE_POS     15U
+#define ADCW1E0CLR_POS  16U
+#define ADCW1E1CLR_POS  18U
+#define ADCW1E2CLR_POS  20U
+#define ADCW1E3CLR_POS  22U
+#define ADCW1E4CLR_POS  24U
+#define ADCW1E5CLR_POS  26U
+#define ADCW1E6CLR_POS  28U
+#define ADCW1E7CLR_POS  30U
+#define ADCW1E0F_POS    17U
+#define ADCW1E1F_POS    19U
+#define ADCW1E2F_POS    21U
+#define ADCW1E3F_POS    23U
+#define ADCW1E4F_POS    25U
+#define ADCW1E5F_POS    27U
+#define ADCW1E6F_POS    29U
+#define ADCW1E7F_POS    31U
+#define ADCW1E0E        (0x01U << ADCW1E0E_POS)
+#define ADCW1E1E        (0x01U << ADCW1E1E_POS)
+#define ADCW1E2E        (0x01U << ADCW1E2E_POS)
+#define ADCW1E3E        (0x01U << ADCW1E3E_POS)
+#define ADCW1E4E        (0x01U << ADCW1E4E_POS)
+#define ADCW1E5E        (0x01U << ADCW1E5E_POS)
+#define ADCW1E6E        (0x01U << ADCW1E6E_POS)
+#define ADCW1E7E        (0x01U << ADCW1E7E_POS)
+#define ADCE0IE         (0x01U << ADCE0IE_POS)
+#define ADCE1IE         (0x01U << ADCE1IE_POS)
+#define ADCE2IE         (0x01U << ADCE2IE_POS)
+#define ADCE3IE         (0x01U << ADCE3IE_POS)
+#define ADCE4IE         (0x01U << ADCE4IE_POS)
+#define ADCE5IE         (0x01U << ADCE5IE_POS)
+#define ADCE6IE         (0x01U << ADCE6IE_POS)
+#define ADCE7IE         (0x01U << ADCE7IE_POS)
+#define ADCW1E0CLR      (0x01U << ADCW1E0CLR_POS)
+#define ADCW1E1CLR      (0x01U << ADCW1E1CLR_POS)
+#define ADCW1E2CLR      (0x01U << ADCW1E2CLR_POS)
+#define ADCW1E3CLR      (0x01U << ADCW1E3CLR_POS)
+#define ADCW1E4CLR      (0x01U << ADCW1E4CLR_POS)
+#define ADCW1E5CLR      (0x01U << ADCW1E5CLR_POS)
+#define ADCW1E6CLR      (0x01U << ADCW1E6CLR_POS)
+#define ADCW1E7CLR      (0x01U << ADCW1E7CLR_POS)
+#define ADCW1E0F        (0x01U << ADCW1E0F_POS)
+#define ADCW1E1F        (0x01U << ADCW1E1F_POS)
+#define ADCW1E2F        (0x01U << ADCW1E2F_POS)
+#define ADCW1E3F        (0x01U << ADCW1E3F_POS)
+#define ADCW1E4F        (0x01U << ADCW1E4F_POS)
+#define ADCW1E5F        (0x01U << ADCW1E5F_POS)
+#define ADCW1E6F        (0x01U << ADCW1E6F_POS)
+#define ADCW1E7F        (0x01U << ADCW1E7F_POS)
+
+//-------------------
+//    CMPxCON
+#define CMPS_POS        0U
+#define CMPE_POS        1U
+#define CMPHS_POS       2U
+#define CMPFS_POS       4U
+#define CMPRFE_POS      6U
+#define CMPFFE_POS      7U
+#define CMPIS_POS       8U
+#define CMPOE_POS       11U
+#define CMPRS_POS       12U
+#define CMPIE_POS       15U
+#define CMPOT_POS       16U
+#define CMPTM_POS       20U
+#define CMPECLR_POS     30U
+#define CMPEF_POS       31U
+#define CMPS            (0x01U << CMPS_POS)
+#define CMPE            (0x01U << CMPE_POS)
+#define CMPHS           (0x03U << CMPHS_POS)
+#define CMPFS           (0x03U << CMPFS_POS)
+#define CMPRFE          (0x01U << CMPRFE_POS)
+#define CMPFFE          (0x01U << CMPFFE_POS)
+#define CMPIS           (0x07U << CMPIS_POS)
+#define CMPOE           (0x01U << CMPOE_POS)
+#define CMPRS           (0x07U << CMPRS_POS)
+#define CMPIE           (0x01U << CMPIE_POS)
+#define CMPOT           (0x0FU << CMPOT_POS)
+#define CMPTM           (0x07U << CMPTM_POS)
+#define CMPECLR         (0x01U << CMPECLR_POS)
+#define CMPEF           (0x01U << CMPEF_POS)
+
+//-------------------
+//    CMPxTW
+#define CMPTWS_POS      0U
+#define CMPTWE_POS      16U
+#define CMPTWS          (0xFFFFU << CMPTWS_POS)
+#define CMPTWE          (0xFFFFU << CMPTWE_POS)
+
+//-------------------
+//    AMPCON
+#define AMP0GC_POS      0U
+#define AMP0E_POS       3U
+#define AMP0OT_POS      4U
+#define AMP1GC_POS      8U
+#define AMP1E_POS       11U
+#define AMP1OT_POS      12U
+#define AMP2GC_POS      16U
+#define AMP2E_POS       19U
+#define AMP2OT_POS      20U
+#define AMP3GC_POS      24U
+#define AMP3E_POS       27U
+#define AMP3OT_POS      28U
+#define AMP0GC          (0x07U << AMP0GC_POS)
+#define AMP0E           (0x01U << AMP0E_POS)
+#define AMP0OT          (0x0FU << AMP0OT_POS)
+#define AMP1GC          (0x07U << AMP1GC_POS)
+#define AMP1E           (0x01U << AMP1E_POS)
+#define AMP1OT          (0x0FU << AMP1OT_POS)
+#define AMP2GC          (0x07U << AMP2GC_POS)
+#define AMP2E           (0x01U << AMP2E_POS)
+#define AMP2OT          (0x0FU << AMP2OT_POS)
+#define AMP3GC          (0x07U << AMP3GC_POS)
+#define AMP3E           (0x01U << AMP3E_POS)
+#define AMP3OT          (0x0FU << AMP3OT_POS)
+
+//-------------------
+//    CCPxCON
+#define CCPE_POS        0U
+#define CCPUT_POS       1U
+#define CCPUM_POS       2U
+#define CCPM_POS        4U
+#define CCPCIC_POS      6U
+#define CCPCI_POS       8U
+#define CCPVFE_POS      11U
+#define CCPT_POS        12U
+#define CCPIE_POS       15U
+#define CCPFC0I_POS     16U
+#define CCPFC1I_POS     18U
+#define CCPFC0L_POS     20U
+#define CCPFC1L_POS     21U
+#define CCPFC0E_POS     22U
+#define CCPFC1E_POS     23U
+#define CCPFC_POS       24U
+#define CCPCOV_POS      25U
+#define CCPFCLR_POS     26U
+#define CCPFF_POS       27U
+#define CCPGCLR_POS     28U
+#define CCPGF_POS       29U
+#define CCPCCLR_POS     30U
+#define CCPCF_POS       31U
+#define CCPE            (0x01U << CCPE_POS)
+#define CCPUT           (0x01U << CCPUT_POS)
+#define CCPUM           (0x03U << CCPUM_POS)
+#define CCPM            (0x03U << CCPM_POS)
+#define CCPCIC          (0x03U << CCPCIC_POS)
+#define CCPCI           (0x07U << CCPCI_POS)
+#define CCPVFE          (0x01U << CCPVFE_POS)
+#define CCPT            (0x07U << CCPT_POS)
+#define CCPIE           (0x01U << CCPIE_POS)
+#define CCPFC0I         (0x03U << CCPFC0I_POS)
+#define CCPFC1I         (0x03U << CCPFC1I_POS)
+#define CCPFC0L         (0x01U << CCPFC0L_POS)
+#define CCPFC1L         (0x01U << CCPFC1L_POS)
+#define CCPFC0E         (0x01U << CCPFC0E_POS)
+#define CCPFC1E         (0x01U << CCPFC1E_POS)
+#define CCPFC           (0x01U << CCPFC_POS)
+#define CCPCOV          (0x01U << CCPCOV_POS)
+#define CCPFCLR         (0x01U << CCPFCLR_POS)
+#define CCPFF           (0x01U << CCPFF_POS)
+#define CCPGCLR         (0x01U << CCPGCLR_POS)
+#define CCPGF           (0x01U << CCPGF_POS)
+#define CCPCCLR         (0x01U << CCPCCLR_POS)
+#define CCPCF           (0x01U << CCPCF_POS)
+
+//-------------------
+//    CCPxOUT
+#define CCPPOE_POS      0U
+#define CCPNOE_POS      1U
+#define CCPFPO_POS      2U
+#define CCPFNO_POS      3U
+#define CCPPIO_POS      4U
+#define CCPNIO_POS      5U
+#define CCPROC_POS      6U
+#define CCPGM_POS       8U
+#define CCPGUE_POS      10U
+#define CCPGDE_POS      11U
+#define CCPGINV_POS     12U
+#define CCPPFM_POS      13U
+#define CCPDCD_POS      16U
+#define CCPSBR_POS      19U
+#define CCPCOL_POS      20U
+#define CCPGFM_POS      22U
+#define CCPPOE          (0x01U << CCPPOE_POS)
+#define CCPNOE          (0x01U << CCPNOE_POS)
+#define CCPFPO          (0x01U << CCPFPO_POS)
+#define CCPFNO          (0x01U << CCPFNO_POS)
+#define CCPPIO          (0x01U << CCPPIO_POS)
+#define CCPNIO          (0x01U << CCPNIO_POS)
+#define CCPROC          (0x03U << CCPROC_POS)
+#define CCPGM           (0x03U << CCPGM_POS)
+#define CCPGUE          (0x01U << CCPGUE_POS)
+#define CCPGDE          (0x01U << CCPGDE_POS)
+#define CCPGINV         (0x01U << CCPGINV_POS)
+#define CCPPFM          (0x01U << CCPPFM_POS)
+#define CCPDCD          (0x07U << CCPDCD_POS)
+#define CCPSBR          (0x01U << CCPSBR_POS)
+#define CCPCOL          (0x03U << CCPCOL_POS)
+#define CCPGFM          (0x01U << CCPGFM_POS)
+
+//-------------------
+//    CCPxVAL
+#define CCPCV_POS       0U
+#define CCPPSC_POS      16U
+#define CCPDT_POS       24U
+#define CCPCV           (0xFFFFU << CCPCV_POS)
+#define CCPPSC          (0xFFU << CCPPSC_POS)
+#define CCPDT           (0xFFU << CCPDT_POS)
+
+//-------------------
+//    CCPxGAT
+#define CCPGSV_POS      0U
+#define CCPGEV_POS      16U
+#define CCPGSV          (0xFFFFU << CCPGSV_POS)
+#define CCPGEV          (0xFFFFU << CCPGEV_POS)
+
+//-------------------
+//    MPxCON
+#define MPW0E_POS       0U
+#define MPW1E_POS       1U
+#define MPW2E_POS       2U
+#define MPW3E_POS       3U
+#define MPW4E_POS       4U
+#define MPW5E_POS       5U
+#define MPW6E_POS       6U
+#define MPW7E_POS       7U
+#define MPT_POS         8U
+#define MPCO_POS        11U
+#define MPLSM_POS       12U
+#define MPLSKS_POS      13U
+#define MPIE_POS        14U
+#define MPW0CLR_POS     16U
+#define MPW0F_POS       17U
+#define MPW1CLR_POS     18U
+#define MPW1F_POS       19U
+#define MPW2CLR_POS     20U
+#define MPW2F_POS       21U
+#define MPW3CLR_POS     22U
+#define MPW3F_POS       23U
+#define MPW4CLR_POS     24U
+#define MPW4F_POS       25U
+#define MPW5CLR_POS     26U
+#define MPW5F_POS       27U
+#define MPW6CLR_POS     28U
+#define MPW6F_POS       29U
+#define MPW7CLR_POS     30U
+#define MPW7F_POS       31U
+#define MPW0E           (0x01U << MPW0E_POS)
+#define MPW1E           (0x01U << MPW1E_POS)
+#define MPW2E           (0x01U << MPW2E_POS)
+#define MPW3E           (0x01U << MPW3E_POS)
+#define MPW4E           (0x01U << MPW4E_POS)
+#define MPW5E           (0x01U << MPW5E_POS)
+#define MPW6E           (0x01U << MPW6E_POS)
+#define MPW7E           (0x01U << MPW7E_POS)
+#define MPT             (0x07U << MPT_POS)
+#define MPCO            (0x01U << MPCO_POS)
+#define MPLSM           (0x01U << MPLSM_POS)
+#define MPLSKS          (0x01U << MPLSKS_POS)
+#define MPIE            (0x01U << MPIE_POS)
+#define MPW0CLR         (0x01U << MPW0CLR_POS)
+#define MPW0F           (0x01U << MPW0F_POS)
+#define MPW1CLR         (0x01U << MPW1CLR_POS)
+#define MPW1F           (0x01U << MPW1F_POS)
+#define MPW2CLR         (0x01U << MPW2CLR_POS)
+#define MPW2F           (0x01U << MPW2F_POS)
+#define MPW3CLR         (0x01U << MPW3CLR_POS)
+#define MPW3F           (0x01U << MPW3F_POS)
+#define MPW4CLR         (0x01U << MPW4CLR_POS)
+#define MPW4F           (0x01U << MPW4F_POS)
+#define MPW5CLR         (0x01U << MPW5CLR_POS)
+#define MPW5F           (0x01U << MPW5F_POS)
+#define MPW6CLR         (0x01U << MPW6CLR_POS)
+#define MPW6F           (0x01U << MPW6F_POS)
+#define MPW7CLR         (0x01U << MPW7CLR_POS)
+#define MPW7F           (0x01U << MPW7F_POS)
+
+//-------------------
+//    ABUFCON
+#define ABUFIS_POS      0U
+#define ABUFE_POS       5U
+#define ABUFM_POS       6U
+#define ABUFOT_POS      8U
+#define ADCTM_POS       16U
+#define ABUFIS          (0x1FU << ABUFIS_POS)
+#define ABUFE           (0x01U << ABUFE_POS)
+#define ABUFM           (0x03U << ABUFM_POS)
+#define ABUFOT          (0x0FU << ABUFOT_POS)
+#define ADCTM           (0xFFU << ADCTM_POS)
+
+//-------------------
+//    WDTxCON
+#define WDTE_POS        0U
+#define WDTRE_POS       1U
+#define WDTWE_POS       2U
+#define WDTIE_POS       3U
+#define WDTCD_POS       4U
+#define WDTCLR_POS      8U
+#define WDTRLV_POS      16U
+#define WDTTO_POS       31U
+#define WDTE            (0x01U << WDTE_POS)
+#define WDTRE           (0x01U << WDTRE_POS)
+#define WDTWE           (0x01U << WDTWE_POS)
+#define WDTIE           (0x01U << WDTIE_POS)
+#define WDTCD           (0x07U << WDTCD_POS)
+#define WDTCLR          (0xFFU << WDTCLR_POS)
+#define WDTRLV          (0xFFU << WDTRLV_POS)
+#define WDTTO           (0x01U << WDTTO_POS)
+
+//-------------------
+//    SPIxCON
+#define SPIE_POS        0U
+#define SPIKS_POS       1U
+#define SPICIH_POS      2U
+#define SPIDSP_POS      3U
+#define SPIMCD_POS      4U
+#define SPIS_POS        8U
+#define SPIHD_POS       9U
+#define SPIHDR_POS      10U
+#define SPILF_POS       11U
+#define SPIDMAE_POS     12U
+#define SPIMSOE_POS     13U
+#define SPISIOP_POS     14U
+#define SPIPORTS_POS    15U
+#define SPIIE_POS       16U
+#define SPITCLR_POS     30U
+#define SPITBV_POS      31U
+#define SPIE            (0x01U << SPIE_POS)
+#define SPIKS           (0x01U << SPIKS_POS)
+#define SPICIH          (0x01U << SPICIH_POS)
+#define SPIDSP          (0x01U << SPIDSP_POS)
+#define SPIMCD          (0x0FU << SPIMCD_POS)
+#define SPIS            (0x01U << SPIS_POS)
+#define SPIHD           (0x01U << SPIHD_POS)
+#define SPIHDR          (0x01U << SPIHDR_POS)
+#define SPILF           (0x01U << SPILF_POS)
+#define SPIDMAE         (0x01U << SPIDMAE_POS)
+#define SPIMSOE         (0x01U << SPIMSOE_POS)
+#define SPISIOP         (0x01U << SPISIOP_POS)
+#define SPIPORTS        (0x01U << SPIPORTS_POS)
+#define SPIIE           (0x01U << SPIIE_POS)
+#define SPITCLR         (0x01U << SPITCLR_POS)
+#define SPITBV          (0x01U << SPITBV_POS)
+
+//-------------------
+//    UTxCON
+#define UTE_POS         0U
+#define UTTKS_POS       1U
+#define UTM_POS         2U
+#define UTBRA_POS       4U
+#define UTRE_POS        7U
+#define UTBR_POS        8U
+#define UTHD_POS        20U
+#define UTTDMAE_POS     21U
+#define UTRDMAE_POS     22U
+#define UTPORTS_POS     23U
+#define UTIE_POS        24U
+#define UTPAR_POS       25U
+#define UTRERR_POS      27U
+#define UTTCLR_POS      28U
+#define UTTBV_POS       29U
+#define UTRCLR_POS      30U
+#define UTRBV_POS       31U
+#define UTE             (0x01U << UTE_POS)
+#define UTTKS           (0x01U << UTTKS_POS)
+#define UTM             (0x03U << UTM_POS)
+#define UTBRA           (0x07U << UTBRA_POS)
+#define UTRE            (0x01U << UTRE_POS)
+#define UTBR            (0xFFFU << UTBR_POS)
+#define UTHD            (0x01U << UTHD_POS)
+#define UTTDMAE         (0x01U << UTTDMAE_POS)
+#define UTRDMAE         (0x01U << UTRDMAE_POS)
+#define UTPORTS         (0x01U << UTPORTS_POS)
+#define UTIE            (0x01U << UTIE_POS)
+#define UTPAR           (0x03U << UTPAR_POS)
+#define UTRERR          (0x01U << UTRERR_POS)
+#define UTTCLR          (0x01U << UTTCLR_POS)
+#define UTTBV           (0x01U << UTTBV_POS)
+#define UTRCLR          (0x01U << UTRCLR_POS)
+#define UTRBV           (0x01U << UTRBV_POS)
+
+//-------------------
+//    IICCON
+#define IICE_POS        0U
+#define IICKS_POS       1U
+#define IICS_POS        2U
+#define IICTX_POS       3U
+#define IICTXC_POS      4U
+#define IICHE_POS       6U
+#define IICSAM_POS      7U
+#define IICMCD_POS      8U
+#define IICSCL_POS      16U
+#define IICDMAE_POS     17U
+#define IICPORTS_POS    18U
+#define IICIE_POS       19U
+#define IICBSTA_POS     20U
+#define IICSLE_POS      21U
+#define IICBSTART_POS   22U
+#define IICBSTOP_POS    23U
+#define IICCCLR_POS     24U
+#define IICCLTO_POS     25U
+#define IICHCLR_POS     26U
+#define IICHNACK_POS    27U
+#define IICTCLR_POS     28U
+#define IICTBV_POS      29U
+#define IICRCLR_POS     30U
+#define IICRBV_POS      31U
+#define IICE            (0x01U << IICE_POS)
+#define IICKS           (0x01U << IICKS_POS)
+#define IICS            (0x01U << IICS_POS)
+#define IICTX           (0x01U << IICTX_POS)
+#define IICTXC          (0x03U << IICTXC_POS)
+#define IICHE           (0x01U << IICHE_POS)
+#define IICSAM          (0x01U << IICSAM_POS)
+#define IICMCD          (0xFFU << IICMCD_POS)
+#define IICSCL          (0x01U << IICSCL_POS)
+#define IICDMAE         (0x01U << IICDMAE_POS)
+#define IICPORTS        (0x01U << IICPORTS_POS)
+#define IICIE           (0x01U << IICIE_POS)
+#define IICBSTA         (0x01U << IICBSTA_POS)
+#define IICSLE          (0x01U << IICSLE_POS)
+#define IICBSTART       (0x01U << IICBSTART_POS)
+#define IICBSTOP        (0x01U << IICBSTOP_POS)
+#define IICCCLR         (0x01U << IICCCLR_POS)
+#define IICCLTO         (0x01U << IICCLTO_POS)
+#define IICHCLR         (0x01U << IICHCLR_POS)
+#define IICHNACK        (0x01U << IICHNACK_POS)
+#define IICTCLR         (0x01U << IICTCLR_POS)
+#define IICTBV          (0x01U << IICTBV_POS)
+#define IICRCLR         (0x01U << IICRCLR_POS)
+#define IICRBV          (0x01U << IICRBV_POS)
+
+//-------------------
+//    CRCCON
+#define CRCREGL_POS     0U
+#define CRCREFI_POS     5U
+#define CRCREFO_POS     6U
+#define CRCCPLO_POS     7U
+#define CRCIDM_POS      8U
+#define CRCPDC_POS      10U
+#define CRCKS_POS       12U
+#define CRCIE_POS       13U
+#define CRCRVB_POS      14U
+#define CRCCCLR_POS     30U
+#define CRCCF_POS       31U
+
+#define CRCREGL         (0x1FU << CRCREGL_POS)
+#define CRCREFI         (0x01U << CRCREFI_POS)
+#define CRCREFO         (0x01U << CRCREFO_POS)
+#define CRCCPLO         (0x01U << CRCCPLO_POS)
+#define CRCIDM          (0x03U << CRCIDM_POS)
+#define CRCPDC          (0x03U << CRCPDC_POS)
+#define CRCKS           (0x01U << CRCKS_POS)
+#define CRCIE           (0x01U << CRCIE_POS)
+#define CRCRVB          (0x01U << CRCRVB_POS)
+#define CRCCCLR         (0x01U << CRCCCLR_POS)
+#define CRCCF           (0x01U << CRCCF_POS)
+
+//-------------------
+//    TxCON
+#define TE_POS          0U
+#define TUT_POS         1U
+#define TUM_POS         2U
+#define TCM_POS         4U
+#define TECC_POS        6U
+#define TCS_POS         8U
+#define TOIE_POS        11U
+#define TERS_POS        12U
+#define TERC_POS        16U
+#define TRS_POS         18U
+#define TRGE_POS        19U
+#define TENC0_POS       20U
+#define TENC1_POS       22U
+#define TENCM_POS       24U
+#define TENCP_POS       26U
+#define TOFM_POS        27U
+#define TCD_POS         29U
+#define TOCLR_POS       30U
+#define TOV_POS         31U
+#define TE              (0x01U << TE_POS)
+#define TUT             (0x01U << TUT_POS)
+#define TUM             (0x03U << TUM_POS)
+#define TCM             (0x03U << TCM_POS)
+#define TECC            (0x03U << TECC_POS)
+#define TCS             (0x07U << TCS_POS)
+#define TOIE            (0x01U << TOIE_POS)
+#define TERS            (0x0FU << TERS_POS)
+#define TERC            (0x03U << TERC_POS)
+#define TRS             (0x01U << TRS_POS)
+#define TRGE            (0x01U << TRGE_POS)
+#define TENC0           (0x03U << TENC0_POS)
+#define TENC1           (0x03U << TENC1_POS)
+#define TENCM           (0x03U << TENCM_POS)
+#define TENCP           (0x01U << TENCP_POS)
+#define TOFM            (0x03U << TOFM_POS)
+#define TCD             (0x01U << TCD_POS)
+#define TOCLR           (0x01U << TOCLR_POS)
+#define TOV             (0x01U << TOV_POS)
+
+//-------------------
+//    TxARL
+#define TARL_POS        0U
+#define TPSC_POS        16U
+#define TARL            (0xFFFFU << TARL_POS)
+#define TPSC            (0xFFFFU << TPSC_POS)
+
+//-------------------
+//    TxECON
+#define TPEC_POS        0U
+#define TETS_POS        8U
+#define TETC_POS        12U
+#define TET_POS         13U
+#define TACT_POS        14U
+#define TEPS_POS        16U
+#define TEPC_POS        19U
+//#define TPS_POS         20U
+#define TPGE_POS        21U
+#define TCSC_POS        22U
+#define TSBR_POS        24U
+#define TEIE_POS        25U
+#define TECLR_POS       30U
+#define TEF_POS         31U
+
+#define TPEC            (0xFFU << TPEC_POS)
+#define TETS            (0x0FU << TETS_POS)
+#define TETC            (0x01U << TETC_POS)
+#define TET             (0x01U << TET_POS)
+#define TACT            (0x03U << TACT_POS)
+#define TEPS            (0x07U << TEPS_POS)
+#define TEPC            (0x01U << TEPC_POS)
+//#define TPS             (0x01U << TPS_POS)
+#define TPGE            (0x01U << TPGE_POS)
+#define TCSC            (0x03U << TCSC_POS)
+#define TSBR            (0x01U << TSBR_POS)
+#define TEIE            (0x01U << TEIE_POS)
+#define TECLR           (0x01U << TECLR_POS)
+#define TEF             (0x01U << TEF_POS)
+
+//-------------------
+//    UBCON
+#define UE_POS          0U
+#define USRSM_POS       1U
+#define UFS_POS         2U
+#define ULT_POS         4U
+#define UDPPU_POS       6U
+#define UDNPU_POS       7U
+#define UDADR_POS       8U
+#define UXM_POS         16U
+#define UIE_POS         17U
+#define URSBF_POS       18U
+#define UBRSM_POS       27U
+#define UBSPD_POS       29U
+#define UBCLR_POS       30U
+#define UBRST_POS       31U
+
+#define UE              (0x01U << UE_POS)
+#define USRSM           (0x01U << USRSM_POS)
+#define UFS             (0x01U << UFS_POS)
+#define ULT             (0x01U << ULT_POS)
+#define UDPPU           (0x01U << UDPPU_POS)
+#define UDNPU           (0x01U << UDNPU_POS)
+#define UDADR           (0x7FU << UDADR_POS)
+#define UXM             (0x01U << UXM_POS)
+#define UIE             (0x01U << UIE_POS)
+#define URSBF           (0x01U << URSBF_POS)
+#define UBRSM           (0x01U << UBRSM_POS)
+#define UBSPD           (0x01U << UBSPD_POS)
+#define UBCLR           (0x01U << UBCLR_POS)
+#define UBRST           (0x01U << UBRST_POS)
+
+//-------------------
+//    UFCON
+#define UFNUM_POS       0U
+#define UFCRC_POS       11U
+#define USOFE_POS       16U
+#define UMISS_POS       29U
+#define USCLR_POS       30U
+#define USOF_POS        31U
+#define UFNUM           (0x7FFU << UFNUM_POS)
+#define UFCRC           (0x1FU << UFCRC_POS)
+#define USOFE           (0x01U << USOFE_POS)
+#define UMISS           (0x01U << UMISS_POS)
+#define USCLR           (0x01U << USCLR_POS)
+#define USOF            (0x01U << USOF_POS)
+
+//-------------------
+//    UE0CON
+#define UEOPS_POS       0U
+#define UEIPS_POS       8U
+#define UE0DOS_POS      16U
+#define UE0DIS_POS      17U
+#define UE0SOS_POS      18U
+#define UE0SIS_POS      19U
+#define UE0STALL_POS    20U
+#define ULTS_POS        21U
+#define UECERRH_POS     22U
+#define UECTP_POS       23U
+#define UENCLR_POS      24U
+#define UEINACK_POS     25U
+#define UECCLR_POS      26U
+#define UECERR_POS      27U
+#define UEOCLR_POS      28U
+#define UEOPF_POS       29U
+#define UEICLR_POS      30U
+#define UEIPF_POS       31U
+#define UEOPS           (0xFFU << UEOPS_POS)
+#define UEIPS           (0xFFU << UEIPS_POS)
+#define UE0DOS          (0x01U << UE0DOS_POS)
+#define UE0DIS          (0x01U << UE0DIS_POS)
+#define UE0SOS          (0x01U << UE0SOS_POS)
+#define UE0SIS          (0x01U << UE0SIS_POS)
+#define UE0STALL        (0x01U << UE0STALL_POS)
+#define ULTS            (0x01U << ULTS_POS)
+#define UECERRH         (0x01U << UECERRH_POS)
+#define UECTP           (0x01U << UECTP_POS)
+#define UENCLR          (0x01U << UENCLR_POS)
+#define UEINACK         (0x01U << UEINACK_POS)
+#define UECCLR          (0x01U << UECCLR_POS)
+#define UECERR          (0x01U << UECERR_POS)
+#define UEOCLR          (0x01U << UEOCLR_POS)
+#define UEOPF           (0x01U << UEOPF_POS)
+#define UEICLR          (0x01U << UEICLR_POS)
+#define UEIPF           (0x01U << UEIPF_POS)
+
+//-------------------
+//    UExCON
+#define UEOS_POS        16U
+#define UEIS_POS        17U
+#define UEODATA0_POS    18U
+#define UEIDATA0_POS    19U
+#define UEOSTALL_POS    20U
+#define UEISTALL_POS    21U
+#define UENOHS_POS      23U
+// #define UEOPS //same as E0
+// #define UEIPS //same as E0
+#define UEOS            (0x01U << UEOS_POS)
+#define UEIS            (0x01U << UEIS_POS)
+#define UEODATA0        (0x01U << UEODATA0_POS)
+#define UEIDATA0        (0x01U << UEIDATA0_POS)
+#define UEOSTALL        (0x01U << UEOSTALL_POS)
+#define UEISTALL        (0x01U << UEISTALL_POS)
+// #define UECERRH //same as E0
+#define UENOHS          (0x01U << UENOHS_POS)
+// #define UENCLR  //same as E0
+// #define UEINAC  //same as E0
+// #define UECCLR  //same as E0
+// #define UECERR  //same as E0
+// #define UEOCLR  //same as E0
+// #define UEOPF   //same as E0
+// #define UEICLR  //same as E0
+// #define UEIPF   //same as E0
+
+//-------------------
+//    DACxCON
+#define DACCCD_POS      0U
+#define DACE_POS        16U
+#define DACIE_POS       17U
+#define DACDMAE_POS     18U
+#define DACDMAL_POS     19U
+#define DACCS_POS       20U
+#define DACIM_POS       21U
+#define DACTE_POS       22U
+#define DACCCLR_POS     30U
+#define DACCF_POS       31U
+
+#define DACCCD          (0xFFFFU << DACCCD_POS)
+#define DACE            (0x01U << DACE_POS)
+#define DACIE           (0x01U << DACIE_POS)
+#define DACDMAE         (0x01U << DACDMAE_POS)
+#define DACDMAL         (0x01U << DACDMAL_POS)
+#define DACCS           (0x01U << DACCS_POS)
+#define DACIM           (0x01U << DACIM_POS)
+#define DACTE           (0x01U << DACTE_POS)
+#define DACCCLR         (0x01U << DACCCLR_POS)
+#define DACCF           (0x01U << DACCF_POS)
+
+
+//-------------------
+//    PORTx_PD (Port Data)
+#define P0_POS          0U
+#define P1_POS          1U
+#define P2_POS          2U
+#define P3_POS          3U
+#define P4_POS          4U
+#define P5_POS          5U
+#define P6_POS          6U
+#define P7_POS          7U
+#define P8_POS          8U
+#define P9_POS          9U
+#define P10_POS         10U
+#define P11_POS         11U
+#define P12_POS         12U
+#define P13_POS         13U
+#define P14_POS         14U
+#define P15_POS         15U
+#define P16_POS         16U
+#define P17_POS         17U
+#define P18_POS         18U
+#define P19_POS         19U
+#define P20_POS         20U
+#define P21_POS         21U
+#define P22_POS         22U
+#define P23_POS         23U
+#define P24_POS         24U
+#define P25_POS         25U
+#define P26_POS         26U
+#define P27_POS         27U
+#define P28_POS         28U
+#define P29_POS         29U
+#define P30_POS         30U
+#define P31_POS         31U
+#define P0D             (0x01U << P0_POS)
+#define P1D             (0x01U << P1_POS)
+#define P2D             (0x01U << P2_POS)
+#define P3D             (0x01U << P3_POS)
+#define P4D             (0x01U << P4_POS)
+#define P5D             (0x01U << P5_POS)
+#define P6D             (0x01U << P6_POS)
+#define P7D             (0x01U << P7_POS)
+#define P8D             (0x01U << P8_POS)
+#define P9D             (0x01U << P9_POS)
+#define P10D            (0x01U << P10_POS)
+#define P11D            (0x01U << P11_POS)
+#define P12D            (0x01U << P12_POS)
+#define P13D            (0x01U << P13_POS)
+#define P14D            (0x01U << P14_POS)
+#define P15D            (0x01U << P15_POS)
+#define P16D            (0x01U << P16_POS)
+#define P17D            (0x01U << P17_POS)
+#define P18D            (0x01U << P18_POS)
+#define P19D            (0x01U << P19_POS)
+#define P20D            (0x01U << P20_POS)
+#define P21D            (0x01U << P21_POS)
+#define P22D            (0x01U << P22_POS)
+#define P23D            (0x01U << P23_POS)
+#define P24D            (0x01U << P24_POS)
+#define P25D            (0x01U << P25_POS)
+#define P26D            (0x01U << P26_POS)
+#define P27D            (0x01U << P27_POS)
+#define P28D            (0x01U << P28_POS)
+#define P29D            (0x01U << P29_POS)
+#define P30D            (0x01U << P30_POS)
+#define P31D            (0x01U << P31_POS)
+
+//-------------------
+//    PORTx_POE (Port Output Enable)
+#define P0OE            (0x01U << P0_POS)
+#define P1OE            (0x01U << P1_POS)
+#define P2OE            (0x01U << P2_POS)
+#define P3OE            (0x01U << P3_POS)
+#define P4OE            (0x01U << P4_POS)
+#define P5OE            (0x01U << P5_POS)
+#define P6OE            (0x01U << P6_POS)
+#define P7OE            (0x01U << P7_POS)
+#define P8OE            (0x01U << P8_POS)
+#define P9OE            (0x01U << P9_POS)
+#define P10OE           (0x01U << P10_POS)
+#define P11OE           (0x01U << P11_POS)
+#define P12OE           (0x01U << P12_POS)
+#define P13OE           (0x01U << P13_POS)
+#define P14OE           (0x01U << P14_POS)
+#define P15OE           (0x01U << P15_POS)
+#define P16OE           (0x01U << P16_POS)
+#define P17OE           (0x01U << P17_POS)
+#define P18OE           (0x01U << P18_POS)
+#define P19OE           (0x01U << P19_POS)
+#define P20OE           (0x01U << P20_POS)
+#define P21OE           (0x01U << P21_POS)
+#define P22OE           (0x01U << P22_POS)
+#define P23OE           (0x01U << P23_POS)
+#define P24OE           (0x01U << P24_POS)
+#define P25OE           (0x01U << P25_POS)
+#define P26OE           (0x01U << P26_POS)
+#define P27OE           (0x01U << P27_POS)
+#define P28OE           (0x01U << P28_POS)
+#define P29OE           (0x01U << P29_POS)
+#define P30OE           (0x01U << P30_POS)
+#define P31OE           (0x01U << P31_POS)
+
+//-------------------
+//    PORTx_PIE (Port Input Enable)
+#define P0IE            (0x01U << P0_POS)
+#define P1IE            (0x01U << P1_POS)
+#define P2IE            (0x01U << P2_POS)
+#define P3IE            (0x01U << P3_POS)
+#define P4IE            (0x01U << P4_POS)
+#define P5IE            (0x01U << P5_POS)
+#define P6IE            (0x01U << P6_POS)
+#define P7IE            (0x01U << P7_POS)
+#define P8IE            (0x01U << P8_POS)
+#define P9IE            (0x01U << P9_POS)
+#define P10IE           (0x01U << P10_POS)
+#define P11IE           (0x01U << P11_POS)
+#define P12IE           (0x01U << P12_POS)
+#define P13IE           (0x01U << P13_POS)
+#define P14IE           (0x01U << P14_POS)
+#define P15IE           (0x01U << P15_POS)
+#define P16IE           (0x01U << P16_POS)
+#define P17IE           (0x01U << P17_POS)
+#define P18IE           (0x01U << P18_POS)
+#define P19IE           (0x01U << P19_POS)
+#define P20IE           (0x01U << P20_POS)
+#define P21IE           (0x01U << P21_POS)
+#define P22IE           (0x01U << P22_POS)
+#define P23IE           (0x01U << P23_POS)
+#define P24IE           (0x01U << P24_POS)
+#define P25IE           (0x01U << P25_POS)
+#define P26IE           (0x01U << P26_POS)
+#define P27IE           (0x01U << P27_POS)
+#define P28IE           (0x01U << P28_POS)
+#define P29IE           (0x01U << P29_POS)
+#define P30IE           (0x01U << P30_POS)
+#define P31IE           (0x01U << P31_POS)
+
+//-------------------
+//    PORTx_PPU (Port Pull-Up)
+#define P0PU            (0x01U << P0_POS)
+#define P1PU            (0x01U << P1_POS)
+#define P2PU            (0x01U << P2_POS)
+#define P3PU            (0x01U << P3_POS)
+#define P4PU            (0x01U << P4_POS)
+#define P5PU            (0x01U << P5_POS)
+#define P6PU            (0x01U << P6_POS)
+#define P7PU            (0x01U << P7_POS)
+#define P8PU            (0x01U << P8_POS)
+#define P9PU            (0x01U << P9_POS)
+#define P10PU           (0x01U << P10_POS)
+#define P11PU           (0x01U << P11_POS)
+#define P12PU           (0x01U << P12_POS)
+#define P13PU           (0x01U << P13_POS)
+#define P14PU           (0x01U << P14_POS)
+#define P15PU           (0x01U << P15_POS)
+#define P16PU           (0x01U << P16_POS)
+#define P17PU           (0x01U << P17_POS)
+#define P18PU           (0x01U << P18_POS)
+#define P19PU           (0x01U << P19_POS)
+#define P20PU           (0x01U << P20_POS)
+#define P21PU           (0x01U << P21_POS)
+#define P22PU           (0x01U << P22_POS)
+#define P23PU           (0x01U << P23_POS)
+#define P24PU           (0x01U << P24_POS)
+#define P25PU           (0x01U << P25_POS)
+#define P26PU           (0x01U << P26_POS)
+#define P27PU           (0x01U << P27_POS)
+#define P28PU           (0x01U << P28_POS)
+#define P29PU           (0x01U << P29_POS)
+#define P30PU           (0x01U << P30_POS)
+#define P31PU           (0x01U << P31_POS)
+
+//-------------------
+//    PORTx_PRIE (Port Rising Edge IE)
+#define P0RIE           (0x01U << P0_POS)
+#define P1RIE           (0x01U << P1_POS)
+#define P2RIE           (0x01U << P2_POS)
+#define P3RIE           (0x01U << P3_POS)
+#define P4RIE           (0x01U << P4_POS)
+#define P5RIE           (0x01U << P5_POS)
+#define P6RIE           (0x01U << P6_POS)
+#define P7RIE           (0x01U << P7_POS)
+#define P8RIE           (0x01U << P8_POS)
+#define P9RIE           (0x01U << P9_POS)
+#define P10RIE          (0x01U << P10_POS)
+#define P11RIE          (0x01U << P11_POS)
+#define P12RIE          (0x01U << P12_POS)
+#define P13RIE          (0x01U << P13_POS)
+#define P14RIE          (0x01U << P14_POS)
+#define P15RIE          (0x01U << P15_POS)
+#define P16RIE          (0x01U << P16_POS)
+#define P17RIE          (0x01U << P17_POS)
+#define P18RIE          (0x01U << P18_POS)
+#define P19RIE          (0x01U << P19_POS)
+#define P20RIE          (0x01U << P20_POS)
+#define P21RIE          (0x01U << P21_POS)
+#define P22RIE          (0x01U << P22_POS)
+#define P23RIE          (0x01U << P23_POS)
+#define P24RIE          (0x01U << P24_POS)
+#define P25RIE          (0x01U << P25_POS)
+#define P26RIE          (0x01U << P26_POS)
+#define P27RIE          (0x01U << P27_POS)
+#define P28RIE          (0x01U << P28_POS)
+#define P29RIE          (0x01U << P29_POS)
+#define P30RIE          (0x01U << P30_POS)
+#define P31RIE          (0x01U << P31_POS)
+
+//-------------------
+//    PORTx_PFIE (Port Falling Edge IE)
+#define P0FIE           (0x01U << P0_POS)
+#define P1FIE           (0x01U << P1_POS)
+#define P2FIE           (0x01U << P2_POS)
+#define P3FIE           (0x01U << P3_POS)
+#define P4FIE           (0x01U << P4_POS)
+#define P5FIE           (0x01U << P5_POS)
+#define P6FIE           (0x01U << P6_POS)
+#define P7FIE           (0x01U << P7_POS)
+#define P8FIE           (0x01U << P8_POS)
+#define P9FIE           (0x01U << P9_POS)
+#define P10FIE          (0x01U << P10_POS)
+#define P11FIE          (0x01U << P11_POS)
+#define P12FIE          (0x01U << P12_POS)
+#define P13FIE          (0x01U << P13_POS)
+#define P14FIE          (0x01U << P14_POS)
+#define P15FIE          (0x01U << P15_POS)
+#define P16FIE          (0x01U << P16_POS)
+#define P17FIE          (0x01U << P17_POS)
+#define P18FIE          (0x01U << P18_POS)
+#define P19FIE          (0x01U << P19_POS)
+#define P20FIE          (0x01U << P20_POS)
+#define P21FIE          (0x01U << P21_POS)
+#define P22FIE          (0x01U << P22_POS)
+#define P23FIE          (0x01U << P23_POS)
+#define P24FIE          (0x01U << P24_POS)
+#define P25FIE          (0x01U << P25_POS)
+#define P26FIE          (0x01U << P26_POS)
+#define P27FIE          (0x01U << P27_POS)
+#define P28FIE          (0x01U << P28_POS)
+#define P29FIE          (0x01U << P29_POS)
+#define P30FIE          (0x01U << P30_POS)
+#define P31FIE          (0x01U << P31_POS)
+
+//-------------------
+//    PORTx_PIF (Port Interrupt Flag)
+#define P0IF            (0x01U << P0_POS)
+#define P1IF            (0x01U << P1_POS)
+#define P2IF            (0x01U << P2_POS)
+#define P3IF            (0x01U << P3_POS)
+#define P4IF            (0x01U << P4_POS)
+#define P5IF            (0x01U << P5_POS)
+#define P6IF            (0x01U << P6_POS)
+#define P7IF            (0x01U << P7_POS)
+#define P8IF            (0x01U << P8_POS)
+#define P9IF            (0x01U << P9_POS)
+#define P10IF           (0x01U << P10_POS)
+#define P11IF           (0x01U << P11_POS)
+#define P12IF           (0x01U << P12_POS)
+#define P13IF           (0x01U << P13_POS)
+#define P14IF           (0x01U << P14_POS)
+#define P15IF           (0x01U << P15_POS)
+#define P16IF           (0x01U << P16_POS)
+#define P17IF           (0x01U << P17_POS)
+#define P18IF           (0x01U << P18_POS)
+#define P19IF           (0x01U << P19_POS)
+#define P20IF           (0x01U << P20_POS)
+#define P21IF           (0x01U << P21_POS)
+#define P22IF           (0x01U << P22_POS)
+#define P23IF           (0x01U << P23_POS)
+#define P24IF           (0x01U << P24_POS)
+#define P25IF           (0x01U << P25_POS)
+#define P26IF           (0x01U << P26_POS)
+#define P27IF           (0x01U << P27_POS)
+#define P28IF           (0x01U << P28_POS)
+#define P29IF           (0x01U << P29_POS)
+#define P30IF           (0x01U << P30_POS)
+#define P31IF           (0x01U << P31_POS)
+
+//-------------------
+//    PORTx_PIFC (Port Interrupt Flag Clear)
+#define P0IFC           (0x01U << P0_POS)
+#define P1IFC           (0x01U << P1_POS)
+#define P2IFC           (0x01U << P2_POS)
+#define P3IFC           (0x01U << P3_POS)
+#define P4IFC           (0x01U << P4_POS)
+#define P5IFC           (0x01U << P5_POS)
+#define P6IFC           (0x01U << P6_POS)
+#define P7IFC           (0x01U << P7_POS)
+#define P8IFC           (0x01U << P8_POS)
+#define P9IFC           (0x01U << P9_POS)
+#define P10IFC          (0x01U << P10_POS)
+#define P11IFC          (0x01U << P11_POS)
+#define P12IFC          (0x01U << P12_POS)
+#define P13IFC          (0x01U << P13_POS)
+#define P14IFC          (0x01U << P14_POS)
+#define P15IFC          (0x01U << P15_POS)
+#define P16IFC          (0x01U << P16_POS)
+#define P17IFC          (0x01U << P17_POS)
+#define P18IFC          (0x01U << P18_POS)
+#define P19IFC          (0x01U << P19_POS)
+#define P20IFC          (0x01U << P20_POS)
+#define P21IFC          (0x01U << P21_POS)
+#define P22IFC          (0x01U << P22_POS)
+#define P23IFC          (0x01U << P23_POS)
+#define P24IFC          (0x01U << P24_POS)
+#define P25IFC          (0x01U << P25_POS)
+#define P26IFC          (0x01U << P26_POS)
+#define P27IFC          (0x01U << P27_POS)
+#define P28IFC          (0x01U << P28_POS)
+#define P29IFC          (0x01U << P29_POS)
+#define P30IFC          (0x01U << P30_POS)
+#define P31IFC          (0x01U << P31_POS)
+
+//-------------------
+//    PORTx_PFS0 (Port Filter Select 0)
+#define P0FS0           (0x01U << P0_POS)
+#define P1FS0           (0x01U << P1_POS)
+#define P2FS0           (0x01U << P2_POS)
+#define P3FS0           (0x01U << P3_POS)
+#define P4FS0           (0x01U << P4_POS)
+#define P5FS0           (0x01U << P5_POS)
+#define P6FS0           (0x01U << P6_POS)
+#define P7FS0           (0x01U << P7_POS)
+#define P8FS0           (0x01U << P8_POS)
+#define P9FS0           (0x01U << P9_POS)
+#define P10FS0          (0x01U << P10_POS)
+#define P11FS0          (0x01U << P11_POS)
+#define P12FS0          (0x01U << P12_POS)
+#define P13FS0          (0x01U << P13_POS)
+#define P14FS0          (0x01U << P14_POS)
+#define P15FS0          (0x01U << P15_POS)
+#define P16FS0          (0x01U << P16_POS)
+#define P17FS0          (0x01U << P17_POS)
+#define P18FS0          (0x01U << P18_POS)
+#define P19FS0          (0x01U << P19_POS)
+#define P20FS0          (0x01U << P20_POS)
+#define P21FS0          (0x01U << P21_POS)
+#define P22FS0          (0x01U << P22_POS)
+#define P23FS0          (0x01U << P23_POS)
+#define P24FS0          (0x01U << P24_POS)
+#define P25FS0          (0x01U << P25_POS)
+#define P26FS0          (0x01U << P26_POS)
+#define P27FS0          (0x01U << P27_POS)
+#define P28FS0          (0x01U << P28_POS)
+#define P29FS0          (0x01U << P29_POS)
+#define P30FS0          (0x01U << P30_POS)
+#define P31FS0          (0x01U << P31_POS)
+
+//-------------------
+//    PORTx_PFS1 (Port Filter Select 1)
+#define P0FS1           (0x01U << P0_POS)
+#define P1FS1           (0x01U << P1_POS)
+#define P2FS1           (0x01U << P2_POS)
+#define P3FS1           (0x01U << P3_POS)
+#define P4FS1           (0x01U << P4_POS)
+#define P5FS1           (0x01U << P5_POS)
+#define P6FS1           (0x01U << P6_POS)
+#define P7FS1           (0x01U << P7_POS)
+#define P8FS1           (0x01U << P8_POS)
+#define P9FS1           (0x01U << P9_POS)
+#define P10FS1          (0x01U << P10_POS)
+#define P11FS1          (0x01U << P11_POS)
+#define P12FS1          (0x01U << P12_POS)
+#define P13FS1          (0x01U << P13_POS)
+#define P14FS1          (0x01U << P14_POS)
+#define P15FS1          (0x01U << P15_POS)
+#define P16FS1          (0x01U << P16_POS)
+#define P17FS1          (0x01U << P17_POS)
+#define P18FS1          (0x01U << P18_POS)
+#define P19FS1          (0x01U << P19_POS)
+#define P20FS1          (0x01U << P20_POS)
+#define P21FS1          (0x01U << P21_POS)
+#define P22FS1          (0x01U << P22_POS)
+#define P23FS1          (0x01U << P23_POS)
+#define P24FS1          (0x01U << P24_POS)
+#define P25FS1          (0x01U << P25_POS)
+#define P26FS1          (0x01U << P26_POS)
+#define P27FS1          (0x01U << P27_POS)
+#define P28FS1          (0x01U << P28_POS)
+#define P29FS1          (0x01U << P29_POS)
+#define P30FS1          (0x01U << P30_POS)
+#define P31FS1          (0x01U << P31_POS)
+
+//-------------------
+//    PORTx_PLS (Port Low Speed)
+#define P0LS            (0x01U << P0_POS)
+#define P1LS            (0x01U << P1_POS)
+#define P2LS            (0x01U << P2_POS)
+#define P3LS            (0x01U << P3_POS)
+#define P4LS            (0x01U << P4_POS)
+#define P5LS            (0x01U << P5_POS)
+#define P6LS            (0x01U << P6_POS)
+#define P7LS            (0x01U << P7_POS)
+#define P8LS            (0x01U << P8_POS)
+#define P9LS            (0x01U << P9_POS)
+#define P10LS           (0x01U << P10_POS)
+#define P11LS           (0x01U << P11_POS)
+#define P12LS           (0x01U << P12_POS)
+#define P13LS           (0x01U << P13_POS)
+#define P14LS           (0x01U << P14_POS)
+#define P15LS           (0x01U << P15_POS)
+#define P16LS           (0x01U << P16_POS)
+#define P17LS           (0x01U << P17_POS)
+#define P18LS           (0x01U << P18_POS)
+#define P19LS           (0x01U << P19_POS)
+#define P20LS           (0x01U << P20_POS)
+#define P21LS           (0x01U << P21_POS)
+#define P22LS           (0x01U << P22_POS)
+#define P23LS           (0x01U << P23_POS)
+#define P24LS           (0x01U << P24_POS)
+#define P25LS           (0x01U << P25_POS)
+#define P26LS           (0x01U << P26_POS)
+#define P27LS           (0x01U << P27_POS)
+#define P28LS           (0x01U << P28_POS)
+#define P29LS           (0x01U << P29_POS)
+#define P30LS           (0x01U << P30_POS)
+#define P31LS           (0x01U << P31_POS)
+
+//-------------------
+//    PORTx_PPE (Port Protect Enable)
+#define P0PE            (0x01U << P0_POS)
+#define P1PE            (0x01U << P1_POS)
+#define P2PE            (0x01U << P2_POS)
+#define P3PE            (0x01U << P3_POS)
+#define P4PE            (0x01U << P4_POS)
+#define P5PE            (0x01U << P5_POS)
+#define P6PE            (0x01U << P6_POS)
+#define P7PE            (0x01U << P7_POS)
+#define P8PE            (0x01U << P8_POS)
+#define P9PE            (0x01U << P9_POS)
+#define P10PE           (0x01U << P10_POS)
+#define P11PE           (0x01U << P11_POS)
+#define P12PE           (0x01U << P12_POS)
+#define P13PE           (0x01U << P13_POS)
+#define P14PE           (0x01U << P14_POS)
+#define P15PE           (0x01U << P15_POS)
+#define P16PE           (0x01U << P16_POS)
+#define P17PE           (0x01U << P17_POS)
+#define P18PE           (0x01U << P18_POS)
+#define P19PE           (0x01U << P19_POS)
+#define P20PE           (0x01U << P20_POS)
+#define P21PE           (0x01U << P21_POS)
+#define P22PE           (0x01U << P22_POS)
+#define P23PE           (0x01U << P23_POS)
+#define P24PE           (0x01U << P24_POS)
+#define P25PE           (0x01U << P25_POS)
+#define P26PE           (0x01U << P26_POS)
+#define P27PE           (0x01U << P27_POS)
+#define P28PE           (0x01U << P28_POS)
+#define P29PE           (0x01U << P29_POS)
+#define P30PE           (0x01U << P30_POS)
+#define P31PE           (0x01U << P31_POS)
 
 #endif // CV32S6015_SR_H
